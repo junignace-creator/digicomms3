@@ -2,7 +2,7 @@
 
 Self-contained HTML reviewers (open in any browser):
 
-- [`index.html`](index.html): landing page
+- [`index.html`](index.html): one page with a switcher between both reviewers
 - [`m3-source-coding-drill.html`](m3-source-coding-drill.html): M3‑1 Information Theory & Source Coding
 - [`m3-channel-coding-drill.html`](m3-channel-coding-drill.html): M3‑2 Channel Coding
 

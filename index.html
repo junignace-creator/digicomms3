@@ -1,15 +1,48 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ECE 701 Module 3 Reviewers</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Module 3 Reviewers</title>
+<meta name="description" content="ECE 701 Module 3 reviewers in one place: M3-1 Information Theory & Source Coding and M3-2 Channel Coding.">
 <style>
-:root{--bg:#f4f6f5;--card:#fff;--ink:#16202a;--muted:#6b7680;--line:#dbe0e0;--accent:#146c5e}
-@media (prefers-color-scheme:dark){:root{--bg:#0b1220;--card:#111b2c;--ink:#e4ebf2;--muted:#8492a6;--line:#233350;--accent:#3ddc97}}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 -apple-system,Segoe UI,Arial,sans-serif;padding:32px 16px}
-main{max-width:640px;margin:0 auto}h1{font-size:1.4rem;margin:0 0 4px}p{color:var(--muted);margin:0 0 20px}
-a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;color:inherit;text-decoration:none}
-a.card:hover{border-color:var(--accent)}a.card b{color:var(--accent)}a.card span{display:block;color:var(--muted);font-size:.9rem;margin-top:4px}
-</style></head><body><main>
-<h1>ECE 701 · Module 3 Reviewers</h1>
-<p>Study plan, lecture notes, formula sheet, glossary and worked practice problems.</p>
-<a class="card" href="m3-source-coding-drill.html"><b>M3‑1 · Information Theory &amp; Source Coding</b><span>Self-information, entropy, Kraft‑McMillan, Shannon / Shannon‑Fano / Huffman codes, extensions, DMC, mutual information, channel capacity.</span></a>
-<a class="card" href="m3-channel-coding-drill.html"><b>M3‑2 · Channel Coding</b><span>Parity &amp; repetition, linear block codes (G, H, syndromes), cyclic codes &amp; CRC, convolutional codes, state/trellis diagrams, Viterbi.</span></a>
-</main></body></html>
+:root{--bg:#f4f6f5;--surface:#fff;--ink:#16202a;--muted:#6b7680;--line:#dbe0e0;--accent:#146c5e;--accent-ink:#fff;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1220;--surface:#111b2c;--ink:#e4ebf2;--muted:#8492a6;--line:#233350;--accent:#3ddc97;--accent-ink:#06201a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1220;--surface:#111b2c;--ink:#e4ebf2;--muted:#8492a6;--line:#233350;--accent:#3ddc97;--accent-ink:#06201a;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",-apple-system,Segoe UI,Arial,sans-serif;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--line);background:var(--bg);overflow-x:auto;scrollbar-width:none;flex:none}
+.bar::-webkit-scrollbar{display:none}
+.bar .label{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);white-space:nowrap;margin-right:4px}
+.bar button{font:600 .85rem "IBM Plex Sans",-apple-system,sans-serif;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:7px 14px;white-space:nowrap;cursor:pointer}
+.bar button.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.frames{flex:1;position:relative;min-height:0}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+iframe[hidden]{display:none}
+@media (max-width:480px){.bar .label{display:none}.bar button{flex:1}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+</head><body>
+<nav class="bar" id="bar" aria-label="Module">
+  <span class="label">ECE 701 · M3</span>
+  <button data-mod="m31">M3‑1 · Source Coding</button>
+  <button data-mod="m32">M3‑2 · Channel Coding</button>
+</nav>
+<div class="frames">
+  <iframe id="f-m31" title="M3-1 Information Theory and Source Coding reviewer" data-src="m3-source-coding-drill.html" hidden></iframe>
+  <iframe id="f-m32" title="M3-2 Channel Coding reviewer" data-src="m3-channel-coding-drill.html" hidden></iframe>
+</div>
+<script>
+function show(mod){
+  document.querySelectorAll('#bar button').forEach(b=>b.classList.toggle('active',b.dataset.mod===mod));
+  document.querySelectorAll('iframe').forEach(f=>{
+    const on=f.id==='f-'+mod;
+    if(on && !f.src) f.src=f.dataset.src;
+    f.hidden=!on;
+  });
+  try{ localStorage.setItem('m3-active-module',mod); }catch(e){}
+  if(location.hash!=='#'+mod) history.replaceState(null,'','#'+mod);
+}
+document.getElementById('bar').addEventListener('click',e=>{ const b=e.target.closest('button[data-mod]'); if(b) show(b.dataset.mod); });
+let start=location.hash.slice(1);
+if(start!=='m31' && start!=='m32'){ try{ start=localStorage.getItem('m3-active-module'); }catch(e){} }
+show(start==='m32'?'m32':'m31');
+</script>
+</body></html>
