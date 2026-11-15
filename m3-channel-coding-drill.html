@@ -505,7 +505,7 @@ footer.done{
   </section>
 
   <section class="pane" id="pane-practice">
-    <div class="exam-note">Problems marked <b>Deck</b> are the slide examples, fully worked. The rest are original problems built on the same methods. Every answer was checked by computation (matrix products, polynomial division and Viterbi run in code). Solve on paper first, then tap to check.</div>
+    <div class="exam-note"><b>Two sections:</b> <b>From the slides</b> = every example and problem in the PPT. <b>Made by me</b> = extra practice that is not in the PPT. Each slide problem has a tag: <span style="color:var(--accent);font-weight:600">worked by her in the recording</span>, <span style="color:var(--accent-2);font-weight:600">answer on the slide, steps by me</span>, or <span style="color:var(--danger);font-weight:600">not solved by her</span>. Every solution uses the steps she taught, and every number was checked by computation.</div>
     <div id="practiceList"></div>
   </section>
 
@@ -580,16 +580,16 @@ const schedule = [
       ["Without looking: list the 4 error types, then the advantages and disadvantages of parity vs repetition.","10m"],
       ["Read Part A sections 4–6 (block codes, linear property test, Hamming weight / distance, d<sub>min</sub>).","20m"],
       ["Redo the linear test on both slide‑16 codes by XOR-ing every pair.","10m"],
-      ["Do Practice #1–#5 cold, then check.","35m"],
+      ["Do D1 and E1–E4 cold, then check.","35m"],
       ["Glossary self-quiz: fundamentals + block-code terms.","20m"],
     ]},
   { night:2, day:"Session 2 · ~2h", focus:"Systematic codes, G and H matrices, syndromes, syndrome decoding",
     tasks:[
       ["Read Part A sections 7–9 (systematic form, parity equations, G = [I | P], H = [P<sup>T</sup> | I], GH<sup>T</sup> = 0).","25m"],
-      ["Redo deck Examples #1–#3 by hand: code bits → G → H → check x = 01011.","20m"],
+      ["Redo deck Examples #1–#3 by hand (D2–D4): code bits → G → H → check x = 01011.","20m"],
       ["Read sections 10–11 (syndrome, error pattern, syndrome decoding).","15m"],
-      ["Do Practice #6 (deck Example #4) and #7 (deck Example #5).","25m"],
-      ["Do Practice #8 (a full (7,4) code: encode, find H, correct a single error).","20m"],
+      ["Do D5 (deck Example #4) and D6 (deck Example #5).","25m"],
+      ["Do E5 (a full (7,4) code: encode, find H, correct a single error).","20m"],
       ["Glossary self-quiz: matrix + syndrome terms.","15m"],
     ]},
   { night:3, day:"Session 3 · ~2h", focus:"Cyclic codes: polynomials, shifting, systematic encoding, syndrome, CRC",
@@ -598,7 +598,7 @@ const schedule = [
       ["Redo her n = 4 shift example (x·c(x) mod x⁴+1) on paper.","10m"],
       ["Read sections 4–5 (generator polynomial, systematic cyclic derivation b(x) = x<sup>r</sup>m(x) mod G(x)).","15m"],
       ["Redo deck Example #6 (m = 1100 → c = 1100010) long division by hand without looking.","15m"],
-      ["Do Practice #9 and #10 (encode m = 1010; syndromes for deck Example #7 and two more words).","30m"],
+      ["Do D8 (deck Example #7), E6 and E7.","30m"],
       ["Read section 6 (CRC) and memorize the CRC table's r values.","10m"],
       ["Glossary self-quiz: cyclic terms.","20m"],
     ]},
@@ -608,7 +608,7 @@ const schedule = [
       ["Redo deck Example #8 table by hand (target 11 01 00 10 01 10 11).","10m"],
       ["Read section 4 (state transition table + state diagram) and redraw the state diagram from memory.","15m"],
       ["Read sections 5–6 (trellis, hard/soft decision, Viterbi). Walk the stage-by-stage cost table for Example #10.","20m"],
-      ["Do Practice #11, #12 and #13.","30m"],
+      ["Do D11 (deck Example #10), E8, E9 and E10.","30m"],
       ["Blank-paper formula dump from the Formula Sheet, then grade yourself.","15m"],
       ["Read the Cheat List red flags out loud, then redo your weakest problem timed.","15m"],
     ]},
@@ -786,7 +786,7 @@ const lectureNotes = {
       <li>Find the <b>coset leader</b> e with syndrome s: the error pattern with the lowest w<sub>H</sub>, assumed to be what the noise caused.</li>
       <li>Decode c = r ⊕ e, then read m from the first k bits.</li></ol>
       <div class="callout"><span class="callout-tag">Shortcut for single errors</span>The syndrome of a single-bit error in position j equals <b>column j of H</b>. So if s matches a column of H, flip that bit.</div>
-      <p>Worked fully in Practice #7 (deck Example #5).</p>`},
+      <p>Worked fully in Practice D6 (deck Example #5).</p>`},
   ]},
   "b": { label:"Part B · Cyclic Codes", sections:[
     {h:"1. Cyclic codes & the cyclic shift property", html:`
@@ -826,7 +826,7 @@ const lectureNotes = {
     {h:"6. Syndrome calculation & CRC", html:`
       <div class="math-block">s(x) = r(x) mod G(x) &nbsp;<span class="fn">(degree &lt; n − k)</span></div>
       <p>Divide the received polynomial by G(x). <b>Remainder 0 → no detectable error</b>. Non-zero → at least one bit is wrong. Errors can go <b>undetected</b> if r(x) happens to be divisible by G(x) anyway.</p>
-      <div class="callout"><span class="callout-tag">Example #7 (left for practice)</span>r = 1100110 → r(x) = x⁶ + x⁵ + x² + x → mod (x³ + x + 1) = 1·x² → <b>s = 100</b>. Non-zero, so there's an error. (Compare Example #6: the valid word was 1100010; bit x² was flipped.) Full division in Practice #10.</div>
+      <div class="callout"><span class="callout-tag">Example #7 (left for practice)</span>r = 1100110 → r(x) = x⁶ + x⁵ + x² + x → mod (x³ + x + 1) = 1·x² → <b>s = 100</b>. Non-zero, so there's an error. (Compare Example #6: the valid word was 1100010; bit x² was flipped.) Full division in Practice D8.</div>
       <h4>Cyclic redundancy check (CRC)</h4>
       <p>A class of cyclic codes with standard generator polynomials designed to efficiently detect <b>random and burst errors</b>, including long bursts longer than r. This is what's commonly used today.</p>
       ${tbl(['code','G(x)','r = n − k'],[['CRC‑8','x⁸ + x² + x + 1','8'],['CRC‑12','x¹² + x¹¹ + x³ + x² + x + 1','12'],['CRC‑16','x¹⁶ + x¹⁵ + x² + 1','16'],['CRC‑CCITT','x¹⁶ + x¹² + x⁵ + 1','16']])}
@@ -976,54 +976,104 @@ const glossary = [
 ];
 
 const practice = [
-  { q:"Parity & repetition. (a) Add an even-parity bit and an odd-parity bit to 1011001. (b) The receiver gets 1011101 + the even-parity bit you computed. Is the error detected? (c) Decode the 3× repetition word 110 001 101 000 111.",
-    a:`(a) 1011001 has four 1s (even) → even parity bit = <b>0</b> (10110010), odd parity bit = <b>1</b> (10110011).<br>
-    (b) 1011101 + 0 → five 1s → odd → <b>detected</b> (one flip). If two bits had flipped, the count would stay even and the error would be missed.<br>
-    (c) Majority of each triple: 110→1, 001→0, 101→1, 000→0, 111→1 → <b>10101</b>. Rate 1/3, redundancy 3.` },
-  { q:"Block code numbers. For a (7,4) block code find the code rate, redundancy, number of possible received words, and number of valid codewords.",
-    a:`<div class="math-block">R = 4/7 = <b>0.571</b> &nbsp; Redundancy = 7/4 = <b>1.75</b> &nbsp; 2⁷ = <b>128</b> received words &nbsp; 2⁴ = <b>16</b> valid</div>` },
-  { q:"Coding gain. Using the slide 8 curves: at P_B = 10⁻⁶ uncoded needs 14 dB and coded needs 9 dB. Find the coding gain. If a code had R = 1/2, what's the cost of that gain?",
-    a:`G = 14 − 9 = <b>5 dB</b>. The cost: with R = 1/2, half the transmitted bits are redundant, so throughput halves for the same bandwidth (more bandwidth for the same data rate). That's the coding gain vs redundancy trade-off.` },
-  { q:"Linear test & metrics. Is the code {00000, 01110, 10101, 11011} linear? Find each Hamming weight, w_min, d_min, and d_H(01110, 11011).",
-    a:`Has 00000 ✓. 01110 ⊕ 10101 = <b>11011</b> ✓, 01110 ⊕ 11011 = 10101 ✓, 10101 ⊕ 11011 = 01110 ✓ → <b>linear</b>.<br>
-    Weights: 0, 3, 3, 4 → <b>w_min = 3 = d_min</b>. d_H(01110, 11011) = w_H(10101) = <b>3</b>.` },
-  { q:"Linear test (deck slide 16). Show why the (6,2) code {000010, 110101, 101010, 011110} is not linear.",
-    a:`No all-zero codeword, so it fails property 3. Also c<sub>A</sub> ⊕ c<sub>B</sub> = 000010 ⊕ 110101 = <b>110111</b>, which is not in the code, so it fails property 2. <b>Not linear.</b>` },
-  { q:"Deck Example #4. (6,3) systematic code, G = [100110; 010011; 001101]. Find R, P, H, d_min, and s for (a) r = 110101 and (b) r = 100101. For (b), also correct the error.",
-    a:`R = 3/6 = <b>0.5</b>. P = [110; 011; 101] (columns 4–6 of G).
-    <div class="math-block">H = [P<sup>T</sup> | I₃] = [1 0 1 1 0 0 ; 1 1 0 0 1 0 ; 0 1 1 0 0 1]</div>
-    Codewords: 000000, 001101, 010011, 011110, 100110, 101011, 110101, 111000 → w_min = <b>d_min = 3</b>.<br>
-    (a) r = 110101: s₁ = 1+0+0+1 = 0, s₂ = 1+1+0 = 0, s₃ = 1+0+1 = 0 → <b>s = 000</b>, valid (m = 110).<br>
-    (b) r = 100101: <b>s = 011</b> = column 2 of H → flip bit 2: c = <b>110101</b>, m = 110.` },
-  { q:"Deck Example #5 (syndrome decoding). G = [10110; 01101]. Find m if r = 10010, and the error pattern e.",
-    a:`P = [110; 101] → H = [P<sup>T</sup> | I₃] = [1 1 1 0 0 ; 1 0 0 1 0 ; 0 1 0 0 1].<br>
-    s = rH<sup>T</sup>: s₁ = r₁+r₂+r₃ = 1, s₂ = r₁+r₄ = 0, s₃ = r₂+r₅ = 0 → <b>s = 100</b>.<br>
-    Single-error syndromes = columns of H: 110, 101, <b>100</b>, 010, 001 → s matches column 3 → coset leader <b>e = 00100</b>.<br>
-    c = r ⊕ e = 10010 ⊕ 00100 = <b>10110</b> (a valid codeword) → <b>m = 10</b>.` },
-  { q:"Full (7,4) code. G = [1000110; 0100011; 0010111; 0001101]. (a) Encode m = 1011. (b) Find H. (c) The receiver gets r = 1010100. Find s, correct it, and recover m.",
-    a:`(a) c = mG = row1 ⊕ row3 ⊕ row4 = 1000110 ⊕ 0010111 ⊕ 0001101 = <b>1011100</b>.<br>
-    (b) P = [110; 011; 111; 101] → <div class="math-block">H = [1 0 1 1 1 0 0 ; 1 1 1 0 0 1 0 ; 0 1 1 1 0 0 1]</div>
-    (c) s = rH<sup>T</sup> = <b>101</b>. Columns of H: 110, 011, 111, <b>101</b>, 100, 010, 001 → bit 4 is wrong → c = <b>1011100</b>, m = <b>1011</b> ✓. (d_min = 3, so any single error is correctable.)` },
-  { q:"Systematic cyclic encoding. (7,4) code, G(x) = x³ + x + 1. Find the codeword for m = 1010.",
-    a:`r = 3. m(x) = x³ + x → x³m(x) = x⁶ + x⁴.
-    ${tbl(['step','quotient','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x³'],['2','1','x³ + x + 1','!x + 1']])}
-    b(x) = x + 1 → b = <b>011</b>. c = [m | b] = <b>1010011</b>. Check: 1010011 mod G(x) = 0 ✓.` },
-  { q:"Cyclic syndrome (deck Example #7 + more). G(x) = x³ + x + 1. Find s for r = 1100110 (deck), r = 1000011, and r = 1000101.",
-    a:`<b>r = 1100110</b> → x⁶ + x⁵ + x² + x. Divide: x³ → XOR x⁶+x⁴+x³ → x⁵+x⁴+x³+x²+x; x² → XOR x⁵+x³+x² → x⁴+x; x → XOR x⁴+x²+x → <b>x²</b> → <b>s = 100</b> (error).<br>
-    <b>r = 1000011</b> (1010011 with one bit flipped) → s = <b>110</b> ≠ 0 → error detected.<br>
-    <b>r = 1000101</b> → s = <b>000</b>. Valid: it's 1100010 (Example #6) cyclically shifted left once, which the cyclic property guarantees is a codeword.` },
-  { q:"Convolutional encoding. Same (2,1,2) code (c₁ = b(l)+b(l−2), c₂ = b(l)+b(l−1)+b(l−2)). Encode b = 1 1 0 1. How many output bits?",
-    a:`${tbl(['l','b(l)','b(l−1)','b(l−2)','c₁','c₂'],[['0','1','0','0','1','1'],['1','1','1','0','1','0'],['2','0','1','1','1','0'],['3','1','0','1','0','0'],['4','0','1','0','0','1'],['5','0','0','1','1','1']])}
-    c = <b>11 10 10 00 01 11</b> → N(L + M) = 2(4 + 2) = <b>12 bits</b>. Path on the state diagram: 00 → 10 → 11 → 01 → 10 → 01 → 00.` },
-  { q:"Viterbi decoding. The codeword from Problem 11 is received with one error as r = 11 10 00 00 01 11. Decode it with the Viterbi algorithm (K = 4 data bits, last two pairs are the flush).",
-    a:`Survivor path costs per state:
-    ${tbl(['stage','r','00','10','01','11'],[['1','11','2','0','–','–'],['2','10','3','3','2','0'],['3','00','3','2','1','1'],['4','00','3','1','2','2'],['5 (flush)','01','3','–','1','–'],['6 (flush)','11','!1','–','–','–']])}
-    ${trellisFig(['11','10','00','00','01','11'],4,'Survivor path for Problem 12. The final cost of 1 means one bit error was corrected (stage 3: received 00, branch output 10).')}
-    Decoded <b>c = 11 10 10 00 01 11</b>, <b>b = 1 1 0 1</b> ✓.` },
-  { q:"Concepts. A convolutional code is (3,1,3). Find its code rate, number of states, and number of output bits for a 10-bit message. What's the difference between hard and soft decision decoding?",
-    a:`R = K/N = <b>1/3</b>. States = 2³ = <b>8</b>. Output = N(L + M) = 3(10 + 3) = <b>39 bits</b>.<br>
-    <b>Hard</b>: threshold to 0/1, Hamming distance (what Viterbi uses here). <b>Soft</b>: keep the voltages, Euclidean distance. Soft keeps more information about how confident each bit was.` },
+  /* ---------- FROM THE SLIDES ---------- */
+  { src:'deck', tag:'lect', title:'Slide 16: Linear or not?',
+    q:"Which is a linear block code? (6,2): {000010, 110101, 101010, 011110}. (5,2): {00000, 01011, 10101, 11110}.",
+    a:`<b>(6,2)</b>: no all-zero codeword (fails property 3), and c<sub>A</sub> ⊕ c<sub>B</sub> = 110111 is not in the code (fails property 2) → <b>not linear</b>.<br>
+    <b>(5,2)</b>: has 00000, and every XOR lands in the set (e.g. c<sub>B</sub> ⊕ c<sub>C</sub> = 11110 = c<sub>D</sub>) → <b>linear</b>.
+    <span class="formula-note">Both checks were done by her in the recording.</span>` },
+  { src:'deck', tag:'lect', title:'Example #1 (slide 20): Code bits as combinations',
+    q:"For the (5,2) code {00000, 01011, 10101, 11110}, write each code bit as a linear combination of m₁, m₂.",
+    a:`${tbl(['bit','column','equation'],[['c₁','0011','1m₁ ⊕ 0m₂'],['c₂','0101','0m₁ ⊕ 1m₂'],['c₃','0011','1m₁ ⊕ 0m₂'],['c₄','0101','0m₁ ⊕ 1m₂'],['c₅','0110','1m₁ ⊕ 1m₂']])}
+    c₁c₂ = m₁m₂, so the code is systematic.
+    <span class="formula-note">Her method: compare each column with m₁ = 0011 and m₂ = 0101; c₅ looks like XOR (from logic circuits).</span>` },
+  { src:'deck', tag:'lect', title:'Example #2 (slide 23): Generator matrix',
+    q:"Same (5,2) systematic code. Determine G.",
+    a:`Column j of G = the coefficients of c<sub>j</sub>:
+    <div class="math-block">G = [1 0 1 0 1 ; 0 1 0 1 1] = [I₂ | P], &nbsp; P = [1 0 1 ; 0 1 1]</div>
+    <span class="formula-note">Worked by her in the recording.</span>` },
+  { src:'deck', tag:'lect', title:'Example #3 (slide 26): Parity check matrix + validity',
+    q:"Same code. Determine H. Is x = 01011 a valid codeword?",
+    a:`H = [P<sup>T</sup> | I₃] = [1 0 1 0 0 ; 0 1 0 1 0 ; 1 1 0 0 1] (3×5).<br>
+    xH<sup>T</sup>: row 1 → 0, row 2 → 1+1 = 0, row 3 → 1+1 = 0 → <b>[0 0 0]</b> → <b>valid</b>.
+    <span class="formula-note">Worked by her in the recording, including the element-by-element multiplication.</span>` },
+  { src:'deck', tag:'slide', title:'Example #4 (slide 28): (6,3) code',
+    q:"G = [100110; 010011; 001101]. Find R, P, H, d_min, and s for (a) r = 110101, (b) r = 100101.",
+    a:`R = 3/6 = <b>0.5</b>. P = [110; 011; 101]. <div class="math-block">H = [1 0 1 1 0 0 ; 1 1 0 0 1 0 ; 0 1 1 0 0 1]</div>
+    Codewords: 000000, 001101, 010011, 011110, 100110, 101011, 110101, 111000 → <b>d_min = w_min = 3</b>.<br>
+    (a) <b>s = 000</b> (valid). (b) <b>s = 011</b> = column 2 of H → error in bit 2, c = 110101.
+    <span class="formula-note">She only walked through the d_min method (list all 2³ messages, multiply by G, take the smallest weight) and said the rest is direct substitution. The values match the slide. The bit‑2 correction in (b) is extra, by me.</span>` },
+  { src:'deck', tag:'none', title:'Example #5 (slide 33): Syndrome decoding',
+    q:"G = [10110; 01101]. Find m if r = 10010, and the error pattern e.",
+    a:`H = [1 1 1 0 0 ; 1 0 0 1 0 ; 0 1 0 0 1]. s = rH<sup>T</sup> = <b>100</b>.<br>
+    Single-error syndromes = columns of H: 110, 101, <b>100</b>, 010, 001 → <b>e = 00100</b>.<br>
+    c = r ⊕ e = <b>10110</b> → <b>m = 10</b>. Matches the slide.
+    <span class="formula-note"><b>Not covered in the recording.</b> The steps follow slide 32's procedure; the column-of-H shortcut is my addition.</span>` },
+  { src:'deck', tag:'lect', title:'Example #6 (slide 41): Systematic cyclic encoding',
+    q:"(7,4) code, G(x) = x³ + x + 1, m = 1100. Find c.",
+    a:`r = 3, x³m(x) = x⁶ + x⁵.
+    ${tbl(['step','quotient','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³'],['2','x²','x⁵ + x³ + x²','x⁴ + x²'],['3','x','x⁴ + x² + x','!x']])}
+    b = 010 → <b>c = 1100010</b>.
+    <span class="formula-note">Worked by her live, the same long division.</span>` },
+  { src:'deck', tag:'slide', title:'Example #7 (slide 43): Cyclic syndrome',
+    q:"Same code. Find s for r = 1100110.",
+    a:`r(x) = x⁶ + x⁵ + x² + x.
+    ${tbl(['step','quotient','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³ + x² + x'],['2','x²','x⁵ + x³ + x²','x⁴ + x'],['3','x','x⁴ + x² + x','!x²']])}
+    <b>s = 100</b> ≠ 0 → error detected.
+    <span class="formula-note">She left this one for practice ("try to solve for the syndrome") after teaching the division. The answer is on the slide; the division steps are mine.</span>` },
+  { src:'deck', tag:'lect', title:'Example #8 (slides 48–49): Convolutional encoding',
+    q:"(2,1,2) code, c₁ = b(l)+b(l−2), c₂ = b(l)+b(l−1)+b(l−2), b = 1 0 1 1 1. Find c.",
+    a:`${tbl(['l','b(l)','b(l−1)','b(l−2)','c₁','c₂'],[['0','1','0','0','1','1'],['1','0','1','0','0','1'],['2','1','0','1','0','0'],['3','1','1','0','1','0'],['4','1','1','1','0','1'],['5','0','1','1','1','0'],['6','0','0','1','1','1']])}
+    Interleave: <b>c = 11 01 00 10 01 10 11</b>.
+    <span class="formula-note">Worked by her live, including appending two zeros to flush the registers.</span>` },
+  { src:'deck', tag:'lect', title:'Example #9 (slide 54): State diagram',
+    q:"Same code. Build the state transition table and state diagram.",
+    a:`${tbl(['b','present S₁S₂','next','c₁c₂'],[['0','00','00','00'],['1','00','10','11'],['0','10','01','01'],['1','10','11','10'],['0','01','00','11'],['1','01','10','00'],['0','11','01','10'],['1','11','11','01']])}
+    ${stateFig()}
+    <span class="formula-note">Table and diagram built by her live (next state = b, S₁ shifted). She said a different layout is fine if the connections are right.</span>` },
+  { src:'deck', tag:'lect', title:'Example #10 (slides 63–65): Viterbi decoding',
+    q:"Same code, r = 01 11 10 10 00 11 10 (last two pairs are the flush). Decode with Viterbi.",
+    a:`${tbl(['stage','r','00','10','01','11'],[['1','01','1','1','–','–'],['2','11','3','1','2','2'],['3','10','3','3','2','1'],['4','10','3','3','1','3'],['5','00','3','1','4','4'],['6','11','4','–','2','–'],['7','10','!3','–','–','–']])}
+    ${trellisFig(['01','11','10','10','00','11','10'],5,'Survivor path for Example #10.')}
+    <b>c = 00 11 10 10 00 01 11</b>, <b>b = 0 1 1 0 1</b>.
+    <span class="formula-note">Worked by her live: Hamming distance per branch, add the path costs, cross out the more expensive branch, trace back from 00.</span>` },
+
+  /* ---------- MADE BY ME ---------- */
+  { src:'mine', title:'Parity & repetition',
+    q:"(a) Even and odd parity bits for 1011001. (b) Received 1011101 + the even-parity bit: detected? (c) Decode 3× repetition 110 001 101 000 111.",
+    a:`(a) Four 1s → even bit <b>0</b>, odd bit <b>1</b>. (b) Five 1s → odd → <b>detected</b>. (c) <b>10101</b>.` },
+  { src:'mine', title:'Block code numbers',
+    q:"(7,4) code: R, redundancy, received words, valid codewords.",
+    a:`R = <b>4/7</b>, redundancy = <b>7/4</b>, <b>128</b> received words, <b>16</b> valid.` },
+  { src:'mine', title:'Coding gain from slide 8',
+    q:"At P_B = 10⁻⁶ uncoded needs 14 dB and coded needs 9 dB. Coding gain? What does an R = 1/2 code cost you?",
+    a:`G = <b>5 dB</b>. Cost: half the transmitted bits are redundant, so throughput halves for the same bandwidth.` },
+  { src:'mine', title:'Linear test & metrics',
+    q:"Is {00000, 01110, 10101, 11011} linear? Weights, d_min, d_H(01110, 11011)?",
+    a:`Has 00000 and all XORs stay in the set → <b>linear</b>. Weights 0, 3, 3, 4 → <b>d_min = 3</b>. d_H = w(10101) = <b>3</b>.` },
+  { src:'mine', title:'Full (7,4) code',
+    q:"G = [1000110; 0100011; 0010111; 0001101]. (a) Encode m = 1011. (b) H. (c) Correct r = 1010100.",
+    a:`(a) c = <b>1011100</b>. (b) H = [1 0 1 1 1 0 0 ; 1 1 1 0 0 1 0 ; 0 1 1 1 0 0 1]. (c) s = <b>101</b> = column 4 → c = 1011100, m = <b>1011</b>.` },
+  { src:'mine', title:'Systematic cyclic encoding',
+    q:"(7,4), G(x) = x³ + x + 1, m = 1010. Find c.",
+    a:`x³m(x) = x⁶ + x⁴ → XOR x⁶+x⁴+x³ → x³ → XOR x³+x+1 → <b>x + 1</b> → b = 011 → <b>c = 1010011</b>.` },
+  { src:'mine', title:'More cyclic syndromes',
+    q:"G(x) = x³ + x + 1. Find s for r = 1000011 and r = 1000101.",
+    a:`1000011 → s = <b>110</b> (error). 1000101 → s = <b>000</b>: it's 1100010 shifted left once, so valid by the cyclic property.` },
+  { src:'mine', title:'Convolutional encoding',
+    q:"Same (2,1,2) code. Encode b = 1 1 0 1.",
+    a:`${tbl(['l','b','b(l−1)','b(l−2)','c₁','c₂'],[['0','1','0','0','1','1'],['1','1','1','0','1','0'],['2','0','1','1','1','0'],['3','1','0','1','0','0'],['4','0','1','0','0','1'],['5','0','0','1','1','1']])}
+    c = <b>11 10 10 00 01 11</b> (12 bits).` },
+  { src:'mine', title:'Viterbi with one error',
+    q:"The previous codeword is received as r = 11 10 00 00 01 11. Decode with Viterbi.",
+    a:`${tbl(['stage','r','00','10','01','11'],[['1','11','2','0','–','–'],['2','10','3','3','2','0'],['3','00','3','2','1','1'],['4','00','3','1','2','2'],['5','01','3','–','1','–'],['6','11','!1','–','–','–']])}
+    ${trellisFig(['11','10','00','00','01','11'],4,'Survivor path; final cost 1 = one bit corrected.')}
+    c = <b>11 10 10 00 01 11</b>, b = <b>1 1 0 1</b> ✓.` },
+  { src:'mine', title:'Convolutional concepts',
+    q:"(3,1,3) code: rate, states, output bits for a 10-bit message. Hard vs soft decision?",
+    a:`R = <b>1/3</b>, <b>8</b> states, 3(10 + 3) = <b>39 bits</b>. Hard = 0/1 + Hamming distance; soft = voltages + Euclidean distance.` },
 ];
+
 function loadState(){ try{ return JSON.parse(localStorage.getItem('m3p2-study-state')||'{}'); }catch(e){ return {}; } }
 function saveState(s){ try{ localStorage.setItem('m3p2-study-state', JSON.stringify(s)); }catch(e){} }
 let state = loadState();
@@ -1097,15 +1147,22 @@ function renderGlossary(filter=''){
   });
   empty.hidden=n>0;
 }
+const TAGS={lect:['Worked by her in the recording','var(--accent)'],slide:['Answer on slide · steps by me with her method','var(--accent-2)'],none:['Not solved by her · solution by me','var(--danger)']};
 function renderPractice(){
   const root=document.getElementById('practiceList'); root.innerHTML='';
-  practice.forEach((p,i)=>{
-    const div=document.createElement('div'); div.className='prob';
-    div.innerHTML=`<div class="prob-title">Problem ${i+1}</div><div class="prob-body">${p.q}</div>
-      <button class="reveal-btn" type="button">Show answer</button><div class="answer" hidden>${p.a}</div>`;
-    const b=div.querySelector('.reveal-btn'), a=div.querySelector('.answer');
-    b.addEventListener('click',()=>{ a.hidden=!a.hidden; b.textContent=a.hidden?'Show answer':'Hide answer'; });
-    root.appendChild(div);
+  [['deck','From the slides (PPT)','The deck\'s own examples and problems. The colored tag says where each solution comes from.'],['mine','Made by me (extra practice)','Original problems that drill the same methods. Not from the PPT. Answers checked by computation.']].forEach(([src,title,sub])=>{
+    const items=practice.filter(p=>p.src===src);
+    const h=document.createElement('div'); h.className='topic-h'; h.textContent=title+' · '+items.length; root.appendChild(h);
+    const s=document.createElement('p'); s.className='formula-note'; s.style.margin='0 0 10px'; s.textContent=sub; root.appendChild(s);
+    items.forEach((p,i)=>{
+      const div=document.createElement('div'); div.className='prob';
+      const tag = src==='deck' ? `<span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;color:${TAGS[p.tag][1]};border:1px solid ${TAGS[p.tag][1]};border-radius:6px;padding:1px 7px;margin-top:4px">${TAGS[p.tag][0]}</span>` : `<span style="display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:.68rem;font-weight:600;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 7px;margin-top:4px">Made by me · not in PPT</span>`;
+      div.innerHTML=`<div class="prob-title">${src==='deck'?'D':'E'}${i+1} · ${p.title}</div>${tag}<div class="prob-body" style="margin-top:6px">${p.q}</div>
+        <button class="reveal-btn" type="button">Show answer</button><div class="answer" hidden>${p.a}</div>`;
+      const b=div.querySelector('.reveal-btn'), a=div.querySelector('.answer');
+      b.addEventListener('click',()=>{ a.hidden=!a.hidden; b.textContent=a.hidden?'Show answer':'Hide answer'; });
+      root.appendChild(div);
+    });
   });
 }
 document.getElementById('tabs').addEventListener('click',e=>{
