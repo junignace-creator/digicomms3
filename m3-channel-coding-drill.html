@@ -1,0 +1,1120 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Channel Coding Drill</title>
+<meta name="description" content="4-session review plan, lecture notes, formula sheet, glossary and worked problems for ECE 701 Module 3 Part 2: channel coding (linear block, cyclic and convolutional codes).">
+<style>
+:root{
+  --bg:#f4f6f5;
+  --surface:#ffffff;
+  --surface-2:#eceef0;
+  --ink:#16202a;
+  --ink-soft:#4b5560;
+  --muted:#6b7680;
+  --line:#dbe0e0;
+  --accent:#146c5e;
+  --accent-ink:#ffffff;
+  --accent-soft:#e3efec;
+  --accent-2:#a5620a;
+  --accent-2-soft:#f6ead2;
+  --danger:#a13a3a;
+  --code-bg:#eef1ef;
+  --shadow:0 1px 2px rgba(22,32,42,.06), 0 6px 20px rgba(22,32,42,.05);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1220;
+    --surface:#111b2c;
+    --surface-2:#16233a;
+    --ink:#e4ebf2;
+    --ink-soft:#b7c2d0;
+    --muted:#8492a6;
+    --line:#233350;
+    --accent:#3ddc97;
+    --accent-ink:#06201a;
+    --accent-soft:#12352c;
+    --accent-2:#ffb454;
+    --accent-2-soft:#2c2108;
+    --danger:#ff8a80;
+    --code-bg:#0e1930;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1220;
+  --surface:#111b2c;
+  --surface-2:#16233a;
+  --ink:#e4ebf2;
+  --ink-soft:#b7c2d0;
+  --muted:#8492a6;
+  --line:#233350;
+  --accent:#3ddc97;
+  --accent-ink:#06201a;
+  --accent-soft:#12352c;
+  --accent-2:#ffb454;
+  --accent-2-soft:#2c2108;
+  --danger:#ff8a80;
+  --code-bg:#0e1930;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,Segoe UI,Arial,sans-serif;
+  padding-inline:16px;
+  max-width:900px;
+  margin:0 auto;
+}
+h1,h2,h3{
+  font-family:"Archivo","IBM Plex Sans",sans-serif;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+  margin:0;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;}
+code, .formula{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;}
+
+header.top{
+  position:sticky;
+  top:env(safe-area-inset-top,0px);
+  background:var(--bg);
+  padding-block:14px 10px;
+  z-index:20;
+  border-bottom:1px solid var(--line);
+}
+.brand{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.brand h1{font-size:1.3rem;font-weight:700;}
+.brand .eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.68rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:600;
+}
+.progress-pill{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.72rem;
+  color:var(--ink-soft);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px 10px;
+  white-space:nowrap;
+}
+nav.tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-top:12px;
+  margin-inline:-16px;
+  padding-inline:16px;
+  scrollbar-width:none;
+}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  font-family:"IBM Plex Sans",sans-serif;
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:8px 13px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+nav.tabs button.active{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+}
+
+main{padding-block:20px 60px;}
+section.pane{display:none;}
+section.pane.active{display:block;}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:16px 18px;
+  margin-bottom:14px;
+}
+.card h2{font-size:1.05rem;margin-bottom:4px;}
+.card .sub{color:var(--muted);font-size:.85rem;margin-bottom:10px;}
+
+.night-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.night-tag{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  color:var(--accent);
+  background:var(--accent-soft);
+  border-radius:6px;
+  padding:2px 8px;
+  text-transform:uppercase;
+}
+.night-mins{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.75rem;
+  color:var(--muted);
+}
+ul.tasklist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+ul.tasklist li{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:8px 10px;
+  border-radius:9px;
+  border:1px solid transparent;
+}
+ul.tasklist li.done{
+  background:var(--accent-soft);
+  border-color:var(--accent);
+}
+ul.tasklist li.done .tasktext{
+  text-decoration:line-through;
+  color:var(--muted);
+}
+ul.tasklist input[type=checkbox]{
+  margin-top:3px;
+  width:17px;height:17px;
+  accent-color:var(--accent);
+  flex:none;
+}
+.tasktext{font-size:.92rem;line-height:1.45;}
+.tasktext b{font-weight:700;}
+.taskmin{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.68rem;
+  color:var(--muted);
+  white-space:nowrap;
+  margin-left:auto;
+  padding-top:2px;
+}
+
+.exam-note{
+  background:var(--accent-2-soft);
+  border:1px solid var(--accent-2);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:.85rem;
+  color:var(--ink);
+  margin-block:14px;
+}
+.exam-note b{color:var(--accent-2);}
+
+.subtabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.subtabs button{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.75rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  cursor:pointer;
+}
+.subtabs button.active{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+}
+.note-sec{margin-bottom:16px;}
+.note-sec h3{
+  font-size:1rem;
+  margin-bottom:8px;
+  padding-bottom:6px;
+  border-bottom:2px solid var(--accent);
+  display:inline-block;
+}
+.note-sec h4{
+  font-size:.88rem;
+  color:var(--accent);
+  margin:14px 0 6px;
+  font-family:"IBM Plex Mono",monospace;
+  letter-spacing:.02em;
+}
+.note-sec p, .note-sec li{
+  font-size:.9rem;
+  line-height:1.55;
+  color:var(--ink);
+}
+.note-sec ul{margin:6px 0 6px 1.1em;padding:0;}
+.note-sec li{margin-bottom:5px;}
+.callout{
+  background:var(--surface-2);
+  border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;
+  padding:9px 12px;
+  margin-block:10px;
+  font-size:.87rem;
+  line-height:1.5;
+}
+.callout .callout-tag{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.66rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--accent);
+  font-weight:700;
+  display:block;
+  margin-bottom:3px;
+}
+
+.topic-h{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.72rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:22px 0 8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.topic-h::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+
+.formula-item{
+  border-bottom:1px solid var(--line);
+  padding-block:12px;
+}
+.formula-item:last-child{border-bottom:none;}
+.formula-name{font-weight:700;font-size:.9rem;margin-bottom:4px;}
+.formula-eq{
+  background:var(--code-bg);
+  border-radius:8px;
+  padding:9px 11px;
+  font-size:.92rem;
+  overflow-x:auto;
+  white-space:nowrap;
+  margin-block:6px;
+}
+.math-block{
+  background:var(--code-bg);
+  border-radius:10px;
+  padding:16px 14px;
+  margin-block:10px;
+  overflow-x:auto;
+  text-align:center;
+  font-family:"STIX Two Math","STIX Two Text",serif;
+  font-size:1.45rem;
+  color:var(--ink);
+  line-height:1.9;
+}
+.math-block .frac{
+  display:inline-flex;
+  flex-direction:column;
+  vertical-align:middle;
+  margin:0 .22em;
+  text-align:center;
+  line-height:1.25;
+  font-size:.92em;
+}
+.math-block .frac .num{
+  border-bottom:1.6px solid currentColor;
+  padding:0 .18em .08em;
+}
+.math-block .frac .den{
+  padding:.08em .18em 0;
+}
+.math-block sup, .math-block sub{ font-size:.68em; }
+.math-block .fn{ font-family:"IBM Plex Sans",sans-serif; font-size:.62em; letter-spacing:.02em; vertical-align:.15em; }
+.formula-eq{ font-family:"STIX Two Math","STIX Two Text",serif; font-size:1.15rem; line-height:1.8; }
+.formula-eq .frac{
+  display:inline-flex; flex-direction:column; vertical-align:middle; margin:0 .18em; text-align:center; line-height:1.15; font-size:.9em;
+}
+.formula-eq .frac .num{ border-bottom:1.4px solid currentColor; padding:0 .15em .06em; }
+.formula-eq .frac .den{ padding:.06em .15em 0; }
+.math-block .rt, .formula-eq .rt{
+  border-top:1.6px solid currentColor;
+  padding:.05em .1em 0;
+  margin-left:.02em;
+}
+.formula-note{font-size:.82rem;color:var(--ink-soft);}
+.watch{color:var(--danger);font-weight:700;}
+
+.gloss-search{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--ink);
+  font-size:.95rem;
+  margin-bottom:12px;
+}
+.gloss-item{
+  padding-block:10px;
+  border-bottom:1px solid var(--line);
+}
+.gloss-item:last-child{border-bottom:none;}
+.gloss-term{font-weight:700;font-size:.9rem;}
+.gloss-def{font-size:.86rem;color:var(--ink-soft);margin-top:2px;}
+.gloss-empty{color:var(--muted);font-size:.88rem;padding:14px 0;text-align:center;}
+
+.prob{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px 15px;
+  margin-bottom:12px;
+  background:var(--surface);
+}
+.prob-title{font-weight:700;font-size:.9rem;margin-bottom:4px;}
+.prob-body{font-size:.9rem;color:var(--ink-soft);line-height:1.5;}
+.reveal-btn{
+  margin-top:10px;
+  font-family:"IBM Plex Sans",sans-serif;
+  font-size:.8rem;
+  font-weight:600;
+  color:var(--accent);
+  background:var(--accent-soft);
+  border:1px solid var(--accent);
+  border-radius:8px;
+  padding:6px 11px;
+  cursor:pointer;
+}
+.answer{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed var(--line);
+  font-size:.87rem;
+  line-height:1.6;
+}
+.answer[hidden]{display:none;}
+.answer .formula-eq{margin-block:4px;}
+
+.trace-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-block:10px;
+  font-size:.85rem;
+}
+.trace-table th, .trace-table td{
+  border:1px solid var(--line);
+  padding:6px 8px;
+  text-align:center;
+}
+.trace-table th{
+  background:var(--surface-2);
+  font-family:"IBM Plex Mono",monospace;
+  font-weight:600;
+  font-size:.78rem;
+}
+.trace-table td.hl{
+  background:var(--accent-soft);
+  font-weight:700;
+}
+
+figure.fig{margin:12px 0;padding:10px 8px 8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+figure.fig svg{display:block;width:100%;max-width:600px;height:auto;margin:0 auto;color:var(--ink)}
+figure.fig figcaption{font-size:.8rem;line-height:1.45;color:var(--ink-soft);margin-top:8px;text-align:center}
+.fig text{fill:var(--ink);font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:11px}
+.fig text.sm{font-size:10px;fill:var(--ink-soft)}
+.fig text.lbl-a{font-size:10px;fill:var(--danger)}
+.fig .ax{stroke:var(--muted);stroke-width:1.2;fill:none}
+.fig .wave{stroke:var(--accent);stroke-width:1.8;fill:none}
+.fig .bd{stroke:var(--danger);stroke-width:1.3;stroke-dasharray:5 4;fill:none}
+.fig .bd2{stroke:var(--line);stroke-width:1;stroke-dasharray:2 3;fill:none}
+.fig .circ{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3;fill:none}
+.fig .dm{stroke:var(--accent-2);stroke-width:2;fill:none}
+.fig .dot{fill:var(--accent)}
+.fig .box{fill:var(--surface-2);stroke:var(--ink-soft);stroke-width:1.2}
+.fig .arr{stroke:var(--ink-soft);stroke-width:1.3;fill:none}
+.fig .arr2{stroke:var(--accent);stroke-width:2;fill:none}
+
+footer.done{
+  text-align:center;
+  color:var(--muted);
+  font-size:.8rem;
+  padding-block:30px 10px;
+}
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=STIX+Two+Math&display=swap">
+
+<header class="top">
+  <div class="brand">
+    <div>
+      <div class="eyebrow">ECE 701 · Module 3 · Part 2</div>
+      <h1>Channel Coding — Exam Drill</h1>
+    </div>
+    <div class="progress-pill" id="progressPill">0 / 0 tasks</div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-pane="schedule" class="active">Schedule</button>
+    <button data-pane="notes">Lecture Notes</button>
+    <button data-pane="formulas">Formula Sheet</button>
+    <button data-pane="glossary">Glossary (ID)</button>
+    <button data-pane="practice">Practice Problems</button>
+    <button data-pane="cheat">Cheat List</button>
+  </nav>
+</header>
+
+<main>
+  <section class="pane active" id="pane-schedule">
+    <div class="exam-note">
+      <b>The setup:</b> one deck (M3‑2, 66 slides) plus four recorded segments. The plan below is <b>four sessions, about 2 hours each</b>. Tell me your exam date and real availability and I'll re-time it. It assumes the same split as before (identification + computation). This module is almost all <b>procedures</b>: G → H, syndromes, polynomial division, the shift-register table, and Viterbi. The lecturer worked those step by step, so drill them by hand until they're automatic. Checkboxes save on this device.
+    </div>
+    <div id="scheduleList"></div>
+  </section>
+
+  <section class="pane" id="pane-notes">
+    <div class="exam-note">Rewritten from the four Taglish lecture captions into clean notes and matched slide-by-slide to the deck. Callouts marked <b>Lecture example</b> or <b>Lecturer said</b> are the professor's own words and worked examples. <span class="watch">⚠</span> marks a spot where the recording or a slide gets something wrong or loose. <b>Slides 29–33</b> (forward error correction, syndrome decoding table, Example #5) <b>were not covered in the recording</b>. Those notes come from the slides alone.</div>
+    <div class="subtabs" id="notesSubtabs"></div>
+    <div id="notesContent"></div>
+  </section>
+
+  <section class="pane" id="pane-formulas">
+    <div class="exam-note">Grouped in lecture order. All additions are <b>modulo‑2 (XOR)</b>: 1 + 1 = 0, and subtraction is the same as addition. Anything flagged <span class="watch">⚠ watch</span> is a place where the slides or the recording disagree with the correct result.</div>
+    <div id="formulaList"></div>
+  </section>
+
+  <section class="pane" id="pane-glossary">
+    <input class="gloss-search" id="glossSearch" placeholder="Search terms (e.g. &quot;syndrome&quot;, &quot;trellis&quot;, &quot;systematic&quot;)…">
+    <div id="glossList"></div>
+    <p class="gloss-empty" id="glossEmpty" hidden>No terms match.</p>
+  </section>
+
+  <section class="pane" id="pane-practice">
+    <div class="exam-note">Problems marked <b>Deck</b> are the slide examples, fully worked. The rest are original problems built on the same methods. Every answer was checked by computation (matrix products, polynomial division and Viterbi run in code). Solve on paper first, then tap to check.</div>
+    <div id="practiceList"></div>
+  </section>
+
+  <section class="pane" id="pane-cheat">
+    <div class="exam-note">Last-minute list. Read the red flags first, then run each recipe once on scratch paper.</div>
+    <div class="card note-sec">
+      <h3>Red flags (easy to mix up)</h3>
+      <ul>
+        <li><b>Source coding</b> removes bits (compression). <b>Channel coding</b> adds redundant bits to fight channel noise.</li>
+        <li><b>Block codes use lowercase (n, k):</b> n = codeword bits, k = message bits. <b>Convolutional codes use capital (N, K, M):</b> N = output bits per step, K = input bits per step, M = number of shift registers. Different meanings, so don't mix them.</li>
+        <li><b>Code rate R = k/n &lt; 1</b> (efficiency). <b>Redundancy = n/k &gt; 1</b> (per the slide formula). One is the reciprocal of the other.</li>
+        <li><b>Parity check</b> = error <i>detecting</i> only, misses an even number of errors, can't locate the bit. <b>Repetition</b> = error <i>correcting</i> (majority vote) but poor bandwidth and weak against burst errors.</li>
+        <li><b>Linear code test:</b> the all-zero codeword must be present, AND the XOR of any two codewords must be another codeword. Missing 00…0 ⇒ not linear immediately.</li>
+        <li><b>d<sub>min</sub> = w<sub>min</sub></b> only for <b>linear</b> codes. w<sub>min</sub> excludes the all-zero codeword.</li>
+        <li><b>G = [I<sub>k</sub> | P]</b> (k × n). <b>H = [P<sup>T</sup> | I<sub>n−k</sub>]</b> ((n−k) × n). Both are for c = [m | b] (message bits on the left). If the parity comes first, swap the blocks.</li>
+        <li><b>s = rH<sup>T</sup></b> depends only on the error pattern (s = eH<sup>T</sup>). s = 0 means no error OR an undetectable error (e is itself a codeword).</li>
+        <li><b>Cyclic codeword bit order:</b> MSB on the left = highest power of x. c = 1100010 ↔ x⁶ + x⁵ + x.</li>
+        <li><b>Systematic cyclic:</b> b(x) = x<sup>r</sup>m(x) mod G(x), then c(x) = b(x) + x<sup>r</sup>m(x). The parity is the <b>remainder</b>, not the quotient.</li>
+        <li><b>Trellis convention:</b> upper branch = input 1, lower branch = input 0. Always start AND end at state 00 (append M zeros to flush).</li>
+        <li><b>Hard decision</b> → Hamming distance. <b>Soft decision</b> → Euclidean distance (keeps the voltages). Viterbi = MLSE with the Hamming metric, keep the <b>smallest</b> path cost at each state.</li>
+      </ul>
+    </div>
+    <div class="card note-sec">
+      <h3>Formulas to have cold</h3>
+      <ul>
+        <li>G(dB) = (E<sub>b</sub>/N₀)<sub>uncoded</sub> − (E<sub>b</sub>/N₀)<sub>coded</sub> at the same BER. Slide 8: 14 − 9 = 5 dB at 10⁻⁶.</li>
+        <li>R = k/n. Redundancy = n/k. Received words = 2<sup>n</sup>, valid codewords = 2<sup>k</sup>.</li>
+        <li>c = mG. GH<sup>T</sup> = 0. xH<sup>T</sup> = 0 for valid x. s = rH<sup>T</sup> = eH<sup>T</sup>. c = r ⊕ e.</li>
+        <li>2<sup>n−k</sup> syndromes, 2<sup>k</sup> error patterns each. Syndrome table is 2<sup>n−k</sup> × 2<sup>k</sup>.</li>
+        <li>d<sub>H</sub>(a,b) = w<sub>H</sub>(a ⊕ b). d<sub>min</sub> = w<sub>min</sub> (linear).</li>
+        <li>Cyclic shift: c<sup>i</sup>(x) = x<sup>i</sup>c(x) mod (x<sup>n</sup> + 1). Non-systematic: c(x) = a<sub>m</sub>(x)G(x). Valid iff c(x) mod G(x) = 0.</li>
+        <li>s(x) = r(x) mod G(x), degree &lt; n − k.</li>
+        <li>Convolutional: c<sub>j</sub>(l) = Σ<sub>i=0</sub><sup>M</sup> g<sub>i</sub><sup>(j)</sup> b(l−i) = g<sup>(j)</sup> ∗ b(l). R = K/N. States = 2<sup>M</sup>. Output length = N × (input bits + M).</li>
+        <li>d<sub>H</sub> = Σ r<sub>i</sub> ⊕ c<sub>i</sub> (hard). d<sub>E</sub> = √Σ(r<sub>i</sub> − c<sub>i</sub>)² (soft).</li>
+      </ul>
+    </div>
+    <div class="card note-sec">
+      <h3>Procedure recipes</h3>
+      <ul>
+        <li><b>Code table → G:</b> write each code bit as a combination of message bits (look at its column), then G's column j = the coefficients of c<sub>j</sub>. Equivalently, G's rows = the codewords for m = 10…0, 01…0, ….</li>
+        <li><b>G → H:</b> split off P (the columns after I<sub>k</sub>), transpose it, append I<sub>n−k</sub>.</li>
+        <li><b>Validity / syndrome:</b> s = rH<sup>T</sup>. Each s bit = XOR of the r bits where that row of H has a 1.</li>
+        <li><b>Syndrome decoding (single error):</b> s ≠ 0 → find the column of H equal to s → flip that bit of r → read m from the first k bits.</li>
+        <li><b>Systematic cyclic encode:</b> r = n − k → x<sup>r</sup>m(x) → long-divide by G(x) with XOR → remainder b(x) padded to r bits → c = [m | b].</li>
+        <li><b>Convolutional encode:</b> table with columns l, b(l), b(l−1), b(l−2), c₁, c₂. Registers start at 0 → shift right every step → append M zeros → interleave c₁c₂.</li>
+        <li><b>State diagram:</b> for each state (S₁S₂) and input b: next state = (b, S₁), output from the equations. Label each arrow "input/output".</li>
+        <li><b>Viterbi:</b> for each received pair, branch metric = Hamming distance to the branch output → path cost = previous cost + branch metric → at each state keep the cheaper incoming path (cross out the other) → after the flush, trace back from 00 → read inputs (upper = 1, lower = 0) and outputs.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="done">Built from M3‑2 Information Theory, Source Coding, and Channel Coding (Part 2) and its four lecture recordings.</footer>
+<script>
+function frac(n,d){ return `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`; }
+function rt(x){ return `√<span class="rt">${x}</span>`; }
+function tbl(head, rows){
+  return '<div style="overflow-x:auto"><table class="trace-table"><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
+    rows.map(r=>'<tr>'+r.map(c=>{ const hl = typeof c==='string' && c.startsWith('!'); return '<td'+(hl?' class="hl"':'')+'>'+(hl?c.slice(1):c)+'</td>'; }).join('')+'</tr>').join('')+'</table></div>';
+}
+var figN=0;
+function svgFig(w,h,caption,label,inner,minw){
+  figN++; const id='ah'+figN;
+  return '<figure class="fig"><svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+label+'"'+(minw?' style="min-width:'+minw+'px"':'')+'><defs><marker id="'+id+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>'+inner(id)+'</svg><figcaption>'+caption+'</figcaption></figure>';
+}
+function T(x,y,s,cls,a){ return '<text x="'+x+'" y="'+y+'"'+(cls?' class="'+cls+'"':'')+' text-anchor="'+(a||'middle')+'">'+s+'</text>'; }
+
+const schedule = [
+  { night:1, day:"Session 1 · ~2h", focus:"Channel coding fundamentals + linear block code basics",
+    tasks:[
+      ["Read Lecture Notes → <b>Part A</b>, sections 1–3 (purpose, error types, parity, repetition, coding gain, redundancy, code rate).","25m"],
+      ["Without looking: list the 4 error types, then the advantages and disadvantages of parity vs repetition.","10m"],
+      ["Read Part A sections 4–6 (block codes, linear property test, Hamming weight / distance, d<sub>min</sub>).","20m"],
+      ["Redo the linear test on both slide‑16 codes by XOR-ing every pair.","10m"],
+      ["Do Practice #1–#5 cold, then check.","35m"],
+      ["Glossary self-quiz: fundamentals + block-code terms.","20m"],
+    ]},
+  { night:2, day:"Session 2 · ~2h", focus:"Systematic codes, G and H matrices, syndromes, syndrome decoding",
+    tasks:[
+      ["Read Part A sections 7–9 (systematic form, parity equations, G = [I | P], H = [P<sup>T</sup> | I], GH<sup>T</sup> = 0).","25m"],
+      ["Redo deck Examples #1–#3 by hand: code bits → G → H → check x = 01011.","20m"],
+      ["Read sections 10–11 (syndrome, error pattern, syndrome decoding).","15m"],
+      ["Do Practice #6 (deck Example #4) and #7 (deck Example #5).","25m"],
+      ["Do Practice #8 (a full (7,4) code: encode, find H, correct a single error).","20m"],
+      ["Glossary self-quiz: matrix + syndrome terms.","15m"],
+    ]},
+  { night:3, day:"Session 3 · ~2h", focus:"Cyclic codes: polynomials, shifting, systematic encoding, syndrome, CRC",
+    tasks:[
+      ["Read Lecture Notes → <b>Part B</b>, sections 1–3 (cyclic property, polynomial representation, shift by mod x<sup>n</sup>+1).","20m"],
+      ["Redo her n = 4 shift example (x·c(x) mod x⁴+1) on paper.","10m"],
+      ["Read sections 4–5 (generator polynomial, systematic cyclic derivation b(x) = x<sup>r</sup>m(x) mod G(x)).","15m"],
+      ["Redo deck Example #6 (m = 1100 → c = 1100010) long division by hand without looking.","15m"],
+      ["Do Practice #9 and #10 (encode m = 1010; syndromes for deck Example #7 and two more words).","30m"],
+      ["Read section 6 (CRC) and memorize the CRC table's r values.","10m"],
+      ["Glossary self-quiz: cyclic terms.","20m"],
+    ]},
+  { night:4, day:"Session 4 · ~2h", focus:"Convolutional codes: encoder table, state diagram, trellis, Viterbi + final review",
+    tasks:[
+      ["Read Lecture Notes → <b>Part C</b>, sections 1–3 (N, K, M notation, shift-register table, generator functions).","15m"],
+      ["Redo deck Example #8 table by hand (target 11 01 00 10 01 10 11).","10m"],
+      ["Read section 4 (state transition table + state diagram) and redraw the state diagram from memory.","15m"],
+      ["Read sections 5–6 (trellis, hard/soft decision, Viterbi). Walk the stage-by-stage cost table for Example #10.","20m"],
+      ["Do Practice #11, #12 and #13.","30m"],
+      ["Blank-paper formula dump from the Formula Sheet, then grade yourself.","15m"],
+      ["Read the Cheat List red flags out loud, then redo your weakest problem timed.","15m"],
+    ]},
+];
+
+/* ---------- figures ---------- */
+function encoderFig(){
+  return svgFig(520,230,'(2,1,2) convolutional encoder from Examples #8–#10. S₁ holds b(l−1), S₂ holds b(l−2). The top adder gives c₁ = b(l) + b(l−2) (g⁽¹⁾ = 101). The bottom adder gives c₂ = b(l) + b(l−1) + b(l−2) (g⁽²⁾ = 111). All adders are modulo‑2.','Convolutional encoder block diagram',function(id){
+    const A=(pts)=>'<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" class="arr" marker-end="url(#'+id+')"/>';
+    const L=(pts)=>'<polyline points="'+pts.map(p=>p.join(',')).join(' ')+'" class="arr"/>';
+    const box=(x,y,t)=>'<rect x="'+x+'" y="'+y+'" width="60" height="34" rx="4" class="box"/>'+T(x+30,y+21,t);
+    const add=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="13" class="box"/>'+T(x,y+5,'+');
+    return T(30,120,'b(l)','','middle')+L([[50,115],[90,115]])+A([[90,115],[150,115]])+box(150,98,'S₁')+L([[210,115],[260,115]])+A([[260,115],[300,115]])+box(300,98,'S₂')+L([[360,115],[400,115]])+
+      L([[90,115],[90,40],[187,40]])+A([[187,40],[227,40]])+add(240,40)+L([[400,115],[400,40],[290,40]])+A([[290,40],[253,40]])+A([[240,27],[240,10],[330,10]])+T(335,14,'c₁(l) = b(l) + b(l−2)','sm','start')+
+      L([[90,115],[90,190],[187,190]])+A([[187,190],[227,190]])+add(240,190)+L([[400,115],[400,190],[290,190]])+A([[290,190],[253,190]])+A([[260,115],[260,150],[240,150],[240,177]])+A([[240,203],[240,222],[330,222]])+T(335,226,'c₂(l) = b(l) + b(l−1) + b(l−2)','sm','start')+
+      T(235,108,'b(l−1)','sm')+T(420,108,'b(l−2)','sm','start')+'<circle cx="90" cy="115" r="3" class="dot"/><circle cx="260" cy="115" r="3" class="dot"/><circle cx="400" cy="115" r="3" class="dot"/>';
+  },420);
+}
+function stateFig(){
+  return svgFig(440,330,'State diagram for the (2,1,2) code (Example #9). Each circle is the register contents S₁S₂. Each arrow is labeled input/output, e.g. from 00, input 1 gives output 11 and moves to state 10.','State diagram of the 2,1,2 convolutional code',function(id){
+    const P={'00':[220,270],'10':[90,165],'01':[350,165],'11':[220,60]};
+    const node=(k)=>'<circle cx="'+P[k][0]+'" cy="'+P[k][1]+'" r="24" class="box"/>'+T(P[k][0],P[k][1]+4,k);
+    const curve=(a,b,cx,cy,lab,lx,ly)=>{ const [x1,y1]=P[a],[x2,y2]=P[b];
+      const t=(x,y,X,Y)=>{const d=Math.hypot(X-x,Y-y);return [x+(X-x)*26/d,y+(Y-y)*26/d];};
+      const s=t(x1,y1,cx,cy), e=t(x2,y2,cx,cy);
+      return '<path d="M'+s[0].toFixed(1)+','+s[1].toFixed(1)+' Q'+cx+','+cy+' '+e[0].toFixed(1)+','+e[1].toFixed(1)+'" class="arr" marker-end="url(#'+id+')"/>'+T(lx,ly,lab,'sm'); };
+    const loop=(k,dy,lab,lx,ly)=>{ const [x,y]=P[k]; const y0=y+dy*22;
+      return '<path d="M'+(x-10)+','+y0+' C'+(x-35)+','+(y0+dy*45)+' '+(x+35)+','+(y0+dy*45)+' '+(x+10)+','+y0+'" class="arr" marker-end="url(#'+id+')"/>'+T(lx,ly,lab,'sm'); };
+    return node('00')+node('10')+node('01')+node('11')+
+      loop('00',1,'0/00',268,318)+loop('11',-1,'1/01',268,14)+
+      curve('00','10',100,262,'1/11',95,245)+curve('01','00',340,262,'0/11',345,245)+
+      curve('10','01',220,120,'0/01',220,128)+curve('01','10',220,210,'1/00',220,205)+
+      curve('10','11',100,70,'1/10',100,90)+curve('11','01',340,70,'0/10',340,90);
+  },340);
+}
+function viterbiRun(r,K){
+  const states=['00','10','01','11'];
+  let cost={'00':0}, back=[];
+  const stages=[];
+  r.forEach((pair,i)=>{
+    const nc={}, nb={};
+    Object.keys(cost).forEach(s=>{
+      const s1=+s[0], s2=+s[1];
+      (i<K?[0,1]:[0]).forEach(x=>{
+        const out=''+((x+s2)%2)+((x+s1+s2)%2), d=(out[0]!==pair[0])+(out[1]!==pair[1]);
+        const ns=''+x+s1, c=cost[s]+d;
+        if(!(ns in nc) || c<nc[ns]){ nc[ns]=c; nb[ns]={from:s,x,out,d}; }
+      });
+    });
+    cost=nc; back.push(nb); stages.push(Object.assign({},nc));
+  });
+  let s='00', path=['00'], bits=[], outs=[];
+  for(let i=back.length-1;i>=0;i--){ const b=back[i][s]; bits.unshift(b.x); outs.unshift(b.out); s=b.from; path.unshift(s); }
+  return {stages,path,bits,outs};
+}
+function trellisFig(r,K,cap){
+  const res=viterbiRun(r,K), L=r.length;
+  const rows={'11':30,'01':80,'10':130,'00':180}, x0=40, dx=(520-x0-20)/L;
+  return svgFig(540,240,cap,'Trellis diagram with the Viterbi survivor path',function(id){
+    let s='';
+    // all valid edges
+    let avail={'00':true};
+    for(let l=0;l<L;l++){
+      const nxt={};
+      Object.keys(avail).forEach(st=>{ (l<K?[0,1]:[0]).forEach(x=>{ const ns=''+x+st[0]; nxt[ns]=true;
+        s+='<line x1="'+(x0+l*dx)+'" y1="'+rows[st]+'" x2="'+(x0+(l+1)*dx)+'" y2="'+rows[ns]+'" style="stroke:var(--line);stroke-width:1.2"/>'; }); });
+      avail=nxt;
+    }
+    for(let l=0;l<L;l++) s+='<line x1="'+(x0+l*dx)+'" y1="'+rows[res.path[l]]+'" x2="'+(x0+(l+1)*dx)+'" y2="'+rows[res.path[l+1]]+'" class="arr2" style="stroke-width:3"/>'+T(x0+(l+.5)*dx,(rows[res.path[l]]+rows[res.path[l+1]])/2-6,res.outs[l],'sm');
+    Object.keys(rows).forEach(st=>s+=T(14,rows[st]+4,st,'sm','middle'));
+    s+='<circle cx="'+x0+'" cy="180" r="5" class="dot"/>'+T(x0,228,'l=0','sm');
+    res.stages.forEach((st,l)=>{ const x=x0+(l+1)*dx; Object.keys(st).forEach(k=>{ s+='<circle cx="'+x+'" cy="'+rows[k]+'" r="5" class="dot"/>'+T(x+9,rows[k]-7,st[k],'lbl-a','start'); }); s+=T(x,228,'l='+(l+1),'sm')+T(x,212,r[l],'sm'); });
+    return s;
+  },440);
+}
+
+const lectureNotes = {
+  "a": { label:"Part A · Fundamentals & Linear Block Codes", sections:[
+    {h:"0. Where this lecture sits", html:`
+      <p>Same block diagram as M3‑1. Sampling + quantization (only if the source is analog) → <b>source coding</b> (compress, send fewer bits) → encryption (not covered) → <b>channel coding</b> → modulation → channel. The receiver reverses each step, with equalization after demodulation to fight ISI.</p>
+      <div class="callout"><span class="callout-tag">Lecturer said</span>Source coding tries to transmit <i>fewer</i> bits; channel coding <i>adds</i> bits. "Parang baliktad," but they're not really opposites: they serve different goals (efficiency vs reliability).</div>`},
+    {h:"1. Channel coding: goal and the two parts", html:`
+      <p>Main goal: <b>combat the overall effect of channel noise</b>. Noise can flip a transmitted 1 into a detected 0. Channel coding lets the receiver detect or correct that.</p>
+      <ol><li><b>Channel encoder</b>: maps the incoming data sequence into a channel input sequence (the channel codeword).</li>
+      <li><b>Channel decoder</b>: inverse-maps the channel output back to an output data sequence.</li></ol>
+      <h4>Types of errors (slide 5)</h4>
+      ${tbl(['type','example (tx → rx)','note'],[['Single-bit','0000 0010 → 0000 1010','one bit flipped (voltage level misread)'],['Multiple-bit','0100 0010 → 0001 1000','several bits, not necessarily adjacent'],['Burst','0100 0110 → 0101 1010','<b>consecutive</b> errors; noise doesn\'t recover right away (e.g. fading)'],['Erasure','?','received signal is ambiguous, too close to the decision boundary to call 1 or 0']])}`},
+    {h:"2. Parity check & repetition codes", html:`
+      <h4>Parity check code (error <i>detecting</i>)</h4>
+      <p>Add one parity bit at the end. <b>Even parity</b>: make the total number of 1s even. <b>Odd parity</b>: make it odd. It's easy to build with XOR gates (XOR truth table: 00→0, 01→1, 10→1, 11→0).</p>
+      <ul><li><b>Advantages</b>: simple implementation, low overhead (just 1 extra bit).</li>
+      <li><b>Disadvantages</b>: <b>can't detect an even number of bit errors</b> (two flips keep the parity the same), and <b>can't tell which bit is wrong</b>. The only fix is to ask the transmitter to retransmit.</li></ul>
+      <h4>Repetition code (error <i>correcting</i>)</h4>
+      <p>Repeat each bit (3× here) and decode by <b>majority rule</b>.</p>
+      ${tbl(['',''],[['Message','1110001'],['Repetition code','111 111 111 000 000 000 111'],['Received','101 111 011 000 010 001 111'],['Corrected (majority)','!1110001']])}
+      <ul><li><b>Advantages</b>: simple; can detect and correct multiple-bit errors.</li>
+      <li><b>Disadvantages</b>: performs poorly with <b>correlated failures</b> (burst errors, where all copies get hit), and has <b>poor bandwidth efficiency</b>: a 7-bit message becomes 21 bits.</li></ul>`},
+    {h:"3. Performance measures: coding gain, redundancy, code rate", html:`
+      <p><b>Coding gain</b>: the difference between the E<sub>b</sub>/N₀ that the uncoded and the coded systems need to reach the <b>same BER</b>, i.e. the <b>saving in E<sub>b</sub>/N₀</b>. E<sub>b</sub>/N₀ = energy per bit over noise power spectral density, an SNR measured per bit so different systems compare fairly.</p>
+      <div class="math-block">G(dB) = ${frac("E<sub>b</sub>","N<sub>0</sub>")}<sub>uncoded</sub> − ${frac("E<sub>b</sub>","N<sub>0</sub>")}<sub>coded</sub></div>
+      <p>Reading the BER-vs-E<sub>b</sub>/N₀ plot (slide 8), two ways:</p>
+      <ul><li><b>Same E<sub>b</sub>/N₀</b> (vertical): the coded curve has the lower bit error probability.</li>
+      <li><b>Same BER</b> (horizontal): at P<sub>B</sub> = 10⁻⁶ (1 in a million), uncoded needs <b>14 dB</b> and coded needs <b>9 dB</b> → coding gain = <b>5 dB</b>.</li>
+      <li>At low SNR (high BER, around 10⁻²) the curves cross and <b>uncoded can actually be better</b>. Coding only pays off past a certain SNR.</li></ul>
+      <p class="formula-note"><span class="watch">⚠</span> In the recording she reads the uncoded value as "40 dB". The slide axis says <b>14</b>.</p>
+      <p><b>Redundancy</b>: the amount of additional bits used to transmit the data.</p>
+      <div class="math-block">Redundancy = ${frac("# bits/codeword with coding","# bits/codeword without coding")} = ${frac("n","k")} &gt; 1</div>
+      <p class="formula-note"><span class="watch">⚠</span> The slide's text says "bits used minus bits of information" (that's n − k, the number of extra bits), but its formula is the ratio n/k. Use the formula unless asked for the number of extra bits.</p>
+      <p><b>Code rate</b>: an efficiency measure, also the coding efficiency.</p>
+      <div class="math-block">R = ${frac("k","n")} &lt; 1</div>
+      <p><b>Trade-off</b>: more redundancy → more coding gain (better BER) but lower throughput, because part of the bandwidth carries redundant bits instead of information.</p>`},
+    {h:"4. Block codes", html:`
+      <p>The information sequence is cut into fixed-length <b>message blocks of k bits</b> (from the source coder or encryptor). The encoder maps each block m = (m₁…m<sub>k</sub>) to a <b>codeword</b> c = (c₁…c<sub>n</sub>) of <b>n code bits</b>, n &gt; k. Notation: <b>(n, k) block code</b>.</p>
+      <p>Design goal: <b>maximize the distance (spacing) between words</b>. A "word" is any binary sequence of the block length, whether made by the encoder or corrupted by noise.</p>
+      <div class="callout"><span class="callout-tag">Lecture example: (7,3) block code</span>
+      ${tbl(['',''],[['message length','k = 3'],['codeword length','n = 7'],['possible received words','2⁷ = 128'],['valid codewords (= messages)','2³ = 8'],['code rate','R = 3/7']])}
+      Only 8 of the 128 words are valid. Receiving any of the other 120 means an error happened.</div>`},
+    {h:"5. Linear block codes", html:`
+      <p>A code is <b>linear</b> if adding any two valid codewords in <b>modulo‑2</b> (XOR) gives another valid codeword. Equivalently, an (n,k) code is linear if a <b>generator matrix G</b> produces every codeword:</p>
+      <div class="math-block">c = mG &nbsp;&nbsp; <span class="fn">[1×n] = [1×k][k×n]</span></div>
+      <p>Matrix product: the inner dimensions must match ("conformable"); the outer dimensions give the result size.</p>
+      <h4>Properties</h4>
+      <ol><li>All valid codewords are linear combinations (XOR sums) of the rows of G.</li>
+      <li>Any linear combination of codewords is another codeword.</li>
+      <li>The <b>all-zero codeword is valid</b>.</li></ol>
+      <div class="callout"><span class="callout-tag">Lecture example (slide 16)</span>
+      <b>(6,2) code</b>: {000010, 110101, 101010, 011110}. There's no 000000, so it fails property 3 immediately. Also c<sub>A</sub> ⊕ c<sub>B</sub> = 000010 ⊕ 110101 = 110111, which isn't in the list. <b>Not linear.</b><br>
+      <b>(5,2) code</b>: {00000, 01011, 10101, 11110}. Has 00000, and every XOR lands in the set (01011 ⊕ 10101 = 11110 = c<sub>D</sub>). <b>Linear.</b> (This code is reused for Examples #1–#3.)</div>`},
+    {h:"6. Metrics: weight and distance", html:`
+      <ul><li><b>Hamming weight w<sub>H</sub></b>: number of non-zero (1) bits in a codeword. (5,2) code: 01011 → 3, 10101 → 3, 11110 → 4.</li>
+      <li><b>Minimum weight w<sub>min</sub></b>: the smallest w<sub>H</sub> among the <b>non-zero</b> codewords (skip 00000). Here w<sub>min</sub> = 3.</li>
+      <li><b>Hamming distance d<sub>H</sub>(a,b)</b>: number of positions where a and b differ. d<sub>H</sub>(10101, 10110) = 2. Shortcut: <b>d<sub>H</sub>(a,b) = w<sub>H</sub>(a ⊕ b)</b>, and 10101 ⊕ 10110 = 00011 → 2.</li>
+      <li><b>Minimum distance d<sub>min</sub></b>: smallest d<sub>H</sub> over all distinct codeword pairs. <b>For linear codes, d<sub>min</sub> = w<sub>min</sub></b>, so you don't need to check every pair.</li></ul>
+      <div class="callout"><span class="callout-tag">Beyond the slides (standard result, useful for essays)</span>A code with minimum distance d<sub>min</sub> can detect up to d<sub>min</sub> − 1 errors and correct up to ⌊(d<sub>min</sub> − 1)/2⌋. d<sub>min</sub> = 3 → detect 2, correct 1.</div>`},
+    {h:"7. Systematic linear block codes", html:`
+      <p><b>Systematic</b>: the first k (leftmost) bits of c are the original message m, and the remaining n − k bits are <b>parity bits b</b>. (Or parity first, message last. Encoder and decoder just have to agree. The course uses message-first.)</p>
+      <div class="math-block">c = [m₁ m₂ … m<sub>k</sub> | b₁ b₂ … b<sub>n−k</sub>]</div>
+      <p>Each parity bit is an XOR combination of the message bits:</p>
+      <div class="math-block">b<sub>i</sub> = p<sub>1i</sub>m₁ ⊕ p<sub>2i</sub>m₂ ⊕ … ⊕ p<sub>ki</sub>m<sub>k</sub></div>
+      <p>p<sub>u,i</sub> = 1 if parity bit b<sub>i</sub> depends on m<sub>u</sub>, 0 otherwise. The coefficients are chosen so that G's rows are linearly independent and the parity equations are unique. On the exam a plain "+" is fine for ⊕.</p>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #1, (5,2) code</span>Read each column of the codewords against m₁ (0011) and m₂ (0101):
+      ${tbl(['bit','column (A→D)','matches','equation'],[['c₁','0011','m₁','1m₁ ⊕ 0m₂'],['c₂','0101','m₂','0m₁ ⊕ 1m₂'],['c₃','0011','m₁','1m₁ ⊕ 0m₂'],['c₄','0101','m₂','0m₁ ⊕ 1m₂'],['c₅','0110','XOR of both','1m₁ ⊕ 1m₂']])}
+      c₁c₂ = m₁m₂, so the code is systematic and c₃c₄c₅ are the parity bits.</div>`},
+    {h:"8. Generator matrix G", html:`
+      <p>G is <b>k × n</b>: rows = message bits, columns = code bits. Each row is linearly independent (no row is a combination of the others), and c = mG is just the XOR of the rows selected by the 1s in m.</p>
+      <div class="math-block">G = [ I<sub>k</sub> | P ] &nbsp;&nbsp;<span class="fn">I<sub>k</sub>: k×k identity, P: k×(n−k) parity matrix, for c = [m | b]</span></div>
+      <p>If the codeword is [b | m] instead, G = [P | I<sub>k</sub>].</p>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #2</span>Column j of G = the coefficients of c<sub>j</sub> from Example #1:
+      <div class="math-block">G = [1 0 1 0 1 ; 0 1 0 1 1] &nbsp;→&nbsp; I₂ = [1 0 ; 0 1], &nbsp; P = [1 0 1 ; 0 1 1]</div>
+      Shortcut: G's rows are just the codewords for m = 10 and m = 01.</div>
+      <div class="callout"><span class="callout-tag">Lecturer said</span>In practice, engineers search for a G that makes every message's codeword distinct and well-spaced. That design work is the hard part.</div>`},
+    {h:"9. Parity check matrix H", html:`
+      <p>H is used at the <b>decoder</b>. It's the generator matrix of the dual code, built from G so that:</p>
+      <div class="math-block">GH<sup>T</sup> = 0 &nbsp;<span class="fn">(a k×(n−k) zero matrix)</span> &nbsp;&nbsp; xH<sup>T</sup> = 0 &nbsp;or&nbsp; Hx<sup>T</sup> = 0 &nbsp;<span class="fn">for every valid x</span></div>
+      <p>Why it works: if x is valid, x = mG, so xH<sup>T</sup> = m(GH<sup>T</sup>) = m·0 = 0.</p>
+      <div class="math-block">H = [ P<sup>T</sup> | I<sub>n−k</sub> ] &nbsp;&nbsp;<span class="fn">size (n−k) × n, for c = [m | b]</span></div>
+      <p>For c = [b | m]: H = [I<sub>n−k</sub> | P<sup>T</sup>].</p>
+      <p class="formula-note"><span class="watch">⚠</span> In the recording she first says H is "N by N−K", then corrects herself mid-example. The right size is <b>(n−k) × n</b> (3 × 5 here).</p>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #3</span>P = [1 0 1 ; 0 1 1] → P<sup>T</sup> = [1 0 ; 0 1 ; 1 1], so
+      <div class="math-block">H = [1 0 1 0 0 ; 0 1 0 1 0 ; 1 1 0 0 1]</div>
+      Check x = 01011: xH<sup>T</sup> → each entry is x dotted with one row of H, summed mod 2.
+      ${tbl(['row of H','x · row','sum mod 2'],[['10100','0+0+0+0+0','0'],['01010','0+1+0+1+0','0'],['11001','0+1+0+0+1','0']])}
+      s = [0 0 0], so <b>x is a valid codeword</b> (it's c<sub>B</sub>).</div>`},
+    {h:"10. Syndrome & error pattern", html:`
+      <div class="math-block">s = rH<sup>T</sup> &nbsp;&nbsp; r = c ⊕ e</div>
+      <p>The <b>syndrome</b> s of a received word r shows whether r is valid: s = 0 means valid. e is the <b>error pattern</b> (1s where bits flipped). It's usually unknown, but finding it is how the receiver recovers c.</p>
+      <p><b>The syndrome depends only on the error pattern</b>: s = (c ⊕ e)H<sup>T</sup> = cH<sup>T</sup> ⊕ eH<sup>T</sup> = 0 ⊕ eH<sup>T</sup> = <b>eH<sup>T</sup></b>. Once you know e, flip those bits.</p>
+      <p><b>Error patterns that differ by a codeword have the same syndrome</b>: if e₂ = e₁ ⊕ c′, then s₂ = e₁H<sup>T</sup> ⊕ c′H<sup>T</sup> = s₁. The decoder can't tell them apart, so it picks the most likely (lowest-weight) one.</p>
+      <ul><li>An error is <b>undetectable</b> when e itself equals a codeword (then s = 0).</li>
+      <li>s = 0 means either (a) no error, or (b) e is a valid codeword, which is an undetectable error.</li>
+      <li>For an (n,k) systematic code there are <b>2<sup>n−k</sup> syndromes</b>, each shared by <b>2<sup>k</sup> error patterns</b>.</li></ul>`},
+    {h:"11. Syndrome decoding (slides 29–33, not in the recording)", html:`
+      <p>Goal: given s, find the e with the <b>least weight</b>. The syndrome decoding table is 2<sup>n−k</sup> × 2<sup>k</sup> and contains all 2<sup>n</sup> words.</p>
+      <ol><li>Build the syndrome decoding table.</li><li>Compute s = rH<sup>T</sup>.</li>
+      <li>Find the <b>coset leader</b> e with syndrome s: the error pattern with the lowest w<sub>H</sub>, assumed to be what the noise caused.</li>
+      <li>Decode c = r ⊕ e, then read m from the first k bits.</li></ol>
+      <div class="callout"><span class="callout-tag">Shortcut for single errors</span>The syndrome of a single-bit error in position j equals <b>column j of H</b>. So if s matches a column of H, flip that bit.</div>
+      <p>Worked fully in Practice #7 (deck Example #5).</p>`},
+  ]},
+  "b": { label:"Part B · Cyclic Codes", sections:[
+    {h:"1. Cyclic codes & the cyclic shift property", html:`
+      <p>Cyclic codes are a <b>class of linear block codes</b> with extra structure. Linear-block syndrome decoding is tedious (you have to search the table); the cyclic structure makes algebraic decoding <b>less complex and faster</b>. Encoding and syndrome calculation can be built with <b>linear feedback shift registers</b>. Examples: <b>Reed‑Solomon (RS)</b> and <b>BCH</b> (Bose‑Chaudhuri‑Hocquenghem) codes.</p>
+      <p><b>Cyclic shift property</b>: if c = (c<sub>n−1</sub>, …, c₁, c₀) is a codeword, then the cyclic shift (c<sub>n−2</sub>, …, c₀, c<sub>n−1</sub>) is also a codeword.</p>
+      <div class="callout"><span class="callout-tag">Lecture example: n = 4</span>(c₃ c₂ c₁ c₀) → shift 1: (c₂ c₁ c₀ c₃) → shift 2: (c₁ c₀ c₃ c₂) → shift 3: (c₀ c₃ c₂ c₁) → shift 4: back to the start. Shifting left or right gives the same set of codewords, as long as encoder and decoder agree.</div>
+      <p>Note the index order: the <b>MSB is on the left</b> (c<sub>n−1</sub>) and the LSB is on the right (c₀).</p>`},
+    {h:"2. Polynomial representation (Galois field)", html:`
+      <p>Cyclic code math uses <b>Galois field (GF(2)) polynomials</b> instead of matrices. A binary sequence [b<sub>n−1</sub> … b₀] becomes:</p>
+      <div class="math-block">P(x) = b<sub>n−1</sub>x<sup>n−1</sup> + … + b₁x + b₀ &nbsp;=&nbsp; b₀ + b₁x + … + b<sub>n−1</sub>x<sup>n−1</sup></div>
+      <ul><li><b>Addition is modulo‑2</b>: x² + x² = (1+1)x² = 0. Like terms cancel, and subtraction = addition.</li>
+      <li><b>Multiplication</b> works normally: x²·x² = x⁴ (add the exponents).</li></ul>
+      <p>Example: 1100010 → x⁶ + x⁵ + x. The leftmost bit is the x<sup>n−1</sup> coefficient.</p>`},
+    {h:"3. Code polynomial & shifting", html:`
+      <div class="math-block">c(x) = c₀ + c₁x + … + c<sub>n−1</sub>x<sup>n−1</sup> &nbsp;<span class="fn">(degree ≤ n−1)</span></div>
+      <div class="math-block">c<sup>i</sup>(x) = x<sup>i</sup>c(x) mod (x<sup>n</sup> + 1)</div>
+      <p>"mod" = keep the <b>remainder</b> after dividing by x<sup>n</sup> + 1 (the divisor).</p>
+      <div class="callout"><span class="callout-tag">Lecture example: n = 4, i = 1</span>x·c(x) = c₀x + c₁x² + c₂x³ + c₃x⁴. Divide by x⁴ + 1: the first quotient term is c₃, and c₃(x⁴ + 1) = c₃x⁴ + c₃. XOR it in: the x⁴ terms cancel, leaving the remainder <b>c₃ + c₀x + c₁x² + c₂x³</b>. The top coefficient wrapped around to the front, which is exactly one cyclic shift.</div>`},
+    {h:"4. Generator polynomial & non-systematic generation", html:`
+      <div class="math-block">G(x) = g₀ + g₁x + … + g<sub>r</sub>x<sup>r</sup>, &nbsp; r = n − k, &nbsp; g₀ = g<sub>r</sub> = 1</div>
+      <ul><li><b>g₀ = 1</b> makes G(x) a factor of x<sup>n</sup> + 1 (it divides x<sup>n</sup> + 1 with remainder 0).</li>
+      <li><b>g<sub>r</sub> = 1</b> makes the degree exactly r. So there's always a 1 at both ends.</li></ul>
+      <div class="math-block">a<sub>m</sub>(x) = a₀ + a₁x + … + a<sub>k−1</sub>x<sup>k−1</sup> &nbsp;&nbsp; c<sup>m</sup>(x) = a<sub>m</sub>(x)G(x)</div>
+      <p>This mirrors c = mG for linear block codes: message × generator. There are 2<sup>k</sup> messages, so 2<sup>k</sup> valid codewords.</p>
+      <p><b>Validity test</b>: c(x) mod G(x) = 0, i.e. no remainder. This plays the same role as cH<sup>T</sup> = 0.</p>`},
+    {h:"5. Systematic cyclic code (Example #6)", html:`
+      <p>Codeword = [Message | Parity] = [m<sub>k−1</sub> … m₀ | b<sub>r−1</sub> … b₀]. As a polynomial, the parity takes the low powers and the message is shifted up by x<sup>r</sup>:</p>
+      <div class="math-block">c(x) = b(x) + x<sup>r</sup>m(x)</div>
+      <p><b>Derivation (from lecture)</b>: c(x) = a(x)G(x) = b(x) + x<sup>r</sup>m(x). Add b(x) to both sides (b + b = 0 in mod‑2) to get x<sup>r</sup>m(x) = a(x)G(x) + b(x). Divide by G(x):</p>
+      <div class="math-block">${frac("x<sup>r</sup>m(x)","G(x)")} = a(x) + ${frac("b(x)","G(x)")} &nbsp;⟹&nbsp; <b>b(x) = x<sup>r</sup>m(x) mod G(x)</b></div>
+      <p>a(x) is the quotient, b(x) is the <b>remainder</b> = the parity. Adding the remainder back makes the whole thing divisible by G(x).</p>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #6, (7,4), G(x) = x³ + x + 1, m = 1100</span>
+      r = 7 − 4 = 3. m(x) = 0 + 0x + x² + x³. x³m(x) = x⁵ + x⁶.<br>
+      Long division of x⁶ + x⁵ by x³ + x + 1 (XOR at each step):
+      ${tbl(['step','quotient term','subtract (XOR)','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³'],['2','x²','x⁵ + x³ + x²','x⁴ + x²'],['3','x','x⁴ + x² + x','!x  ← remainder']])}
+      b(x) = x → padded to 3 bits: b = <b>010</b> (0·x² + 1·x + 0). c(x) = x⁶ + x⁵ + x → <b>c = 1100010</b> ✓</div>`},
+    {h:"6. Syndrome calculation & CRC", html:`
+      <div class="math-block">s(x) = r(x) mod G(x) &nbsp;<span class="fn">(degree &lt; n − k)</span></div>
+      <p>Divide the received polynomial by G(x). <b>Remainder 0 → no detectable error</b>. Non-zero → at least one bit is wrong. Errors can go <b>undetected</b> if r(x) happens to be divisible by G(x) anyway.</p>
+      <div class="callout"><span class="callout-tag">Example #7 (left for practice)</span>r = 1100110 → r(x) = x⁶ + x⁵ + x² + x → mod (x³ + x + 1) = 1·x² → <b>s = 100</b>. Non-zero, so there's an error. (Compare Example #6: the valid word was 1100010; bit x² was flipped.) Full division in Practice #10.</div>
+      <h4>Cyclic redundancy check (CRC)</h4>
+      <p>A class of cyclic codes with standard generator polynomials designed to efficiently detect <b>random and burst errors</b>, including long bursts longer than r. This is what's commonly used today.</p>
+      ${tbl(['code','G(x)','r = n − k'],[['CRC‑8','x⁸ + x² + x + 1','8'],['CRC‑12','x¹² + x¹¹ + x³ + x² + x + 1','12'],['CRC‑16','x¹⁶ + x¹⁵ + x² + 1','16'],['CRC‑CCITT','x¹⁶ + x¹² + x⁵ + 1','16']])}
+      <p>The number in the name = r = the degree of G(x) = the number of parity (check) bits.</p>`},
+  ]},
+  "c": { label:"Part C · Convolutional Codes", sections:[
+    {h:"1. Convolutional codes vs block codes", html:`
+      <p>Block and cyclic codes map each input block to an output block with no memory. A <b>convolutional encoder</b> encodes a <b>continuous bit stream</b> (stream-oriented), and each output depends on the <b>current and past</b> input bits. It has <b>memory</b>.</p>
+      <p>Notation <b>(N, K, M)</b>:</p>
+      ${tbl(['','meaning'],[['N','number of output bits (per encoding step)'],['K','number of input bits (per step)'],['M','number of shift registers (memory)']])}
+      <p class="formula-note"><span class="watch">⚠</span> Capital N, K here are <b>not</b> the block-code n (codeword length) and k (message length).</p>
+      <p>The information sequence passes through a <b>linear finite-state shift register</b> (it acts like a filter), encoded continuously in frames of K bits → N bits. M registers hold the last M input bits.</p>`},
+    {h:"2. Encoding with the shift-register table (Example #8)", html:`
+      ${encoderFig()}
+      <p>(2,1,2): N = 2 outputs (c₁, c₂), K = 1 input, M = 2 registers. l = time index. S₁ = b(l−1) (one step ago), S₂ = b(l−2) (two steps ago).</p>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #8, b = 1 0 1 1 1</span>Registers start at 0 (<b>zero state</b>). Every step, shift right: b(l) → S₁ → S₂. After the 5 data bits, <b>append M = 2 zeros</b> to flush the registers back to 00 for the next sequence.
+      ${tbl(['l','b(l)','b(l−1)','b(l−2)','c₁ = b(l)+b(l−2)','c₂ = b(l)+b(l−1)+b(l−2)'],[['0','1','0','0','1','1'],['1','0','1','0','0','1'],['2','1','0','1','0','0'],['3','1','1','0','1','0'],['4','1','1','1','0','1'],['5','0 (flush)','1','1','1','0'],['6','0 (flush)','0','1','1','1']])}
+      <b>Interleave</b> c₁(0)c₂(0), c₁(1)c₂(1), …: <b>c = 11 01 00 10 01 10 11</b> (14 bits from 5 data bits).</div>`},
+    {h:"3. Generator functions & convolution", html:`
+      <p>Each output is the <b>discrete convolution</b> of the input with an impulse response, the <b>generator function</b> g<sup>(j)</sup>:</p>
+      <div class="math-block">c₁(l) = 1·b(l) + 0·b(l−1) + 1·b(l−2) → g⁽¹⁾ = [1 0 1] &nbsp;&nbsp; c₂(l) → g⁽²⁾ = [1 1 1]</div>
+      <div class="math-block">c<sub>j</sub>(l) = Σ<sub>i=0</sub><sup>M</sup> g<sub>i</sub><sup>(j)</sup> b(l−i) = g<sup>(j)</sup> ∗ b(l), &nbsp; j = 1…N</div>
+      <p>The coefficient is 1 if that delayed bit feeds the adder, 0 if not. <b>Code rate R = K/N = 1/2</b> here.</p>`},
+    {h:"4. State transition table & state diagram (Example #9)", html:`
+      <p><b>State</b> = the contents of the shift registers. There are <b>2<sup>M</sup> states</b>: 4 here (00, 10, 01, 11 = s₀, s₁, s₂, s₃). The state diagram shows how the system jumps between states depending on the input, and what it outputs. Advantage: it makes convolutional codes easier to decode.</p>
+      <div class="callout"><span class="callout-tag">Lecture example: building the table</span>For each present state and each input b: <b>next state = (b, S₁)</b> (shift right). The output comes from the c₁, c₂ equations.
+      ${tbl(['b(l)','S₁ S₂ (present)','S₁ S₂ (next)','c₁ c₂'],[['0','0 0','0 0','0 0'],['1','0 0','1 0','1 1'],['0','1 0','0 1','0 1'],['1','1 0','1 1','1 0'],['0','0 1','0 0','1 1'],['1','0 1','1 0','0 0'],['0','1 1','0 1','1 0'],['1','1 1','1 1','0 1']])}</div>
+      ${stateFig()}
+      <p>Arrow label = <b>input / output</b>. Your drawing can be laid out differently on the exam as long as every connection is right (lecturer said).</p>`},
+    {h:"5. Trellis diagram", html:`
+      <p>Derived from the state diagram. It shows the <b>time evolution</b> of the code: columns are time steps l = 0, T, 2T, …, rows are states, and each arrow is labeled with its output.</p>
+      <ol><li>Always <b>start at the zero state</b>.</li><li>A <b>valid code sequence must start and end at the zero state</b> (that's why you flush with M zeros).</li>
+      <li>Convention: <b>upper branch = input 1, lower branch = input 0</b>.</li></ol>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #8 on the trellis</span>b = 1 0 1 1 1 then flush 0 0 → up, down, up, up, up, down, down → outputs 11 01 00 10 01 10 11, the same codeword as the table. (She uploaded a separate animated PowerPoint of this trellis; worth watching.)</div>`},
+    {h:"6. Decoding: hard/soft decisions & the Viterbi algorithm", html:`
+      <ul><li><b>Hard decision</b>: threshold each received value to 0/1, then use <b>Hamming distance</b>: d<sub>H</sub> = Σ r<sub>i</sub> ⊕ c<sub>i</sub>.</li>
+      <li><b>Soft decision</b>: keep the actual voltages and use <b>Euclidean distance</b>: d<sub>E</sub> = √Σ(r<sub>i</sub> − c<sub>i</sub>)².</li></ul>
+      <p>The optimum convolutional decoder is a <b>maximum-likelihood sequence estimator (MLSE)</b>: search the trellis for the most probable path, using the Hamming metric (hard) or the Euclidean metric (soft).</p>
+      <p><b>Viterbi algorithm</b> = an MLSE using the Hamming metric to eliminate paths. It assumes 0s and 1s have the same error probability (a BSC). It's like finding the <b>shortest (cheapest) path</b>.</p>
+      <ol><li>At each stage l, branch metric = d<sub>H</sub>(received pair, branch output).</li>
+      <li>Path metric at a state = path metric of the previous state + branch metric. d<sub>H</sub>[s₀] = 0 at the start.</li>
+      <li>For l ≤ M each state has only one incoming path. For l &gt; M, two paths enter each state: <b>keep the smaller (survivor)</b> and eliminate the other. There are always 2<sup>M</sup> survivors.</li>
+      <li>Continue through the M flush symbols back to state 00. Trace the surviving path back from 00. The branch outputs are the decoded codeword; upper/lower branches give the input bits 1/0.</li></ol>
+      <div class="callout"><span class="callout-tag">Lecture example: Example #10, r = 01 11 10 10 00 11 10 (last two pairs are the flush)</span>
+      Path costs per state after each stage (survivors only):
+      ${tbl(['stage','r','00','10','01','11'],[['1','01','1','1','–','–'],['2','11','3','1','2','2'],['3','10','3','3','2','1'],['4','10','3','3','1','3'],['5','00','3','1','4','4'],['6 (flush)','11','4','–','2','–'],['7 (flush)','10','!3','–','–','–']])}
+      ${trellisFig(['01','11','10','10','00','11','10'],5,'Viterbi survivor path for Example #10 (thick line), with each branch\'s output above it. Red numbers are the surviving path costs at each state. Faint lines are all valid trellis branches.')}
+      Decoded <b>c = 00 11 10 10 00 01 11</b>, inputs <b>b = 0 1 1 0 1</b>, final path cost 3. That's 3 bit errors corrected (pairs 1, 6 and 7 differed).</div>
+      <div class="callout"><span class="callout-tag">Lecturer said</span>The trellis gives the <i>most likely</i> codeword: it assumes that when an error happens, the received word is still closest to the transmitted codeword.</div>`},
+  ]},
+};
+
+const formulaGroups = [
+  { topic:"Fundamentals", items:[
+    {name:"Coding gain", eq:`G(dB) = (E<sub>b</sub>/N₀)<sub>uncoded</sub> − (E<sub>b</sub>/N₀)<sub>coded</sub> &nbsp;<span class="fn">at the same BER</span>`, note:"<span class=\"watch\">⚠</span> Slide 8: 14 dB − 9 dB = 5 dB at 10⁻⁶. The recording says '40 dB'; the axis shows 14."},
+    {name:"Redundancy ⚠ watch", eq:`Redundancy = ${frac("# bits/codeword with coding","# bits/codeword without coding")} = n/k`, note:"<span class=\"watch\">⚠</span> Slide text says 'bits used minus information bits' (n − k extra bits) but the formula is the ratio. Use the ratio unless asked for the number of extra bits."},
+    {name:"Code rate", eq:`R = ${frac("k","n")}`, note:"Fraction < 1. Also the coding efficiency. R = 1/redundancy."},
+    {name:"Words in an (n,k) block code", eq:`received words = 2<sup>n</sup> &nbsp;&nbsp; valid codewords = 2<sup>k</sup>`, note:"(7,3): 128 vs 8."},
+  ]},
+  { topic:"Linear block codes", items:[
+    {name:"Encoding", eq:`c = mG &nbsp;<span class="fn">[1×n] = [1×k][k×n]</span>`, note:"All additions mod‑2."},
+    {name:"Parity bits (systematic)", eq:`b<sub>i</sub> = p<sub>1i</sub>m₁ ⊕ p<sub>2i</sub>m₂ ⊕ … ⊕ p<sub>ki</sub>m<sub>k</sub>`, note:"p = 1 if b_i depends on that message bit."},
+    {name:"Generator matrix (systematic, c = [m | b])", eq:`G = [I<sub>k</sub> | P] &nbsp;<span class="fn">k×n, P is k×(n−k)</span>`, note:"For c = [b | m]: G = [P | I_k]."},
+    {name:"Parity check matrix", eq:`H = [P<sup>T</sup> | I<sub>n−k</sub>] &nbsp;<span class="fn">(n−k)×n</span> &nbsp;&nbsp; GH<sup>T</sup> = 0`, note:"For c = [b | m]: H = [I_(n−k) | P^T]."},
+    {name:"Validity / syndrome", eq:`s = rH<sup>T</sup> = eH<sup>T</sup> &nbsp;&nbsp; r = c ⊕ e &nbsp;&nbsp; c = r ⊕ e`, note:"s = 0: no error OR undetectable error (e is a codeword). 2^(n−k) syndromes × 2^k error patterns each."},
+    {name:"Hamming distance", eq:`d<sub>H</sub>(a,b) = w<sub>H</sub>(a ⊕ b)`, note:"d_H(10101,10110) = 2."},
+    {name:"Minimum distance (linear codes)", eq:`d<sub>min</sub> = w<sub>min</sub> &nbsp;<span class="fn">(min weight of non-zero codewords)</span>`, note:"Beyond the slides: detect d_min − 1 errors, correct ⌊(d_min − 1)/2⌋."},
+  ]},
+  { topic:"Cyclic codes", items:[
+    {name:"Code polynomial", eq:`c(x) = c₀ + c₁x + … + c<sub>n−1</sub>x<sup>n−1</sup>`, note:"MSB (left bit) = highest power."},
+    {name:"Cyclic shift", eq:`c<sup>i</sup>(x) = x<sup>i</sup>c(x) mod (x<sup>n</sup> + 1)`, note:"mod = remainder."},
+    {name:"Generator polynomial", eq:`G(x) = g₀ + g₁x + … + g<sub>r</sub>x<sup>r</sup>, &nbsp; r = n − k, &nbsp; g₀ = g<sub>r</sub> = 1`, note:"g₀ = 1 → factor of x^n + 1; g_r = 1 → degree exactly r."},
+    {name:"Non-systematic codeword", eq:`c<sup>m</sup>(x) = a<sub>m</sub>(x)G(x)`, note:"Valid iff c(x) mod G(x) = 0."},
+    {name:"Systematic codeword", eq:`b(x) = x<sup>r</sup>m(x) mod G(x) &nbsp;&nbsp; c(x) = b(x) + x<sup>r</sup>m(x)`, note:"c = [m | b], with b padded to r bits."},
+    {name:"Syndrome", eq:`s(x) = r(x) mod G(x) &nbsp;<span class="fn">(degree &lt; n−k)</span>`, note:"0 → no detectable error."},
+  ]},
+  { topic:"Convolutional codes", items:[
+    {name:"Output (discrete convolution)", eq:`c<sub>j</sub>(l) = Σ<sub>i=0</sub><sup>M</sup> g<sub>i</sub><sup>(j)</sup> b(l−i) = g<sup>(j)</sup> ∗ b(l)`, note:"Example: g⁽¹⁾ = [1 0 1], g⁽²⁾ = [1 1 1]."},
+    {name:"Rate, states, length", eq:`R = K/N &nbsp;&nbsp; states = 2<sup>M</sup> &nbsp;&nbsp; output bits = N × (L + M)`, note:"L = number of input bits; M zeros are appended to flush. (2,1,2), L = 5 → 14 bits."},
+    {name:"Next state", eq:`(S₁, S₂)<sub>next</sub> = (b(l), S₁)`, note:"Shift right each step."},
+    {name:"Hard / soft decision distance", eq:`d<sub>H</sub> = Σ r<sub>i</sub> ⊕ c<sub>i</sub> &nbsp;&nbsp; d<sub>E</sub> = ${rt("Σ(r<sub>i</sub> − c<sub>i</sub>)²")}`, note:"Viterbi (hard) uses d_H."},
+    {name:"Viterbi path metric", eq:`d<sub>H</sub>[s₀] = 0, &nbsp; d<sub>H</sub>[s<sub>l</sub>] = d<sub>H</sub>[s<sub>l−1</sub>] + d<sub>H</sub>[r(l), c(l)]`, note:"Keep the minimum at each state; 2^M survivors per stage."},
+  ]},
+];
+
+const glossary = [
+  ["Channel coding","Adding controlled redundancy (extra bits) to combat the effect of channel noise; lets the receiver detect or correct errors."],
+  ["Channel encoder / decoder","Encoder maps the data sequence into a channel input sequence; decoder inverse-maps the channel output back to a data sequence."],
+  ["Single-bit error","Exactly one bit in the received word is flipped."],
+  ["Multiple-bit error","Two or more bits flipped, not necessarily adjacent."],
+  ["Burst error","Consecutive bit errors, e.g. when noise or fading persists over several bits."],
+  ["Erasure","Received signal is ambiguous (too close to the decision boundary to call 1 or 0)."],
+  ["Parity check code","Error-detecting code that appends one parity bit; can't detect an even number of errors or locate the bad bit."],
+  ["Even / odd parity","Parity bit chosen so the total number of 1s in the codeword is even / odd."],
+  ["Repetition code","Basic error-correcting code that repeats each bit and decodes by majority rule; weak against bursts, poor bandwidth efficiency."],
+  ["Correlated failures","Errors that hit related bits together (e.g. bursts); repetition codes perform poorly against them."],
+  ["Coding gain","Saving in E_b/N₀ needed to reach the same BER with coding vs without."],
+  ["E_b/N₀","Energy per bit to noise power spectral density ratio; an SNR measured per bit."],
+  ["Redundancy","Amount of additional bits used; slide formula = bits per codeword with coding ÷ without coding (n/k)."],
+  ["Code rate","R = k/n, number of bits before coding over number of bits after; a measure of coding efficiency."],
+  ["Block code","Code that splits the information into fixed k-bit blocks and maps each to an n-bit codeword, written (n, k)."],
+  ["Code bits","The binary digits in a codeword."],
+  ["Word","Any binary sequence of the block length, whether produced by the encoder or corrupted by noise."],
+  ["Linear block code","Block code where the mod‑2 sum of any two codewords is another codeword; generated by c = mG; includes the all-zero codeword."],
+  ["Modulo‑2 arithmetic","Binary addition without carry (XOR): 1 + 1 = 0; subtraction equals addition."],
+  ["Hamming weight w_H","Number of non-zero (1) components in a codeword."],
+  ["Minimum weight w_min","Smallest Hamming weight among the non-zero codewords."],
+  ["Hamming distance d_H","Number of positions where two words differ; equals w_H(a ⊕ b)."],
+  ["Minimum distance d_min","Smallest Hamming distance between any two distinct codewords; equals w_min for linear codes."],
+  ["Systematic code","Code whose codeword contains the message bits unchanged (first or last k bits), with the parity bits in the remaining n − k positions."],
+  ["Parity bits","The n − k redundant bits of a systematic codeword, each an XOR combination of message bits."],
+  ["Generator matrix G","k×n matrix whose linearly independent rows generate all codewords via c = mG; systematic form [I_k | P]."],
+  ["Parity matrix P","The k×(n−k) part of a systematic G giving the parity-bit coefficients."],
+  ["Parity check matrix H","(n−k)×n matrix with GH^T = 0, used by the decoder to check codewords; systematic form [P^T | I_(n−k)]. It is the generator matrix of the dual code."],
+  ["Dual code","The code generated by H; H of a code is G of its dual."],
+  ["Syndrome","s = rH^T (or r(x) mod G(x)); zero for a valid word, and depends only on the error pattern."],
+  ["Error pattern e","Vector with 1s at the flipped positions; r = c ⊕ e."],
+  ["Undetectable error","An error pattern equal to a valid codeword, giving syndrome 0 even though bits are wrong."],
+  ["Syndrome decoding","Finding the lowest-weight error pattern for a given syndrome, then correcting c = r ⊕ e."],
+  ["Coset leader","The lowest-weight error pattern in the syndrome table with a given syndrome; assumed to be the actual error."],
+  ["Forward error correction (FEC)","Correcting errors at the receiver using the redundancy, without asking for retransmission."],
+  ["Cyclic code","Linear block code where every cyclic shift of a codeword is also a codeword; enables simpler algebraic decoding."],
+  ["Cyclic shift property","If (c_(n−1) … c₀) is a codeword, so is (c_(n−2) … c₀ c_(n−1))."],
+  ["Galois field polynomial","Polynomial over GF(2) used to represent binary sequences; coefficients 0/1, addition mod‑2."],
+  ["Code polynomial","c(x) = c₀ + c₁x + … + c_(n−1)x^(n−1), degree at most n − 1."],
+  ["Generator polynomial G(x)","Degree-r (r = n − k) polynomial with g₀ = g_r = 1 that generates a cyclic code; a factor of x^n + 1."],
+  ["Message polynomial","a_m(x) or m(x) = m₀ + m₁x + … + m_(k−1)x^(k−1)."],
+  ["Linear feedback shift register","Hardware used to implement cyclic encoding and syndrome calculation."],
+  ["Reed‑Solomon / BCH codes","Well-known examples of cyclic codes."],
+  ["Cyclic redundancy check (CRC)","Class of cyclic codes with standard G(x) (CRC‑8, ‑12, ‑16, ‑CCITT) designed to detect random and burst errors, including bursts longer than r."],
+  ["Convolutional code","Code that encodes a continuous bit stream using memory (shift registers), so outputs depend on current and past inputs; denoted (N, K, M)."],
+  ["N, K, M","Number of output bits, input bits per step, and shift registers (memory) in a convolutional code."],
+  ["Zero state","All shift registers contain 0; the start (and required end) state of a convolutional code."],
+  ["Flushing","Appending M zeros after the data so the registers return to the zero state."],
+  ["Interleaving (outputs)","Writing the outputs in time order c₁(0)c₂(0)c₁(1)c₂(1)… to form the codeword."],
+  ["Generator function g^(j)","Impulse response of output j, e.g. [1 0 1]; the output is its discrete convolution with the input."],
+  ["State","The contents of the shift registers; there are 2^M states."],
+  ["State diagram","Graph of states with arrows labeled input/output showing how the encoder moves between states."],
+  ["State transition table","Table of present state + input → next state + output, used to draw the state diagram."],
+  ["Trellis diagram","State diagram unrolled over time; upper branch = input 1, lower = input 0; valid paths start and end at state 00."],
+  ["Hard decision decoding","Threshold received values to 0/1 and use Hamming distance."],
+  ["Soft decision decoding","Keep actual received voltages and use Euclidean distance."],
+  ["MLSE","Maximum-likelihood sequence estimator; the optimum convolutional decoder, which searches the trellis for the most probable sequence."],
+  ["Viterbi algorithm","MLSE that uses the Hamming metric, keeping only the cheapest (survivor) path into each state; like finding the shortest path."],
+  ["Branch metric / path metric","Hamming distance between received pair and branch output / running sum of branch metrics along a path."],
+  ["Survivor path","The lowest-cost path into a state at a given stage; all others are eliminated."],
+];
+
+const practice = [
+  { q:"Parity & repetition. (a) Add an even-parity bit and an odd-parity bit to 1011001. (b) The receiver gets 1011101 + the even-parity bit you computed. Is the error detected? (c) Decode the 3× repetition word 110 001 101 000 111.",
+    a:`(a) 1011001 has four 1s (even) → even parity bit = <b>0</b> (10110010), odd parity bit = <b>1</b> (10110011).<br>
+    (b) 1011101 + 0 → five 1s → odd → <b>detected</b> (one flip). If two bits had flipped, the count would stay even and the error would be missed.<br>
+    (c) Majority of each triple: 110→1, 001→0, 101→1, 000→0, 111→1 → <b>10101</b>. Rate 1/3, redundancy 3.` },
+  { q:"Block code numbers. For a (7,4) block code find the code rate, redundancy, number of possible received words, and number of valid codewords.",
+    a:`<div class="math-block">R = 4/7 = <b>0.571</b> &nbsp; Redundancy = 7/4 = <b>1.75</b> &nbsp; 2⁷ = <b>128</b> received words &nbsp; 2⁴ = <b>16</b> valid</div>` },
+  { q:"Coding gain. Using the slide 8 curves: at P_B = 10⁻⁶ uncoded needs 14 dB and coded needs 9 dB. Find the coding gain. If a code had R = 1/2, what's the cost of that gain?",
+    a:`G = 14 − 9 = <b>5 dB</b>. The cost: with R = 1/2, half the transmitted bits are redundant, so throughput halves for the same bandwidth (more bandwidth for the same data rate). That's the coding gain vs redundancy trade-off.` },
+  { q:"Linear test & metrics. Is the code {00000, 01110, 10101, 11011} linear? Find each Hamming weight, w_min, d_min, and d_H(01110, 11011).",
+    a:`Has 00000 ✓. 01110 ⊕ 10101 = <b>11011</b> ✓, 01110 ⊕ 11011 = 10101 ✓, 10101 ⊕ 11011 = 01110 ✓ → <b>linear</b>.<br>
+    Weights: 0, 3, 3, 4 → <b>w_min = 3 = d_min</b>. d_H(01110, 11011) = w_H(10101) = <b>3</b>.` },
+  { q:"Linear test (deck slide 16). Show why the (6,2) code {000010, 110101, 101010, 011110} is not linear.",
+    a:`No all-zero codeword, so it fails property 3. Also c<sub>A</sub> ⊕ c<sub>B</sub> = 000010 ⊕ 110101 = <b>110111</b>, which is not in the code, so it fails property 2. <b>Not linear.</b>` },
+  { q:"Deck Example #4. (6,3) systematic code, G = [100110; 010011; 001101]. Find R, P, H, d_min, and s for (a) r = 110101 and (b) r = 100101. For (b), also correct the error.",
+    a:`R = 3/6 = <b>0.5</b>. P = [110; 011; 101] (columns 4–6 of G).
+    <div class="math-block">H = [P<sup>T</sup> | I₃] = [1 0 1 1 0 0 ; 1 1 0 0 1 0 ; 0 1 1 0 0 1]</div>
+    Codewords: 000000, 001101, 010011, 011110, 100110, 101011, 110101, 111000 → w_min = <b>d_min = 3</b>.<br>
+    (a) r = 110101: s₁ = 1+0+0+1 = 0, s₂ = 1+1+0 = 0, s₃ = 1+0+1 = 0 → <b>s = 000</b>, valid (m = 110).<br>
+    (b) r = 100101: <b>s = 011</b> = column 2 of H → flip bit 2: c = <b>110101</b>, m = 110.` },
+  { q:"Deck Example #5 (syndrome decoding). G = [10110; 01101]. Find m if r = 10010, and the error pattern e.",
+    a:`P = [110; 101] → H = [P<sup>T</sup> | I₃] = [1 1 1 0 0 ; 1 0 0 1 0 ; 0 1 0 0 1].<br>
+    s = rH<sup>T</sup>: s₁ = r₁+r₂+r₃ = 1, s₂ = r₁+r₄ = 0, s₃ = r₂+r₅ = 0 → <b>s = 100</b>.<br>
+    Single-error syndromes = columns of H: 110, 101, <b>100</b>, 010, 001 → s matches column 3 → coset leader <b>e = 00100</b>.<br>
+    c = r ⊕ e = 10010 ⊕ 00100 = <b>10110</b> (a valid codeword) → <b>m = 10</b>.` },
+  { q:"Full (7,4) code. G = [1000110; 0100011; 0010111; 0001101]. (a) Encode m = 1011. (b) Find H. (c) The receiver gets r = 1010100. Find s, correct it, and recover m.",
+    a:`(a) c = mG = row1 ⊕ row3 ⊕ row4 = 1000110 ⊕ 0010111 ⊕ 0001101 = <b>1011100</b>.<br>
+    (b) P = [110; 011; 111; 101] → <div class="math-block">H = [1 0 1 1 1 0 0 ; 1 1 1 0 0 1 0 ; 0 1 1 1 0 0 1]</div>
+    (c) s = rH<sup>T</sup> = <b>101</b>. Columns of H: 110, 011, 111, <b>101</b>, 100, 010, 001 → bit 4 is wrong → c = <b>1011100</b>, m = <b>1011</b> ✓. (d_min = 3, so any single error is correctable.)` },
+  { q:"Systematic cyclic encoding. (7,4) code, G(x) = x³ + x + 1. Find the codeword for m = 1010.",
+    a:`r = 3. m(x) = x³ + x → x³m(x) = x⁶ + x⁴.
+    ${tbl(['step','quotient','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x³'],['2','1','x³ + x + 1','!x + 1']])}
+    b(x) = x + 1 → b = <b>011</b>. c = [m | b] = <b>1010011</b>. Check: 1010011 mod G(x) = 0 ✓.` },
+  { q:"Cyclic syndrome (deck Example #7 + more). G(x) = x³ + x + 1. Find s for r = 1100110 (deck), r = 1000011, and r = 1000101.",
+    a:`<b>r = 1100110</b> → x⁶ + x⁵ + x² + x. Divide: x³ → XOR x⁶+x⁴+x³ → x⁵+x⁴+x³+x²+x; x² → XOR x⁵+x³+x² → x⁴+x; x → XOR x⁴+x²+x → <b>x²</b> → <b>s = 100</b> (error).<br>
+    <b>r = 1000011</b> (1010011 with one bit flipped) → s = <b>110</b> ≠ 0 → error detected.<br>
+    <b>r = 1000101</b> → s = <b>000</b>. Valid: it's 1100010 (Example #6) cyclically shifted left once, which the cyclic property guarantees is a codeword.` },
+  { q:"Convolutional encoding. Same (2,1,2) code (c₁ = b(l)+b(l−2), c₂ = b(l)+b(l−1)+b(l−2)). Encode b = 1 1 0 1. How many output bits?",
+    a:`${tbl(['l','b(l)','b(l−1)','b(l−2)','c₁','c₂'],[['0','1','0','0','1','1'],['1','1','1','0','1','0'],['2','0','1','1','1','0'],['3','1','0','1','0','0'],['4','0','1','0','0','1'],['5','0','0','1','1','1']])}
+    c = <b>11 10 10 00 01 11</b> → N(L + M) = 2(4 + 2) = <b>12 bits</b>. Path on the state diagram: 00 → 10 → 11 → 01 → 10 → 01 → 00.` },
+  { q:"Viterbi decoding. The codeword from Problem 11 is received with one error as r = 11 10 00 00 01 11. Decode it with the Viterbi algorithm (K = 4 data bits, last two pairs are the flush).",
+    a:`Survivor path costs per state:
+    ${tbl(['stage','r','00','10','01','11'],[['1','11','2','0','–','–'],['2','10','3','3','2','0'],['3','00','3','2','1','1'],['4','00','3','1','2','2'],['5 (flush)','01','3','–','1','–'],['6 (flush)','11','!1','–','–','–']])}
+    ${trellisFig(['11','10','00','00','01','11'],4,'Survivor path for Problem 12. The final cost of 1 means one bit error was corrected (stage 3: received 00, branch output 10).')}
+    Decoded <b>c = 11 10 10 00 01 11</b>, <b>b = 1 1 0 1</b> ✓.` },
+  { q:"Concepts. A convolutional code is (3,1,3). Find its code rate, number of states, and number of output bits for a 10-bit message. What's the difference between hard and soft decision decoding?",
+    a:`R = K/N = <b>1/3</b>. States = 2³ = <b>8</b>. Output = N(L + M) = 3(10 + 3) = <b>39 bits</b>.<br>
+    <b>Hard</b>: threshold to 0/1, Hamming distance (what Viterbi uses here). <b>Soft</b>: keep the voltages, Euclidean distance. Soft keeps more information about how confident each bit was.` },
+];
+function loadState(){ try{ return JSON.parse(localStorage.getItem('m3p2-study-state')||'{}'); }catch(e){ return {}; } }
+function saveState(s){ try{ localStorage.setItem('m3p2-study-state', JSON.stringify(s)); }catch(e){} }
+let state = loadState();
+function updateProgress(){
+  const boxes=document.querySelectorAll('#scheduleList input[type=checkbox]');
+  const done=document.querySelectorAll('#scheduleList input[type=checkbox]:checked').length;
+  document.getElementById('progressPill').textContent = done+' / '+boxes.length+' tasks';
+}
+function renderSchedule(){
+  const root=document.getElementById('scheduleList'); root.innerHTML='';
+  schedule.forEach(n=>{
+    const card=document.createElement('div'); card.className='card';
+    const totalMin=n.tasks.reduce((s,t)=>s+parseInt(t[1]),0);
+    card.innerHTML=`<div class="night-head"><div><span class="night-tag">${n.day}</span>
+      <div class="sub" style="margin-top:6px;font-weight:600;color:var(--ink);">${n.focus}</div></div>
+      <div class="night-mins">~${totalMin} min</div></div><ul class="tasklist"></ul>`;
+    const ul=card.querySelector('ul');
+    n.tasks.forEach((t,i)=>{
+      const id='n'+n.night+'-t'+i; const li=document.createElement('li'); const c=!!state[id];
+      if(c) li.classList.add('done');
+      li.innerHTML=`<input type="checkbox" id="${id}" ${c?'checked':''}><label for="${id}" class="tasktext">${t[0]}</label><span class="taskmin">${t[1]}</span>`;
+      ul.appendChild(li);
+    });
+    root.appendChild(card);
+  });
+  root.addEventListener('change',e=>{
+    if(e.target.matches('input[type=checkbox]')){
+      state[e.target.id]=e.target.checked; saveState(state);
+      e.target.closest('li').classList.toggle('done',e.target.checked); updateProgress();
+    }
+  });
+  updateProgress();
+}
+let activeNoteModule=Object.keys(lectureNotes)[0];
+function renderNotesSubtabs(){
+  const root=document.getElementById('notesSubtabs'); root.innerHTML='';
+  Object.keys(lectureNotes).forEach(key=>{
+    const b=document.createElement('button'); b.textContent=lectureNotes[key].label;
+    b.className= key===activeNoteModule?'active':'';
+    b.addEventListener('click',()=>{ activeNoteModule=key; renderNotesSubtabs(); renderNotesContent(); });
+    root.appendChild(b);
+  });
+}
+function renderNotesContent(){
+  const root=document.getElementById('notesContent'); root.innerHTML='';
+  lectureNotes[activeNoteModule].sections.forEach(sec=>{
+    const card=document.createElement('div'); card.className='card note-sec';
+    card.innerHTML=`<h3>${sec.h}</h3>${sec.html}`; root.appendChild(card);
+  });
+}
+function renderFormulas(){
+  const root=document.getElementById('formulaList'); root.innerHTML='';
+  formulaGroups.forEach(g=>{
+    const h=document.createElement('div'); h.className='topic-h'; h.textContent=g.topic; root.appendChild(h);
+    const card=document.createElement('div'); card.className='card';
+    g.items.forEach(it=>{
+      const d=document.createElement('div'); d.className='formula-item';
+      d.innerHTML=`<div class="formula-name">${it.name}</div><div class="math-block">${it.eq}</div>${it.note?`<div class="formula-note">${it.note}</div>`:''}`;
+      card.appendChild(d);
+    });
+    root.appendChild(card);
+  });
+}
+function renderGlossary(filter=''){
+  const root=document.getElementById('glossList'), empty=document.getElementById('glossEmpty');
+  root.innerHTML=''; const f=filter.trim().toLowerCase(); let n=0;
+  glossary.forEach(([t,d])=>{
+    if(f && !t.toLowerCase().includes(f) && !d.toLowerCase().includes(f)) return;
+    n++; const div=document.createElement('div'); div.className='gloss-item';
+    div.innerHTML=`<div class="gloss-term">${t}</div><div class="gloss-def">${d}</div>`; root.appendChild(div);
+  });
+  empty.hidden=n>0;
+}
+function renderPractice(){
+  const root=document.getElementById('practiceList'); root.innerHTML='';
+  practice.forEach((p,i)=>{
+    const div=document.createElement('div'); div.className='prob';
+    div.innerHTML=`<div class="prob-title">Problem ${i+1}</div><div class="prob-body">${p.q}</div>
+      <button class="reveal-btn" type="button">Show answer</button><div class="answer" hidden>${p.a}</div>`;
+    const b=div.querySelector('.reveal-btn'), a=div.querySelector('.answer');
+    b.addEventListener('click',()=>{ a.hidden=!a.hidden; b.textContent=a.hidden?'Show answer':'Hide answer'; });
+    root.appendChild(div);
+  });
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-pane]'); if(!btn) return;
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('active',b===btn));
+  document.querySelectorAll('section.pane').forEach(p=>p.classList.toggle('active',p.id==='pane-'+btn.dataset.pane));
+  window.scrollTo(0,0);
+});
+document.getElementById('glossSearch').addEventListener('input',e=>renderGlossary(e.target.value));
+renderSchedule(); renderNotesSubtabs(); renderNotesContent(); renderFormulas(); renderGlossary(); renderPractice();
+</script>
+</html>

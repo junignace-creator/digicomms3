@@ -1,0 +1,1163 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Source Coding Drill</title>
+<meta name="description" content="4-session review plan, lecture notes, formula sheet, glossary and worked problems for ECE 701 Module 3 Part 1: information theory and source coding.">
+<style>
+:root{
+  --bg:#f4f6f5;
+  --surface:#ffffff;
+  --surface-2:#eceef0;
+  --ink:#16202a;
+  --ink-soft:#4b5560;
+  --muted:#6b7680;
+  --line:#dbe0e0;
+  --accent:#146c5e;
+  --accent-ink:#ffffff;
+  --accent-soft:#e3efec;
+  --accent-2:#a5620a;
+  --accent-2-soft:#f6ead2;
+  --danger:#a13a3a;
+  --code-bg:#eef1ef;
+  --shadow:0 1px 2px rgba(22,32,42,.06), 0 6px 20px rgba(22,32,42,.05);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0b1220;
+    --surface:#111b2c;
+    --surface-2:#16233a;
+    --ink:#e4ebf2;
+    --ink-soft:#b7c2d0;
+    --muted:#8492a6;
+    --line:#233350;
+    --accent:#3ddc97;
+    --accent-ink:#06201a;
+    --accent-soft:#12352c;
+    --accent-2:#ffb454;
+    --accent-2-soft:#2c2108;
+    --danger:#ff8a80;
+    --code-bg:#0e1930;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0b1220;
+  --surface:#111b2c;
+  --surface-2:#16233a;
+  --ink:#e4ebf2;
+  --ink-soft:#b7c2d0;
+  --muted:#8492a6;
+  --line:#233350;
+  --accent:#3ddc97;
+  --accent-ink:#06201a;
+  --accent-soft:#12352c;
+  --accent-2:#ffb454;
+  --accent-2-soft:#2c2108;
+  --danger:#ff8a80;
+  --code-bg:#0e1930;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,Segoe UI,Arial,sans-serif;
+  padding-inline:16px;
+  max-width:900px;
+  margin:0 auto;
+}
+h1,h2,h3{
+  font-family:"Archivo","IBM Plex Sans",sans-serif;
+  letter-spacing:-.01em;
+  text-wrap:balance;
+  margin:0;
+}
+.mono{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;}
+code, .formula{font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;}
+
+header.top{
+  position:sticky;
+  top:env(safe-area-inset-top,0px);
+  background:var(--bg);
+  padding-block:14px 10px;
+  z-index:20;
+  border-bottom:1px solid var(--line);
+}
+.brand{
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+}
+.brand h1{font-size:1.3rem;font-weight:700;}
+.brand .eyebrow{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.68rem;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  color:var(--accent);
+  font-weight:600;
+}
+.progress-pill{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.72rem;
+  color:var(--ink-soft);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:4px 10px;
+  white-space:nowrap;
+}
+nav.tabs{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding-top:12px;
+  margin-inline:-16px;
+  padding-inline:16px;
+  scrollbar-width:none;
+}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{
+  font-family:"IBM Plex Sans",sans-serif;
+  font-size:.85rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  background:transparent;
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:8px 13px;
+  white-space:nowrap;
+  cursor:pointer;
+}
+nav.tabs button.active{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+}
+
+main{padding-block:20px 60px;}
+section.pane{display:none;}
+section.pane.active{display:block;}
+
+.card{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  padding:16px 18px;
+  margin-bottom:14px;
+}
+.card h2{font-size:1.05rem;margin-bottom:4px;}
+.card .sub{color:var(--muted);font-size:.85rem;margin-bottom:10px;}
+
+.night-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.night-tag{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.7rem;
+  font-weight:700;
+  letter-spacing:.06em;
+  color:var(--accent);
+  background:var(--accent-soft);
+  border-radius:6px;
+  padding:2px 8px;
+  text-transform:uppercase;
+}
+.night-mins{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.75rem;
+  color:var(--muted);
+}
+ul.tasklist{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;}
+ul.tasklist li{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:8px 10px;
+  border-radius:9px;
+  border:1px solid transparent;
+}
+ul.tasklist li.done{
+  background:var(--accent-soft);
+  border-color:var(--accent);
+}
+ul.tasklist li.done .tasktext{
+  text-decoration:line-through;
+  color:var(--muted);
+}
+ul.tasklist input[type=checkbox]{
+  margin-top:3px;
+  width:17px;height:17px;
+  accent-color:var(--accent);
+  flex:none;
+}
+.tasktext{font-size:.92rem;line-height:1.45;}
+.tasktext b{font-weight:700;}
+.taskmin{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.68rem;
+  color:var(--muted);
+  white-space:nowrap;
+  margin-left:auto;
+  padding-top:2px;
+}
+
+.exam-note{
+  background:var(--accent-2-soft);
+  border:1px solid var(--accent-2);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:.85rem;
+  color:var(--ink);
+  margin-block:14px;
+}
+.exam-note b{color:var(--accent-2);}
+
+.subtabs{
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  margin-bottom:14px;
+}
+.subtabs button{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.75rem;
+  font-weight:600;
+  color:var(--ink-soft);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:6px 11px;
+  cursor:pointer;
+}
+.subtabs button.active{
+  background:var(--accent);
+  color:var(--accent-ink);
+  border-color:var(--accent);
+}
+.note-sec{margin-bottom:16px;}
+.note-sec h3{
+  font-size:1rem;
+  margin-bottom:8px;
+  padding-bottom:6px;
+  border-bottom:2px solid var(--accent);
+  display:inline-block;
+}
+.note-sec h4{
+  font-size:.88rem;
+  color:var(--accent);
+  margin:14px 0 6px;
+  font-family:"IBM Plex Mono",monospace;
+  letter-spacing:.02em;
+}
+.note-sec p, .note-sec li{
+  font-size:.9rem;
+  line-height:1.55;
+  color:var(--ink);
+}
+.note-sec ul{margin:6px 0 6px 1.1em;padding:0;}
+.note-sec li{margin-bottom:5px;}
+.callout{
+  background:var(--surface-2);
+  border-left:3px solid var(--accent);
+  border-radius:0 8px 8px 0;
+  padding:9px 12px;
+  margin-block:10px;
+  font-size:.87rem;
+  line-height:1.5;
+}
+.callout .callout-tag{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.66rem;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--accent);
+  font-weight:700;
+  display:block;
+  margin-bottom:3px;
+}
+
+.topic-h{
+  font-family:"IBM Plex Mono",monospace;
+  font-size:.72rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:22px 0 8px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.topic-h::after{
+  content:"";
+  flex:1;
+  height:1px;
+  background:var(--line);
+}
+
+.formula-item{
+  border-bottom:1px solid var(--line);
+  padding-block:12px;
+}
+.formula-item:last-child{border-bottom:none;}
+.formula-name{font-weight:700;font-size:.9rem;margin-bottom:4px;}
+.formula-eq{
+  background:var(--code-bg);
+  border-radius:8px;
+  padding:9px 11px;
+  font-size:.92rem;
+  overflow-x:auto;
+  white-space:nowrap;
+  margin-block:6px;
+}
+.math-block{
+  background:var(--code-bg);
+  border-radius:10px;
+  padding:16px 14px;
+  margin-block:10px;
+  overflow-x:auto;
+  text-align:center;
+  font-family:"STIX Two Math","STIX Two Text",serif;
+  font-size:1.45rem;
+  color:var(--ink);
+  line-height:1.9;
+}
+.math-block .frac{
+  display:inline-flex;
+  flex-direction:column;
+  vertical-align:middle;
+  margin:0 .22em;
+  text-align:center;
+  line-height:1.25;
+  font-size:.92em;
+}
+.math-block .frac .num{
+  border-bottom:1.6px solid currentColor;
+  padding:0 .18em .08em;
+}
+.math-block .frac .den{
+  padding:.08em .18em 0;
+}
+.math-block sup, .math-block sub{ font-size:.68em; }
+.math-block .fn{ font-family:"IBM Plex Sans",sans-serif; font-size:.62em; letter-spacing:.02em; vertical-align:.15em; }
+.formula-eq{ font-family:"STIX Two Math","STIX Two Text",serif; font-size:1.15rem; line-height:1.8; }
+.formula-eq .frac{
+  display:inline-flex; flex-direction:column; vertical-align:middle; margin:0 .18em; text-align:center; line-height:1.15; font-size:.9em;
+}
+.formula-eq .frac .num{ border-bottom:1.4px solid currentColor; padding:0 .15em .06em; }
+.formula-eq .frac .den{ padding:.06em .15em 0; }
+.math-block .rt, .formula-eq .rt{
+  border-top:1.6px solid currentColor;
+  padding:.05em .1em 0;
+  margin-left:.02em;
+}
+.formula-note{font-size:.82rem;color:var(--ink-soft);}
+.watch{color:var(--danger);font-weight:700;}
+
+.gloss-search{
+  width:100%;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid var(--line);
+  background:var(--surface);
+  color:var(--ink);
+  font-size:.95rem;
+  margin-bottom:12px;
+}
+.gloss-item{
+  padding-block:10px;
+  border-bottom:1px solid var(--line);
+}
+.gloss-item:last-child{border-bottom:none;}
+.gloss-term{font-weight:700;font-size:.9rem;}
+.gloss-def{font-size:.86rem;color:var(--ink-soft);margin-top:2px;}
+.gloss-empty{color:var(--muted);font-size:.88rem;padding:14px 0;text-align:center;}
+
+.prob{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px 15px;
+  margin-bottom:12px;
+  background:var(--surface);
+}
+.prob-title{font-weight:700;font-size:.9rem;margin-bottom:4px;}
+.prob-body{font-size:.9rem;color:var(--ink-soft);line-height:1.5;}
+.reveal-btn{
+  margin-top:10px;
+  font-family:"IBM Plex Sans",sans-serif;
+  font-size:.8rem;
+  font-weight:600;
+  color:var(--accent);
+  background:var(--accent-soft);
+  border:1px solid var(--accent);
+  border-radius:8px;
+  padding:6px 11px;
+  cursor:pointer;
+}
+.answer{
+  margin-top:10px;
+  padding-top:10px;
+  border-top:1px dashed var(--line);
+  font-size:.87rem;
+  line-height:1.6;
+}
+.answer[hidden]{display:none;}
+.answer .formula-eq{margin-block:4px;}
+
+.trace-table{
+  width:100%;
+  border-collapse:collapse;
+  margin-block:10px;
+  font-size:.85rem;
+}
+.trace-table th, .trace-table td{
+  border:1px solid var(--line);
+  padding:6px 8px;
+  text-align:center;
+}
+.trace-table th{
+  background:var(--surface-2);
+  font-family:"IBM Plex Mono",monospace;
+  font-weight:600;
+  font-size:.78rem;
+}
+.trace-table td.hl{
+  background:var(--accent-soft);
+  font-weight:700;
+}
+
+figure.fig{margin:12px 0;padding:10px 8px 8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+figure.fig svg{display:block;width:100%;max-width:600px;height:auto;margin:0 auto;color:var(--ink)}
+figure.fig figcaption{font-size:.8rem;line-height:1.45;color:var(--ink-soft);margin-top:8px;text-align:center}
+.fig text{fill:var(--ink);font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace;font-size:11px}
+.fig text.sm{font-size:10px;fill:var(--ink-soft)}
+.fig text.lbl-a{font-size:10px;fill:var(--danger)}
+.fig .ax{stroke:var(--muted);stroke-width:1.2;fill:none}
+.fig .wave{stroke:var(--accent);stroke-width:1.8;fill:none}
+.fig .bd{stroke:var(--danger);stroke-width:1.3;stroke-dasharray:5 4;fill:none}
+.fig .bd2{stroke:var(--line);stroke-width:1;stroke-dasharray:2 3;fill:none}
+.fig .circ{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3;fill:none}
+.fig .dm{stroke:var(--accent-2);stroke-width:2;fill:none}
+.fig .dot{fill:var(--accent)}
+.fig .box{fill:var(--surface-2);stroke:var(--ink-soft);stroke-width:1.2}
+.fig .arr{stroke:var(--ink-soft);stroke-width:1.3;fill:none}
+.fig .arr2{stroke:var(--accent);stroke-width:2;fill:none}
+
+footer.done{
+  text-align:center;
+  color:var(--muted);
+  font-size:.8rem;
+  padding-block:30px 10px;
+}
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=STIX+Two+Math&display=swap">
+
+<header class="top">
+  <div class="brand">
+    <div>
+      <div class="eyebrow">ECE 701 · Module 3 · Part 1</div>
+      <h1>Information Theory &amp; Source Coding — Exam Drill</h1>
+    </div>
+    <div class="progress-pill" id="progressPill">0 / 0 tasks</div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button data-pane="schedule" class="active">Schedule</button>
+    <button data-pane="notes">Lecture Notes</button>
+    <button data-pane="formulas">Formula Sheet</button>
+    <button data-pane="glossary">Glossary (ID)</button>
+    <button data-pane="practice">Practice Problems</button>
+    <button data-pane="cheat">Cheat List</button>
+  </nav>
+</header>
+
+<main>
+  <section class="pane active" id="pane-schedule">
+    <div class="exam-note">
+      <b>The setup:</b> one deck (M3‑1, 74 slides) plus six recorded segments. The plan below is <b>four sessions, about 2 hours each</b>. Tell me your exam date and real availability and I'll re-time it. It assumes the same split as last exam (identification + computation), so each session pairs a <i>Lecture Notes</i> pass with the <i>Glossary</i> and <i>Practice</i> tabs. The lecturer said almost all the computation is "direct substitution". What she spent class time on was <b>building the codes</b> (Shannon, Shannon‑Fano, Huffman, extensions), so drill those by hand. Checkboxes save on this device.
+    </div>
+    <div id="scheduleList"></div>
+  </section>
+
+  <section class="pane" id="pane-notes">
+    <div class="exam-note">Rewritten from the six Taglish lecture captions into clean notes and matched slide-by-slide to the deck. Callouts marked <b>Lecture example</b> or <b>Lecturer said</b> are the professor's own examples and remarks, the kind that tend to come back on exams. <span class="watch">⚠</span> marks a spot where the recording or the slide gets something wrong or loose.</div>
+    <div class="subtabs" id="notesSubtabs"></div>
+    <div id="notesContent"></div>
+  </section>
+
+  <section class="pane" id="pane-formulas">
+    <div class="exam-note">Grouped in lecture order. Anything flagged <span class="watch">⚠ watch</span> is a place where the slides or the recording disagree with the correct result, or where notation is reused. Read the note so it doesn't cost you a computation point.</div>
+    <div id="formulaList"></div>
+  </section>
+
+  <section class="pane" id="pane-glossary">
+    <input class="gloss-search" id="glossSearch" placeholder="Search terms (e.g. &quot;prefix&quot;, &quot;likelihood&quot;, &quot;Kraft&quot;)…">
+    <div id="glossList"></div>
+    <p class="gloss-empty" id="glossEmpty" hidden>No terms match.</p>
+  </section>
+
+  <section class="pane" id="pane-practice">
+    <div class="exam-note">Problems 4–7 are the deck's own <b>Problem #1 and #2</b> (slides 71–72), fully worked. The rest are original problems built on the same methods. Every number was checked by computation. Shannon‑Fano and Huffman can produce different but equally valid codes depending on how you split or combine. The lecturer said <b>any valid variant is accepted</b> on the exam, so check your <i>L̄</i> against the answer rather than the exact bits.</div>
+    <div id="practiceList"></div>
+  </section>
+
+  <section class="pane" id="pane-cheat">
+    <div class="exam-note">Last-minute list. Read the red flags first, then run each recipe once on scratch paper.</div>
+    <div class="card note-sec">
+      <h3>Red flags (easy to mix up)</h3>
+      <ul>
+        <li><b>High probability → LOW self-information → SHORT codeword.</b> Rare events carry more information and get longer codewords.</li>
+        <li><b>Entropy is maximum when symbols are equiprobable</b> (H = log₂K). But a BSC with <b>error probability p = 0.5</b> is the <i>worst</i> channel (C = 0). Equiprobable <i>inputs</i> are good; an equiprobable <i>error</i> is bad.</li>
+        <li><b>BSC p → 1 is not a bad channel:</b> C → 1 because it consistently flips the bits, so the receiver just inverts them.</li>
+        <li><b>Prefix-free ⇒ uniquely decodable</b>, but not the reverse. <b>Kraft ≤ 1</b> does NOT prove a given code is prefix-free (deck Example 2, Code III: satisfies Kraft but "0" is a prefix of "01").</li>
+        <li><b>Kraft &gt; 1</b> ⇒ not uniquely decodable, so it can't be a prefix code.</li>
+        <li><b>Source coding</b> removes redundancy (compress). <b>Channel coding</b> adds redundancy (protect). Part 1 = source coding only.</li>
+        <li><b>Shannon's 1st theorem</b> (noiseless / source coding): H ≤ L̄ₙ/n &lt; H + 1/n. <b>Shannon's 2nd theorem</b> (noisy / channel coding): R<sub>s</sub>H(S) ≤ R<sub>c</sub>C.</li>
+        <li><b>Likelihood</b> = P(y|x), the transition probability (data given hypothesis). <b>Posterior</b> = P(x|y). <b>A priori</b> = P(x). <b>Marginal</b> = P(y).</li>
+        <li><b>Max a priori</b> uses only P(x) and ignores what was received. <b>MAP (a posteriori)</b> uses P(x|y). <b>ML</b> uses P(y|x).</li>
+        <li><b>Transition matrix:</b> each <b>row</b> = one input x, sums to 1. Columns do NOT have to sum to 1.</li>
+        <li><b>Joint entropy:</b> H(X,Y) ≤ H(X) + H(Y), with equality only if X and Y are independent (then I = 0). <span class="watch">The recording said "≥", which is backwards.</span></li>
+        <li><b>Units:</b> base 2 = bits (Shannons), base 10 = Hartleys, base e = nats. On the calculator, <b>type the base 2</b> explicitly.</li>
+      </ul>
+    </div>
+    <div class="card note-sec">
+      <h3>Formulas to have cold</h3>
+      <ul>
+        <li>No. of codewords = radix<sup>n</sup>. ASCII: 2⁷ = 128.</li>
+        <li>I(s<sub>i</sub>) = log<sub>b</sub>(1/p<sub>i</sub>). H(S) = Σ p<sub>i</sub> log<sub>b</sub>(1/p<sub>i</sub>), 0 ≤ H ≤ log<sub>b</sub>K.</li>
+        <li>H<sub>b</sub>(p) = p log₂(1/p) + (1−p) log₂(1/(1−p)). H<sub>b</sub>(0.5) = 1, H<sub>b</sub>(0.2) = 0.7219, H<sub>b</sub>(0.1) = 0.4690.</li>
+        <li>L̄ = Σ p<sub>i</sub>l<sub>i</sub>. η = H(S)/L̄ (L<sub>min</sub> = H). Kraft: Σ 2<sup>−l<sub>i</sub></sup> ≤ 1 (general: Σ r<sup>−l<sub>i</sub></sup> ≤ 1).</li>
+        <li>l<sub>i</sub> = ⌈log₂(1/p<sub>i</sub>)⌉ ⇒ H ≤ L̄ ≤ H + 1. Extension: H(S̄) = nH(S), H ≤ L̄ₙ/n ≤ H + 1/n.</li>
+        <li>P(x<sub>i</sub>,y<sub>j</sub>) = P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>). P(y<sub>j</sub>) = Σ<sub>i</sub> P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>). In matrix form, <b>p(Y) = p(X)·P</b>.</li>
+        <li>Bayes: P(x|y) = P(y|x)P(x)/P(y).</li>
+        <li>I(X;Y) = H(X) − H(X|Y) = H(Y) − H(Y|X) = H(X) + H(Y) − H(X,Y) ≥ 0.</li>
+        <li>C = max over P(x) of I(X;Y). C<sub>BSC</sub> = 1 − H<sub>b</sub>(p).</li>
+        <li>Info rate = H(S)/T<sub>s</sub> = R<sub>s</sub>H(S). Capacity per second = C/T<sub>c</sub> = R<sub>c</sub>C. Reliable if R<sub>s</sub>H(S) ≤ R<sub>c</sub>C.</li>
+      </ul>
+    </div>
+    <div class="card note-sec">
+      <h3>Code-building recipes</h3>
+      <ul>
+        <li><b>Shannon:</b> sort p descending → l<sub>i</sub> = ⌈log₂(1/p<sub>i</sub>)⌉ → p<sub>k</sub> = sum of all probabilities <i>above</i> it (first = 0) → convert p<sub>k</sub> to binary by repeated ×2, keep the integer bit, continue with the fraction → codeword = first l<sub>i</sub> bits after the point.</li>
+        <li><b>Shannon‑Fano:</b> sort descending → split the list into 2 groups with sums as close as possible → upper group gets 0, lower gets 1 → keep splitting each group until every symbol is alone. Ties = multiple valid answers.</li>
+        <li><b>Huffman:</b> sort descending → merge the two smallest into one node (label the branches 0/1) → re-sort → repeat until the total is 1.0 → read each codeword by tracing from the root (right) back to the symbol (left). Ties = multiple valid answers, but L̄ is always the same minimum.</li>
+        <li><b>n‑th extension:</b> list all K<sup>n</sup> super-symbols → multiply probabilities (DMS is i.i.d.) → run the algorithm on the new list → H(S̄) = nH(S), η = H(S̄)/L̄ₙ, bits per original symbol = L̄ₙ/n.</li>
+        <li><b>After any code:</b> compute H, L̄, η, Kraft sum, and check that no codeword is a prefix of another.</li>
+      </ul>
+    </div>
+  </section>
+</main>
+
+<footer class="done">Built from M3‑1 Information Theory, Source Coding, and Channel Coding (Part 1) and its six lecture recordings.</footer>
+
+<script>
+function frac(n,d){ return `<span class="frac"><span class="num">${n}</span><span class="den">${d}</span></span>`; }
+function rt(x){ return `√<span class="rt">${x}</span>`; }
+function tbl(head, rows){
+  return '<div style="overflow-x:auto"><table class="trace-table"><tr>'+head.map(h=>'<th>'+h+'</th>').join('')+'</tr>'+
+    rows.map(r=>'<tr>'+r.map(c=>{ const hl = typeof c==='string' && c.startsWith('!'); return '<td'+(hl?' class="hl"':'')+'>'+(hl?c.slice(1):c)+'</td>'; }).join('')+'</tr>').join('')+'</table></div>';
+}
+
+const schedule = [
+  {
+    night:1, day:"Session 1 · ~2h", focus:"Coding basics + information theory (self-information, entropy)",
+    tasks:[
+      ["Read Lecture Notes → <b>Part A</b>, sections 1–2 (coding vocabulary, radix, codeword length, ASCII / Morse / 2‑out‑of‑5).","20m"],
+      ["Without looking: define codeword, radix, codeword length; state no. of codewords = radix<sup>n</sup>; say why 10110 is an error in 2‑out‑of‑5.","10m"],
+      ["Read sections 3–5 (information source, DMS, self-information, units, extreme cases, properties).","20m"],
+      ["Read section 6 (entropy): reproduce the derivation of the log<sub>b</sub>K upper bound and the binary entropy curve on paper.","20m"],
+      ["Do Practice #1 and #2 cold, then the deck's Example #1 (answer 1.75 bits).","20m"],
+      ["Glossary self-quiz: the coding + information-theory terms (first ~16 in the list). Say each definition out loud.","20m"],
+    ]
+  },
+  {
+    night:2, day:"Session 2 · ~2h", focus:"Source coding theory: L̄, efficiency, prefix codes, Kraft, Shannon's 1st theorem",
+    tasks:[
+      ["Read Lecture Notes → <b>Part B</b>, sections 1–3 (average length, efficiency, source coding theorem, uniquely decodable vs prefix-free, binary trees).","25m"],
+      ["Read section 4 (Kraft‑McMillan): redo the deck's Example #2 for all three codes. Which violates Kraft, which is prefix?","15m"],
+      ["Read section 5 (optimal length, ceiling, H ≤ L̄ ≤ H+1, extensions). Write the full chain of inequalities from memory.","20m"],
+      ["Do Practice #3 (Kraft check) cold.","10m"],
+      ["Read section 6 (Shannon code): redo Example #3's binary-conversion table by hand without looking.","20m"],
+      ["Do Practice #8 (Shannon code on a 6-symbol source).","20m"],
+      ["Glossary self-quiz: the source-coding terms.","10m"],
+    ]
+  },
+  {
+    night:3, day:"Session 3 · ~2h", focus:"Shannon‑Fano, Huffman, extensions (the computation-heavy block)",
+    tasks:[
+      ["Read Part B sections 7–8 (Shannon‑Fano, Huffman), including both alternative splits and combinations from lecture.","20m"],
+      ["Redo deck Examples #4 and #5 by hand (target L̄ = 2.2 bits, η = 0.9645).","15m"],
+      ["Do Practice #4 and #6 (deck Problems 1a and 2a): Shannon‑Fano then Huffman on the same source.","30m"],
+      ["Read section 9 (Example #6 + 2nd extension). Rebuild the super-symbol table and the codes.","15m"],
+      ["Do Practice #9 (extension on a new source) and compare η for n = 1 vs n = 2.","20m"],
+      ["Do Practice #5 and #7 (deck Problems 1b and 2b, 8 symbols) if time allows. These are the longest ones.","20m"],
+    ]
+  },
+  {
+    night:4, day:"Session 4 · ~2h", focus:"DMC, decision rules, mutual information, channel capacity, channel coding theorem + final review",
+    tasks:[
+      ["Read Lecture Notes → <b>Part C</b>, sections 1–3 (DMC, transition matrix, likelihood / a priori / marginal / posterior, BSC, decision rules).","20m"],
+      ["Do Practice #10 (output probabilities + max a priori vs MAP vs ML). The three rules give different answers here.","15m"],
+      ["Read sections 4–6 (mutual information Venn diagram, capacity, BSC extreme cases, Shannon's 2nd theorem).","20m"],
+      ["Do Practice #11, #12, #13.","20m"],
+      ["Blank-paper formula dump from the Formula Sheet tab, then grade yourself.","15m"],
+      ["Glossary blitz: the whole list once, flag misses, then re-drill only the misses.","15m"],
+      ["Read the Cheat List red flags out loud, then pick your weakest practice problem and redo it timed.","15m"],
+    ]
+  },
+];
+
+/* ---------- figures ---------- */
+var figN=0;
+function svgFig(w,h,caption,label,inner,minw){
+  figN++; const id='ah'+figN;
+  return '<figure class="fig"><svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+label+'"'+(minw?' style="min-width:'+minw+'px"':'')+'><defs><marker id="'+id+'" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>'+inner(id)+'</svg><figcaption>'+caption+'</figcaption></figure>';
+}
+function T(x,y,s,cls,a){ return '<text x="'+x+'" y="'+y+'"'+(cls?' class="'+cls+'"':'')+' text-anchor="'+(a||'middle')+'">'+s+'</text>'; }
+function curveFig(fn,cap,label,ylab,marks){
+  return svgFig(420,250,cap,label,function(){
+    const x0=50,y0=210,W=340,Hh=180; let d='';
+    for(let i=0;i<=200;i++){ const p=i/200; const v=fn(Math.min(Math.max(p,1e-9),1-1e-9)); d+=(i?' L':'M')+(x0+p*W).toFixed(1)+','+(y0-v*Hh).toFixed(1); }
+    let s='<line x1="'+x0+'" y1="'+y0+'" x2="'+(x0+W+10)+'" y2="'+y0+'" class="ax"/><line x1="'+x0+'" y1="'+y0+'" x2="'+x0+'" y2="20" class="ax"/>';
+    [0,0.25,0.5,0.75,1].forEach(t=>{ s+=T(x0+t*W,y0+15,t,'sm'); });
+    s+=T(x0-8,y0-Hh+4,'1','sm','end')+T(x0-8,y0+4,'0','sm','end')+'<line x1="'+x0+'" y1="'+(y0-Hh)+'" x2="'+(x0+W)+'" y2="'+(y0-Hh)+'" class="bd2"/>';
+    s+=T(x0+W/2,y0+32,'p','sm')+T(x0+6,16,ylab,'sm','start');
+    s+='<path d="'+d+'" class="wave"/>';
+    (marks||[]).forEach(m=>{ s+='<circle cx="'+(x0+m[0]*W)+'" cy="'+(y0-m[1]*Hh)+'" r="4" class="dot"/>'+T(x0+m[0]*W+(m[3]||0),y0-m[1]*Hh+(m[4]||-10),m[2],'sm',m[5]||'middle'); });
+    return s; });
+}
+const Hb = p => p*Math.log2(1/p)+(1-p)*Math.log2(1/(1-p));
+function hbFig(){ return curveFig(Hb,'Binary entropy function H<sub>b</sub>(p). Zero at p = 0 and p = 1 (one symbol is certain), maximum of 1 bit at p = 0.5 (equiprobable). The lecturer plotted it in Desmos as x·log₂(1/x) + (1−x)·log₂(1/(1−x)).','Binary entropy function curve','H_b(p)  bits',[[0.5,1,'max = 1 bit at p = 0.5',0,-10]]); }
+function cbscFig(){ return curveFig(p=>1-Hb(p),'BSC capacity C = 1 − H<sub>b</sub>(p) against the crossover (error) probability p. p → 0: noiseless, C = 1. p → 1: inverting channel, also C = 1. p = 0.5: output tells you nothing, C = 0.','BSC capacity curve','C  bits/use',[[0.5,0,'worst: C = 0',0,-10],[0.02,0.86,'noiseless',8,4,'start'],[0.98,0.86,'inverting',-8,4,'end']]); }
+function bscFig(){
+  return svgFig(420,190,'Binary symmetric channel: a bit is received correctly with probability 1 − p and flipped with probability p, the same for both inputs ("symmetric"). Small p is the error probability.','Binary symmetric channel diagram',function(id){
+    return '<circle cx="90" cy="45" r="5" class="dot"/><circle cx="90" cy="150" r="5" class="dot"/><circle cx="330" cy="45" r="5" class="dot"/><circle cx="330" cy="150" r="5" class="dot"/>'+
+    T(72,49,'0','','end')+T(72,154,'1','','end')+T(348,49,'0','','start')+T(348,154,'1','','start')+
+    '<line x1="96" y1="45" x2="322" y2="45" class="arr2" marker-end="url(#'+id+')"/><line x1="96" y1="150" x2="322" y2="150" class="arr2" marker-end="url(#'+id+')"/>'+
+    '<line x1="96" y1="49" x2="322" y2="146" class="bd" marker-end="url(#'+id+')"/><line x1="96" y1="146" x2="322" y2="49" class="bd" marker-end="url(#'+id+')"/>'+
+    T(210,35,'1 − p')+T(210,170,'1 − p')+T(255,82,'p','lbl-a')+T(255,124,'p','lbl-a')+T(90,20,'input X','sm')+T(330,20,'output Y','sm');
+  },320);
+}
+function vennFig(){
+  return svgFig(440,250,'Mutual information as a Venn diagram. Left circle = H(X), right circle = H(Y), whole shape = H(X,Y). The overlap is I(X;Y), the part of the input uncertainty resolved by seeing the output. The crescents are H(X|Y) and H(Y|X).','Venn diagram of entropies and mutual information',function(){
+    return '<circle cx="170" cy="130" r="95" style="fill:var(--accent-2-soft);stroke:var(--accent-2);stroke-width:2;fill-opacity:.7"/>'+
+      '<circle cx="270" cy="130" r="95" style="fill:var(--accent-soft);stroke:var(--accent);stroke-width:2;fill-opacity:.7"/>'+
+      T(125,134,'H(X|Y)')+T(220,134,'I(X;Y)')+T(318,134,'H(Y|X)')+T(150,244,'H(X)','sm')+T(290,244,'H(Y)','sm')+
+      '<path d="M75,26 Q75,12 120,12 L200,12 Q220,12 220,2 Q220,12 240,12 L320,12 Q365,12 365,26" class="arr"/>'+T(220,30,'H(X,Y)','sm');
+  },320);
+}
+function treeFig(){
+  return svgFig(460,200,'Binary tree of the prefix code {1, 01, 001, 000} from slide 31. Every codeword sits on a leaf, which is what makes it prefix-free. Tree depth 3 = l<sub>max</sub>.','Binary code tree',function(){
+    const L=(x1,y1,x2,y2)=>'<line x1="'+x1+'" y1="'+y1+'" x2="'+x2+'" y2="'+y2+'" class="arr"/>';
+    const D=(x,y)=>'<circle cx="'+x+'" cy="'+y+'" r="4" class="dot"/>';
+    return L(40,110,150,50)+L(40,110,150,140)+L(150,140,260,95)+L(150,140,260,175)+L(260,175,370,145)+L(260,175,370,195)+
+      D(40,110)+D(150,50)+D(150,140)+D(260,95)+D(260,175)+D(370,145)+D(370,195)+
+      T(90,72,'1','sm')+T(90,135,'0','sm')+T(200,112,'1','sm')+T(200,168,'0','sm')+T(312,155,'1','sm')+T(312,195,'0','sm')+
+      T(160,46,'s0 = 1  (l=1)','','start')+T(270,92,'s1 = 01  (l=2)','','start')+T(380,149,'s2 = 001','','start')+T(380,199,'s3 = 000','','start');
+  },380);
+}
+
+const lectureNotes = {
+  "a": {
+    label:"Part A · Coding & Information",
+    sections:[
+      {h:"0. Where this lecture sits", html:`
+        <p>Back to the general block diagram (slide 2): sampling → quantization → <b>source coding</b> → encryption → <b>channel coding</b> → modulation → channel. <b>Part 1</b> (this deck) is mostly <b>source coding</b> and its decoder. <b>Part 2</b> covers channel coding. <b>Encryption is skipped</b> in this module.</p>
+        <p>Some concepts in this lecture (codeword, radix, codeword length) apply to both source and channel coding.</p>`},
+      {h:"1. What a code is", html:`
+        <p><b>Coding</b> = a set of rules that assigns a <b>codeword</b> to every message drawn from a dictionary of acceptable messages. It's just a <i>mapping</i> from message → codeword. You can also define it as a system that assigns arbitrary messages to letters, numbers, words or other symbols (bits for us).</p>
+        <h4>Three types of codes</h4>
+        <ul>
+          <li><b>Source code</b>: binary sequence representing the source output (this lecture).</li>
+          <li><b>Error code</b>: designed to detect or correct errors (channel coding, Part 2).</li>
+          <li><b>Cryptographic code</b>: designed to conceal information.</li>
+        </ul>
+        <h4>Vocabulary</h4>
+        <ul>
+          <li><b>Codeword</b>: a sequence (a <i>vector</i>) of code symbols representing one message. Binary example: (1,0,1,1,0). Morse example: · · − ·</li>
+          <li><b>Radix</b>: the number of <i>unique</i> symbols in the code alphabet, i.e. the <b>base</b>. {0,1} → 2, {·,−} → 2, {0–9} → 10, {0–9, A–F} → 16.</li>
+          <li><b>Codeword length n</b>: number of symbols in one codeword. 10110 → n = 5. · · − · → n = 4.</li>
+        </ul>
+        <div class="math-block">No. of codewords = (radix)<sup>n</sup></div>
+        <div class="callout"><span class="callout-tag">Lecture example</span>Binary, n = 5: each of the 5 positions has 2 choices, so 2×2×2×2×2 = 2⁵ = <b>32</b> possible codewords. You don't have to use all of them. You only need as many as there are source messages.</div>
+        <h4>Fixed vs variable length</h4>
+        <ul>
+          <li><b>Fixed-length</b>: every codeword has the same n.</li>
+          <li><b>Variable-length coding (VLC)</b>: lossless compression that can still be read back symbol by symbol, with higher code efficiency. It gives <b>shorter codewords to frequent symbols and longer ones to rare symbols</b>, so fewer bits are sent on average.</li>
+        </ul>`},
+      {h:"2. Code examples (slides 8–9)", html:`
+        <ul>
+          <li><b>ASCII</b> (American Standard Code for Information Interchange): <b>fixed-length, 7 bits</b>, radix 2, so 2⁷ = <b>128</b> possible codewords. 0–9 = 30H–39H (011XXXX), A–Z = 41H–5AH, a–z = 61H–7AH. Each hex digit = 4 bits.</li>
+          <li><b>Morse code</b>: <b>variable-length</b>, dots and dashes sent as on-off tones, lights or clicks. Characters use 1 up to 5 symbols.</li>
+          <li><b>Two-out-of-five</b>: binary-coded decimal. Each digit uses 5 bits, <b>exactly two of them 1</b>. Position weights are 0‑1‑2‑3‑6, so the digit = the sum of the two weights (e.g. 8 = 2+6 → 00101). Digit 0 is a special case: 01100 (1+2 = 3 doesn't apply, it's just assigned).</li>
+        </ul>
+        <div class="callout"><span class="callout-tag">Lecture example: error detection and correction</span>Receive <b>10110</b>: three 1s, so an error definitely happened (retransmission may be requested). To <b>correct</b> it, pick the valid codeword closest to what was received. Dropping one 1 gives three candidates at distance 1: 00110 = 5, 10010 = 3, 10100 = 2. The system has to choose one, so detection is certain but correction is a decision.</div>`},
+      {h:"3. Information theory & the information source", html:`
+        <p><b>Information theory</b> = the mathematical treatment of the concepts, parameters and rules governing message transmission. It gives a <b>tangible (quantifiable) measure of the information content of a source</b>, so we can design better systems. Its techniques are <b>probabilistic</b>.</p>
+        <p>The information in a message = how many symbols you need to encode that event <i>optimally</i>. Optimal = <b>short</b> codewords that are still <b>uniquely decodable</b>.</p>
+        <p>Two fundamental questions: (1) How much information does a source produce? (2) How much can go through a channel with minimal error probability?</p>
+        <h4>Information source</h4>
+        <ul>
+          <li>Any source output is <b>statistically random</b>. You can't know in advance what it will send. Sources can be analog or discrete; this course focuses on <b>discrete</b>.</li>
+          <li>Simplest discrete source: emits letters from a <b>finite alphabet</b> S = {s₀, s₁, …, s<sub>K−1</sub>} (e.g. a binary source).</li>
+          <li>Symbols follow a <b>PMF</b> (discrete RV, our case) or a <b>PDF</b> (continuous/analog).</li>
+          <li>Each symbol has p<sub>i</sub> = P[S = s<sub>i</sub>], measurable empirically. The axioms are: <b>non-negativity</b> p<sub>i</sub> ≥ 0, <b>normalization</b> Σp<sub>i</sub> = 1, and <b>additivity</b> P(A∪B) = P(A)+P(B) for mutually exclusive symbols (only one occurs at a time).</li>
+          <li>Binary source: S = {0,1}, radix 2, with p₀ = P[S=0] and p₁ = P[S=1] (not necessarily equal).</li>
+        </ul>
+        <p><b>Discrete memoryless source (DMS)</b>: discrete, and its outputs are <b>i.i.d.</b> (independent and identically distributed). Each symbol is independent of the others, so the source has <b>no memory</b> of past symbols. Everything after this point assumes a DMS.</p>`},
+      {h:"4. Self-information (slides 16–18)", html:`
+        <div class="math-block">I(s<sub>i</sub>) = H<sub>i</sub> = log<sub>b</sub>${frac("1","p<sub>i</sub>")} = −log<sub>b</sub> p<sub>i</sub></div>
+        <p>The information carried by one particular symbol. Also called <b>surprisal</b> or <b>Shannon information</b>: more information = more surprise. I(s<sub>i</sub>) ≥ 0, with equality only when p<sub>i</sub> = 1 (a certain event brings nothing new).</p>
+        <h4>Units depend on the base b</h4>
+        ${tbl(['b','unit'],[['2','bits (Shannons), the default'],['10','Hartleys'],['e','nats (natural units)']])}
+        <p>Change of base: log<sub>b</sub>(a) = log<sub>c</sub>(a) / log<sub>c</sub>(b). E.g. log₂(a) = log₁₀(a) / log₁₀(2).</p>
+        <h4>Two extremes</h4>
+        <ul>
+          <li>p<sub>i</sub> → 1 (common event): I → log(1) = 0. <b>Common events carry little information.</b></li>
+          <li>p<sub>i</sub> → 0 (rare, almost impossible event): I → ∞. <b>Rare events carry more information.</b></li>
+        </ul>
+        <div class="callout"><span class="callout-tag">Lecturer's analogy</span>News: what makes something newsworthy on TV or Facebook is that it's rare and contains new information. Something that happens all the time isn't news.</div>
+        <h4>Properties</h4>
+        <ol>
+          <li>I(s<sub>i</sub>) = 0 for p<sub>i</sub> = 1.</li>
+          <li>I(s<sub>i</sub>) ≥ 0 for 0 ≤ p<sub>i</sub> ≤ 1.</li>
+          <li>I(s<sub>k</sub>) &gt; I(s<sub>i</sub>) if p<sub>k</sub> &lt; p<sub>i</sub> (rarer → more information).</li>
+          <li>I(s<sub>i</sub>s<sub>j</sub>) = I(s<sub>i</sub>) + I(s<sub>j</sub>) if s<sub>i</sub>, s<sub>j</sub> are statistically independent.</li>
+        </ol>`},
+      {h:"5. Entropy (slides 19–21)", html:`
+        <p>Entropy = the <b>average (expected) self-information</b> over all symbols of the source. It's an <i>expectation</i>, so each value is weighted by its probability, not a plain add-and-divide average.</p>
+        <div class="math-block">H(S) = E[I(S)] = Σ<sub>i=0</sub><sup>K−1</sup> p<sub>i</sub> I(s<sub>i</sub>) = Σ<sub>i=0</sub><sup>K−1</sup> p<sub>i</sub> log<sub>b</sub>${frac("1","p<sub>i</sub>")}</div>
+        <div class="math-block">0 ≤ H(S) ≤ log<sub>b</sub>K</div>
+        <ul>
+          <li><b>Lower bound H = 0</b>: a <b>deterministic source</b> that always emits one symbol with probability 1. No randomness.</li>
+          <li><b>Upper bound H = log<sub>b</sub>K</b>: all K symbols <b>equiprobable</b>, p<sub>i</sub> = 1/K. Each term is (1/K)·log<sub>b</sub>K, and there are K of them, so the sum is log<sub>b</sub>K.</li>
+        </ul>
+        <h4>Binary entropy function</h4>
+        <p>Binary source with p₀ = P and p₁ = 1 − P (a Bernoulli RV):</p>
+        <div class="math-block">H<sub>b</sub>(P) = P log₂${frac("1","P")} + (1−P) log₂${frac("1","1−P")}</div>
+        ${hbFig()}
+        <p>H = 0 when P = 1 (s₀ certain) or P = 0 (s₁ certain). Maximum 1 bit when P = 0.5.</p>
+        <div class="callout"><span class="callout-tag">Lecturer said</span>She plotted this live on <b>desmos.com</b> and caught herself using the wrong log. When you type it into a calculator, <b>put the base 2 in explicitly</b>, otherwise your answer will be wrong.</div>
+        <div class="callout"><span class="callout-tag">Example #1 (left for you)</span>p = ½, ¼, ⅛, ⅛ → H = ½(1) + ¼(2) + ⅛(3) + ⅛(3) = <b>1.75 bits/symbol</b>.</div>`},
+    ]
+  },
+  "b": {
+    label:"Part B · Source Coding",
+    sections:[
+      {h:"1. Source coding & average codeword length", html:`
+        <p><b>Source coding</b> = efficiently representing data from a discrete source, i.e. finding the <b>fewest bits per symbol</b>. To do it efficiently you <b>must know the source statistics</b>. In variable-length codes, probable symbols get shorter codewords.</p>
+        <p>Two functional requirements: (1) codewords are <b>binary</b>; (2) the code is <b>uniquely decodable</b>. Setup: DMS output s<sub>k</sub> → source encoder → binary block b<sub>k</sub>.</p>
+        <div class="math-block">L̄ = Σ<sub>i=0</sub><sup>K−1</sup> p<sub>i</sub> l<sub>i</sub> &nbsp;&nbsp;&nbsp; η = ${frac("L<sub>min</sub>","L̄")} ≤ 1</div>
+        <p>The goal is the smallest L̄ (L<sub>min</sub>). The encoder is efficient when η → 1.</p>
+        <h4>Source coding theorem: what is L<sub>min</sub>?</h4>
+        <p>For a DMS with entropy H(S), <b>any distortionless encoding has L̄ ≥ H(S)</b>. Entropy is the fundamental limit on average bits per symbol, so <b>L<sub>min</sub> = H(S)</b> and in practice <b>η = H(S)/L̄</b>.</p>
+        <div class="callout"><span class="callout-tag">Lecturer said</span>You can go below the entropy, but then you get <b>distortion</b> (it's no longer lossless).</div>`},
+      {h:"2. Uniquely decodable vs prefix-free", html:`
+        <p><b>Uniquely decodable</b>: every concatenation of codewords is distinct, so a bit stream has only one interpretation. (Not an issue for fixed-length codes.)</p>
+        <div class="callout"><span class="callout-tag">Slide 28 counter-example</span>{0, 1, 11, 00}: "1" is a prefix of "11" and "0" of "00". "11" could be s₂ or s₁s₁, so it is <b>not</b> uniquely decodable.</div>
+        <p><b>Prefix-free code</b> (prefix code / <b>instantaneous code</b>): no codeword is a prefix of another. Each codeword can be decoded the moment it ends, without looking ahead.</p>
+        <div class="callout"><span class="callout-tag">Slide 29</span>{1, 01, 001, 000}: receive 0 0 0 1 0 1 → <u>000</u> <u>1</u> <u>01</u> → s₃ s₀ s₁.</div>
+        <p><b>Prefix-free ⇒ always uniquely decodable. Uniquely decodable ⇏ prefix-free.</b></p>`},
+      {h:"3. Binary tree representation", html:`
+        ${treeFig()}
+        <ul>
+          <li>Branches labeled 1/0. A codeword is a path from the root.</li>
+          <li>If a codeword lies <b>on the path</b> of another (it is an ancestor), the code is <b>not</b> prefix-free. Slide 30: {10, 00, 11, 110}: s₂ = 11 is an ancestor of s₃ = 110.</li>
+          <li>In a prefix-free code <b>every codeword is a leaf</b>.</li>
+          <li>Tree depth = l<sub>max</sub>. There are 2<sup>l<sub>max</sub></sup> nodes at the bottom. A codeword of length l<sub>i</sub> "uses up" 2<sup>l<sub>max</sub>−l<sub>i</sub></sup> of them (slide 32: s₀ = 1 removes 4 of 8, s₁ = 01 removes 2).</li>
+        </ul>`},
+      {h:"4. Kraft‑McMillan inequality", html:`
+        <p>All the used-up nodes can't exceed the total: Σ 2<sup>l<sub>max</sub>−l<sub>i</sub></sup> ≤ 2<sup>l<sub>max</sub></sup>. Divide both sides by 2<sup>l<sub>max</sub></sup>:</p>
+        <div class="math-block">Σ<sub>i=0</sub><sup>K−1</sup> 2<sup>−l<sub>i</sub></sup> ≤ 1 &nbsp;&nbsp;&nbsp; <span class="fn">general radix r:</span> Σ r<sup>−l<sub>i</sub></sup> ≤ 1</div>
+        <p>It's a <b>necessary</b> condition for a uniquely decodable code. If the lengths satisfy it, a prefix code <b>with those lengths exists</b>. It does <b>not</b> prove that a particular code you were handed is prefix-free.</p>
+        <div class="callout"><span class="callout-tag">Example #2 (slide 34)</span>
+        ${tbl(['','Code I','Code II','Code III'],[['codes','0, 1, 11, 00','0, 10, 110, 111','0, 01, 011, 0111'],['Kraft sum','½+½+¼+¼ = 1.5','½+¼+⅛+⅛ = 1','½+¼+⅛+1/16 = 0.9375'],['verdict','!violates → not prefix','!satisfies, prefix','satisfies, but "0" is a prefix of "01" → not prefix']])}
+        </div>`},
+      {h:"5. Optimal length & Shannon's first theorem", html:`
+        <p>Minimize L̄ subject to Kraft. Using Lagrange multipliers (derivation skipped in lecture because it's long):</p>
+        <div class="math-block">l<sub>i</sub><sup>*</sup> = log₂${frac("1","p<sub>i</sub>")} &nbsp;<span class="fn">= the self-information</span></div>
+        <p>The asterisk means optimal. High p → small log → short codeword, which is exactly the "common symbols get fewer bits" idea.</p>
+        <div class="callout"><span class="callout-tag">Lecture example</span>p = 0.3 → l* = log₂(1/0.3) = 1.737. A codeword can't be 1.737 bits long, so take the <b>ceiling</b> (round up): ⌈1.737⌉ = 2. Ceiling brackets have the bars on top; floor brackets have them on the bottom.</div>
+        <div class="math-block">log₂${frac("1","p<sub>i</sub>")} ≤ ⌈log₂${frac("1","p<sub>i</sub>")}⌉ ≤ log₂${frac("1","p<sub>i</sub>")} + 1</div>
+        <p>Multiply by p<sub>i</sub> and sum over all symbols. The left side becomes H(S), the middle becomes L̄, and the right becomes H(S) + Σp<sub>i</sub> = H(S) + 1:</p>
+        <div class="math-block">H(S) ≤ L̄ ≤ H(S) + 1</div>
+        <p>So an optimal-length code is within <b>1 bit</b> of entropy. How do we get closer?</p>
+        <h4>Extensions of the code</h4>
+        <p>Combine (concatenate) n source symbols into one <b>super-symbol</b>, the <b>n‑th extension</b>, and encode the block. Because the DMS is i.i.d., <b>H(S̄) = nH(S)</b>.</p>
+        <div class="math-block">nH(S) ≤ L̄<sub>n</sub> ≤ nH(S) + 1 &nbsp;⟹&nbsp; H(S) ≤ ${frac("L̄<sub>n</sub>","n")} ≤ H(S) + ${frac("1","n")}</div>
+        <p>L̄<sub>n</sub> = bits per super-symbol; L̄<sub>n</sub>/n = bits per original symbol. This is <b>Shannon's First Coding Theorem</b> (also called the <b>Noiseless Coding Theorem</b> or <b>Source Coding Theorem</b>). Now you're within 1/n bit of entropy, and as n grows you code larger blocks and get closer to H. With n = 1 it reduces to the plain bound.</p>`},
+      {h:"6. Shannon code (Example #3)", html:`
+        <p>Builds a prefix code from the probabilities:</p>
+        <ol>
+          <li>Sort probabilities in decreasing order.</li>
+          <li>Length l<sub>i</sub> = ⌈log₂(1/p<sub>i</sub>)⌉.</li>
+          <li>p<sub>k</sub> = sum of all probabilities <b>before</b> (above) this symbol. The first one is 0.</li>
+          <li>Expand p<sub>k</sub> in binary to l<sub>i</sub> bits after the radix point. The first l<sub>i</sub> bits are the codeword.</li>
+        </ol>
+        <p><b>Decimal fraction → binary:</b> multiply by 2, write down the integer part (0 or 1), keep the fractional part, repeat until you have l<sub>i</sub> bits.</p>
+        <div class="callout"><span class="callout-tag">Lecture example: Example #3, p = 0.5, 0.25, 0.125, 0.125</span>
+        ${tbl(['sym','p<sub>i</sub>','l<sub>i</sub>','p<sub>k</sub>','×2 steps','codeword'],[['A','0.500','1','0','0×2 = 0.0','!0'],['B','0.250','2','0.5','0.5×2 = 1.0 → 0×2 = 0.0','!10'],['C','0.125','3','0.75','1.5 → 1.0 → 0.0','!110'],['D','0.125','3','0.875','1.75 → 1.5 → 1.0','!111']])}
+        H = 1.75 bits, L̄ = 0.5(1)+0.25(2)+0.125(3)+0.125(3) = 1.75 bits, <b>η = 1</b>. Kraft = ½+¼+⅛+⅛ = 1. Prefix-free.</div>
+        <div class="callout"><span class="callout-tag">Lecturer said</span>She only demonstrates building the code. Entropy, L̄, η and the Kraft check are "direct substitution" that you're expected to do yourself, and the answers are on the slide.</div>`},
+      {h:"7. Shannon‑Fano code (Example #4)", html:`
+        <ol>
+          <li>List symbols by decreasing probability (high p near the top gets short codes).</li>
+          <li>Divide the list into <b>radix</b> groups (2 for binary) with <b>sums as close as possible</b>.</li>
+          <li>Assign one symbol to each group (0 to one, 1 to the other).</li>
+          <li>Repeat on each group until every symbol is alone.</li>
+        </ol>
+        <p>With radix 10 you would divide into 10 groups and label them 0–9.</p>
+        <div class="callout"><span class="callout-tag">Lecture example: Example #4, p = 0.4, 0.2, 0.2, 0.1, 0.1</span>
+        Two valid first splits: A | BCDE (0.4 vs 0.6) or AB | CDE (0.6 vs 0.4). She used <b>AB | CDE</b>:
+        ${tbl(['sym','p','split 1','split 2','split 3','code','l'],[['A','0.4','0','0','','!00','2'],['B','0.2','0','1','','!01','2'],['C','0.2','1','0','','!10','2'],['D','0.1','1','1','0','!110','3'],['E','0.1','1','1','1','!111','3']])}
+        H = 2.1219 bits, L̄ = 2.2 bits, η = 0.9645. Kraft = ¼+¼+¼+⅛+⅛ = 1. Prefix-free.</div>
+        <div class="callout"><span class="callout-tag">Lecturer said: exam policy</span>Because the split is your decision, different answers are possible and so are slightly different H/L̄/η work. <b>On the exam, any valid split is accepted.</b> Putting 0 on top is her habit; 1 first is also fine as long as you're consistent.</div>`},
+      {h:"8. Huffman code (Example #5)", html:`
+        <p>Uses the source statistics to <b>minimize L̄</b>. It's the most optimal of the three, and the method is more graphical. An efficient code has p₀ ≥ p₁ ≥ … ≥ p<sub>K−1</sub> paired with l₀ ≤ l₁ ≤ … ≤ l<sub>K−1</sub>.</p>
+        <ol>
+          <li>List symbols by decreasing probability.</li>
+          <li><b>Combine the two least probable</b> items, labeling the two branches 0 and 1.</li>
+          <li>Re-sort and repeat until two remain, then combine them (total 1.0).</li>
+          <li><b>Trace the tree backwards</b> (from the root on the right to the symbol on the left) to read each codeword.</li>
+        </ol>
+        <div class="callout"><span class="callout-tag">Lecture example: Example #5, same p = 0.4, 0.2, 0.2, 0.1, 0.1</span>
+        Merge D+E → 0.2. Now there are three 0.2s, so there are several ways to continue. She showed two:
+        ${tbl(['sym','p','her answer (slide)','alternative from lecture'],[['A','0.4','0  (l=1)','0  (l=1)'],['B','0.2','10  (l=2)','100  (l=3)'],['C','0.2','110  (l=3)','101  (l=3)'],['D','0.1','1110  (l=4)','110  (l=3)'],['E','0.1','1111  (l=4)','111  (l=3)']])}
+        Both give <b>L̄ = 2.2 bits, η = 0.9645</b> and are prefix-free. The codes differ, but L̄ is the same minimum.</div>`},
+      {h:"9. Example #6: comparing all three, plus the 2nd extension", html:`
+        <p>p₀ = 0.8, p₁ = 0.2. H = H<sub>b</sub>(0.2) = <b>0.7219 bits</b>.</p>
+        ${tbl(['n = 1','code','L̄','η'],[['Shannon','0, 110','1.4','0.5156'],['Shannon‑Fano','0, 1','1.0','0.7219'],['Huffman','0, 1','1.0','0.7219']])}
+        <p class="formula-note"><span class="watch">⚠</span> The slide prints Shannon η = 0.5756. 0.7219/1.4 = <b>0.5156</b>. Recompute it yourself on the exam.</p>
+        <h4>Second extension (n = 2), which she worked live</h4>
+        <p>Concatenate 2 symbols: s₀s₀, s₀s₁, s₁s₀, s₁s₁. DMS is i.i.d., so <b>multiply</b> the probabilities:</p>
+        ${tbl(['super-symbol','p','Shannon','Shannon‑Fano (hers)','Huffman (hers)'],[['s₀s₀','0.8×0.8 = 0.64','0','0','0'],['s₀s₁','0.8×0.2 = 0.16','101','10','10'],['s₁s₀','0.2×0.8 = 0.16','110','110','110'],['s₁s₁','0.2×0.2 = 0.04','11110','111','111']])}
+        <p>H(S̄) = 2 × 0.7219 = <b>1.4439 bits</b>. Shannon: L̄₂ = 1.80, η = 0.8021. Shannon‑Fano: L̄₂ = 1.56, η = 0.9255. Huffman: L̄₂ = <b>1.56</b>, η = <b>0.9255</b>.</p>
+        <p class="formula-note"><span class="watch">⚠ watch</span> The slide says Huffman L̄ = 1.6, η = 0.9024. Her own Huffman code (0, 10, 110, 111) gives 0.64 + 0.32 + 0.48 + 0.12 = <b>1.56</b>, and so does every valid Huffman tree for these probabilities. The slide's value is 1.56 rounded to 1.6 before dividing. Show 1.56 and 0.9255.</p>
+        <p><b>Takeaway:</b> going from n = 1 to n = 2 raised Huffman's efficiency from 0.72 to 0.93. Bits per original symbol went 1.0 → 0.78, closer to H = 0.72.</p>`},
+    ]
+  },
+  "c": {
+    label:"Part C · Channel & Capacity",
+    sections:[
+      {h:"1. Discrete memoryless channel (DMC)", html:`
+        <p>Now we model the <b>channel</b> instead of the source. A DMC is a statistical model with input X and output Y, where <b>Y is a noisy version of X</b>. Each unit of time it accepts one x and outputs one y.</p>
+        <ul>
+          <li><b>Discrete</b>: both alphabets are finite. X = {x₀ … x<sub>q−1</sub>}, Y = {y₀ … y<sub>s−1</sub>}, and q and s don't have to be equal.</li>
+          <li><b>Memoryless</b>: the current output depends only on the <b>current input</b>, not on past inputs or outputs.</li>
+          <li><b>Transition probabilities</b> P(Y = y<sub>j</sub> | X = x<sub>i</sub>), each between 0 and 1.</li>
+        </ul>
+        <div class="callout"><span class="callout-tag">How the lecturer reads P(y<sub>j</sub>|x<sub>i</sub>)</span>"The probability that the <b>data</b> y<sub>j</sub> is observed, given that the <b>hypothesis</b> x<sub>i</sub> is true." From the receiver's side, Y is what you observe (the data) and X is unknown (the hypothesis). This conditional probability is called the <b>likelihood</b>.</div>
+        <h4>Channel transition matrix P (q × s)</h4>
+        <ul>
+          <li><b>Row = one input</b> (the hypothesis x<sub>i</sub>), <b>column = one output</b> (the observation y<sub>j</sub>). Every entry is a likelihood.</li>
+          <li><b>Each row sums to 1</b>: given what was sent, the outputs are the exhaustive set of outcomes. <b>Columns don't have to sum to 1</b> (a student asked; the answer is no).</li>
+          <li>Purpose: <b>characterize the channel</b>, so better techniques can be designed. Matrix form also makes MATLAB coding easy.</li>
+        </ul>
+        <h4>The four probabilities (memorize the names)</h4>
+        ${tbl(['expression','name'],[['P(y<sub>j</sub>|x<sub>i</sub>)','<b>likelihood</b> (transition / causal probability)'],['P(x<sub>i</sub>)','<b>a priori</b> probability (prior of the hypothesis)'],['P(y<sub>j</sub>)','<b>marginal</b> probability (prior of the observation)'],['P(x<sub>i</sub>|y<sub>j</sub>)','<b>posterior</b> (diagnostic) probability']])}
+        <div class="math-block">P(x<sub>i</sub>,y<sub>j</sub>) = P(y<sub>j</sub>|x<sub>i</sub>)·P(x<sub>i</sub>) &nbsp;&nbsp;&nbsp; P(y<sub>j</sub>) = Σ<sub>i=0</sub><sup>q−1</sup> P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>)</div>
+        <div class="math-block">p(Y) = p(X)·P &nbsp;&nbsp;<span class="fn">[1×s] = [1×q]·[q×s]</span></div>
+        <p>Vector × matrix: the inner dimensions must agree (q = q, "conformable"), and the result takes the outer dimensions. Each output entry = the dot product of the input row with one column of P. p(X) and p(Y) each sum to 1.</p>
+        <div class="math-block">Bayes: P(x<sub>i</sub>|y<sub>j</sub>) = ${frac("P(y<sub>j</sub>|x<sub>i</sub>)·P(x<sub>i</sub>)","P(y<sub>j</sub>)")}</div>`},
+      {h:"2. Binary symmetric channel (BSC)", html:`
+        ${bscFig()}
+        <p>Binary = input and output are 0 or 1. Symmetric = the flip probability is the same in both directions. Small <b>p is the probability of error</b> (P(1|0) = P(0|1) = p), and 1 − p is the probability of correct reception.</p>
+        <div class="math-block">P = [ P(0|0) &nbsp; P(1|0) ; P(0|1) &nbsp; P(1|1) ] = [ 1−p &nbsp; p ; p &nbsp; 1−p ]</div>`},
+      {h:"3. Decision rules", html:`
+        <p>Given that y<sub>j</sub> was received, decide which x<sub>i</sub> was sent. d(y<sub>j</sub>) is the decision function.</p>
+        ${tbl(['rule','picks the x<sub>i</sub> that maximizes','notes'],[['Maximum <b>a priori</b>','P(x<sub>i</sub>)','Ignores what was received. Only useful when the channel is so bad (highly corrupted, or no transition matrix known) that the observation is worthless. Not as good as the others.'],['Maximum <b>a posteriori</b> (MAP)','P(x<sub>i</sub>|y<sub>j</sub>)','Uses the observation: "given this y, which x most likely produced it?"'],['Maximum <b>likelihood</b> (ML)','P(y<sub>j</sub>|x<sub>i</sub>)','Uses the transition probabilities. Equals MAP when the inputs are equiprobable.']])}
+        <p>She only wants a high-level understanding here. These rules are used later for more refined designs.</p>`},
+      {h:"4. Mutual information (slides 58–61)", html:`
+        <p>Self-information is about one symbol. <b>Mutual information</b> measures the relationship between two random variables (here the channel input and output): how much you learn about one by observing the other.</p>
+        <ul>
+          <li>H(X): uncertainty about the input <b>before</b> observing Y.</li>
+          <li>H(X|Y): uncertainty about the input <b>remaining after</b> observing Y.</li>
+          <li>I(X;Y): the input uncertainty that is <b>resolved</b> by observing Y. For a good channel it must be <b>large</b>.</li>
+        </ul>
+        <div class="math-block">I(X;Y) = H(X) − H(X|Y)</div>
+        ${vennFig()}
+        <h4>Properties</h4>
+        <ol>
+          <li><b>Symmetric</b>: I(X;Y) = I(Y;X) = H(Y) − H(Y|X). Both are the same overlap in the Venn diagram. H(Y|X) = uncertainty left in Y after <i>sending</i> X.</li>
+          <li><b>Non-negative</b>: I(X;Y) ≥ 0. Observing the output can never lose information. It equals 0 when X and Y are <b>statistically independent</b> (output unrelated to input).</li>
+          <li><b>Joint entropy form</b>: I(X;Y) = H(X) + H(Y) − H(X,Y).</li>
+        </ol>
+        <p class="formula-note"><span class="watch">⚠ watch</span> In the recording she says the joint entropy is "greater than or equal to the sum of the individual entropies" and that "when they're exactly the same, mutual information becomes zero". Both are backwards. Correct: <b>H(X,Y) ≤ H(X) + H(Y)</b>, with equality only when X and Y are <b>independent</b>, and that equality case is when I = 0. You can see it from the Venn diagram: the union is never bigger than the two circles added together. If X and Y are identical, I is at its maximum (= H(X)), not zero.</p>`},
+      {h:"5. Channel capacity (slides 63–65)", html:`
+        <div class="math-block">C = max<sub>P(x<sub>i</sub>)</sub> I(X;Y)</div>
+        <p>The maximum average information transferred per channel symbol, maximized over all input distributions. Units: <b>bits per channel use</b> (bits per transmission). It's the maximum rate at which information can go through the channel.</p>
+        <p>For a BSC, I(X;Y) is maximized when the <b>input</b> symbols are <b>equiprobable</b>, giving:</p>
+        <div class="math-block">C<sub>BSC</sub> = 1 − H<sub>b</sub>(p)</div>
+        <div class="callout"><span class="callout-tag">Lecturer's reading</span>The <b>1</b> is the best possible: 1 bit per use. The <b>H<sub>b</sub>(p)</b> is a "noise penalty", the information lost crossing the channel.</div>
+        ${cbscFig()}
+        ${tbl(['case','H<sub>b</sub>(p)','C','meaning'],[['p → 0','→ 0','→ 1','no channel errors, ideal'],['p → 1','→ 0','→ 1','channel flips every symbol, but consistently, so invert at the receiver'],['p = 0.5','1','0','worst channel: half the bits are wrong at random']])}
+        <div class="callout"><span class="callout-tag">Lecturer said: don't mix these up</span>"Equiprobable is good" refers to the <b>source/input symbols</b> (max entropy, max I). In the capacity table, p = 0.5 means the <b>error</b> is equiprobable (correct half the time, wrong half the time), and that's the worst case. Transmission is still possible, but a lot needs fixing, which is where channel coding comes in.</div>`},
+      {h:"6. Information rate & the channel coding theorem", html:`
+        <p>Chain: DMS → channel encoder → DMC → channel decoder → destination.</p>
+        <div class="math-block">source info rate = ${frac("H(S)","T<sub>s</sub>")} = R<sub>s</sub>H(S) &nbsp;(bps) &nbsp;&nbsp;&nbsp; capacity per second = ${frac("C","T<sub>c</sub>")} = R<sub>c</sub>C &nbsp;(bps)</div>
+        <p>T<sub>s</sub> = source symbol period, R<sub>s</sub> = 1/T<sub>s</sub> = symbol <b>rate</b>. T<sub>c</sub> = channel symbol period (one channel use every T<sub>c</sub> s), R<sub>c</sub> = channel symbol rate.</p>
+        <p class="formula-note"><span class="watch">⚠</span> In the recording she calls R<sub>s</sub> the "symbol period" once. It's the symbol <b>rate</b> (1/T<sub>s</sub>).</p>
+        <div class="math-block">R<sub>s</sub>H(S) ≤ R<sub>c</sub>C</div>
+        <p><b>Channel coding theorem</b> (Shannon's <b>Second</b> Coding Theorem, the <b>Noisy Coding Theorem</b>): if the source information rate does not exceed the channel capacity per second, <b>a coding scheme exists</b> that makes transmission arbitrarily reliable. Capacity is the fundamental limit on the rate of reliable, error-free transmission over a DMC. Push more than that and the result will be full of errors.</p>
+        ${tbl(['','1st theorem','2nd theorem'],[['also called','Noiseless / Source Coding Theorem','Noisy / Channel Coding Theorem'],['statement','H(S) ≤ L̄ₙ/n ≤ H(S) + 1/n','R<sub>s</sub>H(S) ≤ R<sub>c</sub>C'],['considers channel?','no, source only','yes, includes noise via C']])}
+        <p>Channel coding algorithms come in Part 2 (the next module).</p>`},
+    ]
+  },
+};
+
+const formulaGroups = [
+  { topic:"Coding basics", items:[
+    {name:"Number of possible codewords", eq:`No. of codewords = (radix)<sup>n</sup>`, note:"Binary, n = 5 → 32. ASCII, n = 7 → 128."},
+  ]},
+  { topic:"Information theory", items:[
+    {name:"Self-information (surprisal)", eq:`I(s<sub>i</sub>) = log<sub>b</sub>${frac("1","p<sub>i</sub>")} = −log<sub>b</sub>p<sub>i</sub>`, note:"b = 2 → bits (Shannon), 10 → Hartley, e → nats. Change base with log_b(a) = log_c(a)/log_c(b)."},
+    {name:"Entropy", eq:`H(S) = Σ<sub>i=0</sub><sup>K−1</sup> p<sub>i</sub> log<sub>b</sub>${frac("1","p<sub>i</sub>")}, &nbsp; 0 ≤ H(S) ≤ log<sub>b</sub>K`, note:"0 → deterministic source; log_b K → equiprobable symbols."},
+    {name:"Binary entropy function", eq:`H<sub>b</sub>(p) = p log₂${frac("1","p")} + (1−p) log₂${frac("1","1−p")}`, note:"Max 1 bit at p = 0.5; 0 at p = 0 or 1. Handy values: H_b(0.1) = 0.4690, H_b(0.2) = 0.7219."},
+  ]},
+  { topic:"Source coding", items:[
+    {name:"Average codeword length", eq:`L̄ = Σ p<sub>i</sub> l<sub>i</sub>`, note:""},
+    {name:"Coding efficiency", eq:`η = ${frac("L<sub>min</sub>","L̄")} = ${frac("H(S)","L̄")} ≤ 1`, note:"With an extension, use η = H(S̄)/L̄ₙ = nH(S)/L̄ₙ (same ratio as per-symbol)."},
+    {name:"Kraft‑McMillan inequality", eq:`Σ<sub>i=0</sub><sup>K−1</sup> 2<sup>−l<sub>i</sub></sup> ≤ 1 &nbsp;&nbsp; <span class="fn">(radix r: Σ r<sup>−l<sub>i</sub></sup> ≤ 1)</span>`, note:"<span class=\"watch\">⚠ watch</span> Slide 33 wording ('sufficient condition for a prefix code') means a prefix code with those lengths exists. A specific code can satisfy Kraft and still not be prefix (Example 2, Code III). Always check prefixes separately."},
+    {name:"Optimal codeword length", eq:`l<sub>i</sub><sup>*</sup> = log₂${frac("1","p<sub>i</sub>")} &nbsp;→&nbsp; l<sub>i</sub> = ⌈log₂${frac("1","p<sub>i</sub>")}⌉`, note:"Ceiling = round up to the next integer."},
+    {name:"Bounds on L̄", eq:`H(S) ≤ L̄ ≤ H(S) + 1`, note:"Source coding theorem lower bound plus the ceiling upper bound."},
+    {name:"Shannon's 1st theorem (n‑th extension)", eq:`H(S̄) = nH(S) &nbsp;&nbsp; H(S) ≤ ${frac("L̄<sub>n</sub>","n")} ≤ H(S) + ${frac("1","n")}`, note:"L̄ₙ = bits per super-symbol, L̄ₙ/n = bits per original symbol. Super-symbol probability = product of the individual probabilities (i.i.d.)."},
+    {name:"Shannon code cumulative probability", eq:`p<sub>k</sub> = Σ<sub>i=1</sub><sup>k−1</sup> p<sub>i</sub>`, note:"Sum of probabilities above the symbol in the sorted list. Expand in binary to l_i bits."},
+    {name:"Example #6 values ⚠ watch", eq:`n=1: H = 0.7219 &nbsp; n=2: H(S̄) = 1.4439, Huffman L̄₂ = 1.56, η = 0.9255`, note:"<span class=\"watch\">⚠</span> Slide 49 shows Huffman (n = 2) L̄ = 1.6, η = 0.9024, and Shannon (n = 1) η = 0.5756. Correct values: 1.56 / 0.9255 and 0.7219/1.4 = 0.5156."},
+  ]},
+  { topic:"Discrete memoryless channel", items:[
+    {name:"Row sum of the transition matrix", eq:`Σ<sub>j=0</sub><sup>s−1</sup> P(y<sub>j</sub>|x<sub>i</sub>) = 1 &nbsp; ∀i`, note:"Rows only, not columns."},
+    {name:"Joint and marginal", eq:`P(x<sub>i</sub>,y<sub>j</sub>) = P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>) &nbsp;&nbsp; P(y<sub>j</sub>) = Σ<sub>i</sub> P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>)`, note:"Likelihood × a priori = joint. Sum the joint over i to get the marginal."},
+    {name:"Matrix form", eq:`p(Y) = p(X)·P &nbsp; <span class="fn">[1×s] = [1×q][q×s]</span>`, note:""},
+    {name:"Bayes' rule (posterior)", eq:`P(x<sub>i</sub>|y<sub>j</sub>) = ${frac("P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>)","P(y<sub>j</sub>)")}`, note:"Posterior = likelihood × prior / marginal."},
+    {name:"BSC transition matrix", eq:`P = [1−p &nbsp; p ; p &nbsp; 1−p]`, note:"p = error (crossover) probability."},
+    {name:"Decision rules", eq:`Max a priori: argmax P(x<sub>i</sub>) &nbsp;|&nbsp; MAP: argmax P(x<sub>i</sub>|y<sub>j</sub>) &nbsp;|&nbsp; ML: argmax P(y<sub>j</sub>|x<sub>i</sub>)`, note:""},
+  ]},
+  { topic:"Mutual information & capacity", items:[
+    {name:"Mutual information", eq:`I(X;Y) = H(X) − H(X|Y) = H(Y) − H(Y|X) = H(X) + H(Y) − H(X,Y)`, note:"Symmetric, ≥ 0, = 0 iff X and Y are independent."},
+    {name:"Joint entropy bound ⚠ watch", eq:`H(X,Y) ≤ H(X) + H(Y)`, note:"<span class=\"watch\">⚠</span> The recording says ≥. That's wrong, since I ≥ 0 forces ≤."},
+    {name:"Channel capacity", eq:`C = max<sub>P(x<sub>i</sub>)</sub> I(X;Y) &nbsp;<span class="fn">(bits/channel use)</span>`, note:""},
+    {name:"BSC capacity", eq:`C<sub>BSC</sub> = 1 − H<sub>b</sub>(p)`, note:"Achieved with equiprobable inputs. p → 0 or 1: C → 1. p = 0.5: C = 0."},
+    {name:"Information rate / capacity per second", eq:`R<sub>s</sub>H(S) = ${frac("H(S)","T<sub>s</sub>")} &nbsp;&nbsp; R<sub>c</sub>C = ${frac("C","T<sub>c</sub>")} &nbsp;(bps)`, note:""},
+    {name:"Channel coding theorem (Shannon's 2nd)", eq:`R<sub>s</sub>H(S) ≤ R<sub>c</sub>C`, note:"If this holds, a coding scheme exists for arbitrarily reliable transmission."},
+  ]},
+];
+
+const glossary = [
+  ["Coding","A set of rules that assigns a codeword to every message drawn from a dictionary of acceptable messages (a message → codeword mapping)."],
+  ["Source code","Binary sequence representation of the source output."],
+  ["Error code","A code designed to detect or correct errors (channel coding)."],
+  ["Cryptographic code","A code designed to conceal information."],
+  ["Codeword","A sequence (vector) of code symbols assigned to represent one message."],
+  ["Radix","Number of unique code symbols in the code alphabet; the base of the code (binary = 2, hex = 16)."],
+  ["Codeword length (n)","Number of code symbols in a single codeword."],
+  ["Variable-length coding (VLC)","Lossless compression that gives shorter codewords to frequent symbols and longer ones to rare symbols; can be read back symbol by symbol and gives higher efficiency."],
+  ["ASCII","American Standard Code for Information Interchange; a fixed-length 7-bit code (128 codewords)."],
+  ["Morse code","Variable-length code using dots and dashes, sent as on-off tones, lights or clicks."],
+  ["Two-out-of-five code","Binary-coded decimal using 5 bits with exactly two 1s (weights 0‑1‑2‑3‑6); detects errors and can correct by choosing the closest codeword."],
+  ["Information theory","Mathematical treatment of the concepts, parameters and rules governing message transmission; gives a tangible measure of a source's information content. Probabilistic in nature."],
+  ["Discrete memoryless source (DMS)","A discrete source whose output symbols are i.i.d.; it has no memory of previously generated symbols."],
+  ["i.i.d.","Independent and identically distributed."],
+  ["PMF / PDF","Probability mass function (discrete RVs) / probability density function (continuous RVs)."],
+  ["Self-information","Information content of one symbol, I(s_i) = log_b(1/p_i). Also called surprisal or Shannon information."],
+  ["Bit / Shannon, Hartley, Nat","Units of information for log base 2, 10 and e respectively."],
+  ["Entropy H(S)","Average (expected) self-information of a source over all its symbols; the fundamental limit on average bits per symbol."],
+  ["Deterministic source","A source that always emits one symbol with probability 1; entropy = 0."],
+  ["Binary entropy function H_b(p)","Entropy of a binary (Bernoulli) source: p log₂(1/p) + (1−p) log₂(1/(1−p)). Max 1 bit at p = 0.5."],
+  ["Source coding","Efficiently representing data from a discrete source; finding the fewest bits per symbol. Requires knowing the source statistics."],
+  ["Average codeword length L̄","Σ p_i l_i, the probability-weighted average of codeword lengths."],
+  ["Coding efficiency η","L_min / L̄ = H(S)/L̄ ≤ 1; the encoder is efficient as η → 1."],
+  ["Source coding theorem","For a DMS, any distortionless encoding has L̄ ≥ H(S), so L_min = H(S)."],
+  ["Uniquely decodable code","A code where every concatenation of codewords is distinct, so each bit stream has only one interpretation."],
+  ["Prefix-free code","A code where no codeword is a prefix of another; also called a prefix code or instantaneous code. Always uniquely decodable."],
+  ["Instantaneous code","Another name for a prefix-free code: each codeword is decodable by itself with no dependence on what follows."],
+  ["Kraft‑McMillan inequality","Σ r^(−l_i) ≤ 1; necessary for unique decodability, and guarantees a prefix code with those lengths exists."],
+  ["l_max","Maximum codeword length; the depth of the code's binary tree."],
+  ["Ceiling function","Rounds up to the nearest integer; used to make l_i = ⌈log₂(1/p_i)⌉ an integer."],
+  ["Super-symbol / n-th extension","Block of n concatenated source symbols encoded as one unit; H(S̄) = nH(S)."],
+  ["Shannon's First Coding Theorem","H(S) ≤ L̄ₙ/n ≤ H(S) + 1/n. Also called the Noiseless Coding Theorem or Source Coding Theorem."],
+  ["Shannon code","Prefix code with l_i = ⌈log₂(1/p_i)⌉, built by expanding the cumulative probability p_k in binary to l_i bits."],
+  ["Shannon‑Fano code","Code built by repeatedly dividing the sorted list into groups with near-equal probability sums and assigning 0/1 to each group."],
+  ["Huffman code","Optimal code built by repeatedly combining the two least probable items into a tree, then tracing back to assign codewords."],
+  ["Discrete memoryless channel (DMC)","Statistical channel model with finite input/output alphabets where the current output depends only on the current input."],
+  ["Transition probability","P(y_j|x_i), the probability of observing y_j given x_i was sent; also called the likelihood."],
+  ["Channel transition matrix","q×s matrix of transition probabilities; rows = inputs (each sums to 1), columns = outputs."],
+  ["Likelihood","P(y_j|x_i): probability the data is observed given the hypothesis is true (causal probability)."],
+  ["A priori probability","P(x_i): prior probability of the transmitted symbol (hypothesis)."],
+  ["Marginal probability","P(y_j) = Σ P(y_j|x_i)P(x_i): prior probability of the observation."],
+  ["Posterior probability","P(x_i|y_j): probability the hypothesis is true given the observation (diagnostic probability)."],
+  ["Binary symmetric channel (BSC)","Binary-in, binary-out channel where each bit flips with the same probability p in either direction."],
+  ["Maximum a priori rule","Decides using only the prior probabilities P(x_i), ignoring the received symbol."],
+  ["Maximum a posteriori (MAP) rule","Decides the x_i that maximizes P(x_i|y_j)."],
+  ["Maximum likelihood (ML) rule","Decides the x_i that maximizes P(y_j|x_i)."],
+  ["Mutual information I(X;Y)","Input uncertainty resolved by observing the output: H(X) − H(X|Y). Symmetric and non-negative."],
+  ["Conditional entropy H(X|Y)","Uncertainty remaining about the input after observing the output."],
+  ["Joint entropy H(X,Y)","Total uncertainty of input and output together; the union in the Venn diagram."],
+  ["Channel capacity C","Maximum mutual information over all input distributions; bits per channel use."],
+  ["Inverting channel","BSC with p → 1: always flips bits, so capacity is still 1 (just invert at the receiver)."],
+  ["Information rate","R_s H(S) = H(S)/T_s, the average information per second from the source (bps)."],
+  ["Channel coding theorem","Reliable transmission is possible if R_s H(S) ≤ R_c C. Also called Shannon's Second Coding Theorem or the Noisy Coding Theorem."],
+];
+
+const practice = [
+  { q:"Self-information. A symbol occurs with probability 1/8. Find its self-information in bits, Hartleys and nats.",
+    a:`<div class="math-block">I = log₂ 8 = <b>3 bits</b> &nbsp;&nbsp; log₁₀ 8 = <b>0.9031 Hartley</b> &nbsp;&nbsp; ln 8 = <b>2.0794 nats</b></div>
+    <span class="formula-note">Check: 3 bits × log₁₀2 = 3 × 0.30103 = 0.9031. Change of base works.</span>` },
+  { q:"Entropy. A DMS emits four symbols with p = 0.4, 0.3, 0.2, 0.1. Find H(S) and its maximum possible value for a 4-symbol source.",
+    a:`<div class="math-block">H = 0.4·log₂2.5 + 0.3·log₂3.333 + 0.2·log₂5 + 0.1·log₂10</div>
+    <div class="math-block">= 0.5288 + 0.5211 + 0.4644 + 0.3322 = <b>1.8464 bits/symbol</b></div>
+    Max = log₂4 = <b>2 bits</b>, reached only if all four are equiprobable.` },
+  { q:"Kraft‑McMillan. For each code, compute the Kraft sum and decide whether it is prefix-free. X = {1, 01, 001, 0001}, Y = {0, 1, 00, 11}, Z = {0, 01, 11}.",
+    a:`${tbl(['code','Kraft sum','prefix-free?'],[['X','½+¼+⅛+1/16 = 0.9375 ≤ 1','yes (every codeword is a leaf)'],['Y','½+½+¼+¼ = 1.5 > 1','no, violates Kraft so it cannot be uniquely decodable'],['Z','½+¼+¼ = 1 ≤ 1','no: "0" is a prefix of "01"']])}
+    <span class="formula-note">Z is the trap: satisfying Kraft does not make a specific code prefix-free.</span>` },
+  { q:"Deck Problem #1a: Shannon‑Fano. p₀ = 0.30, p₁ = 0.25, p₂ = 0.15, p₃ = 0.12, p₄ = 0.10, p₅ = 0.08. Find the code, H, L̄, η and check Kraft.",
+    a:`First split: {s₀,s₁} = 0.55 vs {s₂…s₅} = 0.45 (closest). Then s₀|s₁, and {s₂,s₃} = 0.27 vs {s₄,s₅} = 0.18.
+    ${tbl(['sym','p','code','l'],[['s₀','0.30','!00','2'],['s₁','0.25','!01','2'],['s₂','0.15','!100','3'],['s₃','0.12','!101','3'],['s₄','0.10','!110','3'],['s₅','0.08','!111','3']])}
+    <div class="math-block">H = <b>2.4224 bits</b> &nbsp;&nbsp; L̄ = 0.55(2) + 0.45(3) = <b>2.45 bits</b> &nbsp;&nbsp; η = <b>0.9887</b></div>
+    Kraft = 2(¼) + 4(⅛) = 1 ≤ 1 ✓. Prefix-free ✓.` },
+  { q:"Deck Problem #1b: Shannon‑Fano. p = 0.20, 0.19, 0.17, 0.15, 0.14, 0.06, 0.05, 0.04 (a…h). Find the code, H, L̄, η and check Kraft.",
+    a:`First split: {a,b,c} = 0.56 vs {d…h} = 0.44. Then a | bc (0.20 vs 0.36). For {d…h} the split d | efgh and de | fgh tie (0.15 vs 0.29); either is valid.
+    ${tbl(['sym','p','code (d | efgh)','l'],[['a','0.20','!00','2'],['b','0.19','!010','3'],['c','0.17','!011','3'],['d','0.15','!10','2'],['e','0.14','!110','3'],['f','0.06','!1110','4'],['g','0.05','!11110','5'],['h','0.04','!11111','5']])}
+    <div class="math-block">H = <b>2.8072 bits</b> &nbsp;&nbsp; L̄ = <b>2.89 bits</b> &nbsp;&nbsp; η = <b>0.9714</b></div>
+    Kraft = 1 ✓. (The other tie, d = 100, e = 101, f = 110, g = 1110, h = 1111, also gives L̄ = 2.89.)` },
+  { q:"Deck Problem #2a: Huffman. Same source as #1a (0.30, 0.25, 0.15, 0.12, 0.10, 0.08). Find the code, H, L̄, η and check Kraft.",
+    a:`Merges: 0.08+0.10 = 0.18 → 0.12+0.15 = 0.27 → 0.18+0.25 = 0.43 → 0.27+0.30 = 0.57 → 0.43+0.57 = 1.0.
+    ${tbl(['sym','p','code','l'],[['s₀','0.30','!00','2'],['s₁','0.25','!10','2'],['s₂','0.15','!010','3'],['s₃','0.12','!011','3'],['s₄','0.10','!110','3'],['s₅','0.08','!111','3']])}
+    <div class="math-block">H = 2.4224 &nbsp; L̄ = <b>2.45 bits</b> &nbsp; η = <b>0.9887</b></div>
+    Kraft = 1 ✓. Same L̄ as Shannon‑Fano here. Your bit labels may differ; the lengths (2,2,3,3,3,3) should not.` },
+  { q:"Deck Problem #2b: Huffman. Same source as #1b (0.20, 0.19, 0.17, 0.15, 0.14, 0.06, 0.05, 0.04). Find the code, H, L̄, η and check Kraft.",
+    a:`Merges: 0.04+0.05 = 0.09 → 0.06+0.09 = 0.15 → 0.14+0.15 = 0.29 → 0.15+0.17 = 0.32 → 0.19+0.20 = 0.39 → 0.29+0.32 = 0.61 → 1.0.
+    ${tbl(['sym','p','code','l'],[['a','0.20','!10','2'],['b','0.19','!11','2'],['c','0.17','!000','3'],['d','0.15','!010','3'],['e','0.14','!011','3'],['f','0.06','!0011','4'],['g','0.05','!00100','5'],['h','0.04','!00101','5']])}
+    <div class="math-block">H = 2.8072 &nbsp; L̄ = <b>2.85 bits</b> &nbsp; η = <b>0.9850</b></div>
+    Kraft = 1 ✓. Huffman beats Shannon‑Fano here (2.85 vs 2.89), as expected: Huffman is optimal.` },
+  { q:"Shannon code. Build the Shannon code for the #1a source (0.30, 0.25, 0.15, 0.12, 0.10, 0.08). Find L̄, η and the Kraft sum.",
+    a:`${tbl(['p','l = ⌈log₂1/p⌉','p<sub>k</sub>','binary','code'],[['0.30','⌈1.74⌉ = 2','0','.00','!00'],['0.25','2','0.30','.01…','!01'],['0.15','⌈2.74⌉ = 3','0.55','.100…','!100'],['0.12','⌈3.06⌉ = 4','0.70','.1011…','!1011'],['0.10','⌈3.32⌉ = 4','0.82','.1101…','!1101'],['0.08','⌈3.64⌉ = 4','0.92','.1110…','!1110']])}
+    <div class="math-block">L̄ = 0.6 + 0.5 + 0.45 + 4(0.30) = <b>2.75 bits</b> &nbsp;&nbsp; η = 2.4224/2.75 = <b>0.8809</b></div>
+    Kraft = ¼+¼+⅛+3(1/16) = <b>0.8125</b> ≤ 1. Prefix-free ✓. The Shannon code is valid but less efficient than Fano/Huffman (2.45).` },
+  { q:"Extension. p₀ = 0.9, p₁ = 0.1. (a) Huffman code and η for n = 1. (b) Huffman code, L̄₂, bits per symbol and η for the 2nd extension.",
+    a:`(a) H = H<sub>b</sub>(0.1) = <b>0.4690</b>. Huffman = {0, 1}, L̄ = 1, η = <b>0.4690</b>.<br>
+    (b) Super-symbols: 0.81, 0.09, 0.09, 0.01. Merges: 0.01+0.09 = 0.10 → 0.09+0.10 = 0.19 → 0.81+0.19.
+    ${tbl(['super-symbol','p','code','l'],[['s₀s₀','0.81','!0','1'],['s₀s₁','0.09','!10','2'],['s₁s₀','0.09','!110','3'],['s₁s₁','0.01','!111','3']])}
+    <div class="math-block">L̄₂ = 0.81 + 0.18 + 0.27 + 0.03 = <b>1.29</b> &nbsp; L̄₂/2 = <b>0.645 bits/symbol</b> &nbsp; η = ${frac("2(0.4690)","1.29")} = <b>0.7271</b></div>
+    Efficiency jumps from 0.47 to 0.73, and the bound H ≤ 0.645 ≤ H + ½ holds.` },
+  { q:"Channel + decision rules. BSC with p = 0.2 and priors P(x=0) = 0.9, P(x=1) = 0.1. (a) Find P(y=0) and P(y=1) using p(Y) = p(X)P. (b) If y = 1 is received, what does each rule decide: max a priori, MAP, ML?",
+    a:`(a) <div class="math-block">[0.9 &nbsp; 0.1]·[0.8 &nbsp; 0.2 ; 0.2 &nbsp; 0.8] = [0.72+0.02 &nbsp;&nbsp; 0.18+0.08] = [<b>0.74</b> &nbsp; <b>0.26</b>]</div>
+    (b) <b>Max a priori:</b> P(x=0) = 0.9 is largest → decide <b>0</b> (ignores y).<br>
+    <b>ML:</b> P(y=1|x=0) = 0.2 vs P(y=1|x=1) = 0.8 → decide <b>1</b>.<br>
+    <b>MAP:</b> P(x=0|y=1) = 0.9·0.2/0.26 = 0.692, P(x=1|y=1) = 0.1·0.8/0.26 = 0.308 → decide <b>0</b>.
+    <span class="formula-note">The strong prior beats the observation under MAP. MAP reduces to ML only when the inputs are equiprobable.</span>` },
+  { q:"BSC capacity. Find C for a BSC with p = 0.1, p = 0.5 and p = 0.9.",
+    a:`<div class="math-block">p = 0.1: H<sub>b</sub> = 0.1·log₂10 + 0.9·log₂(1/0.9) = 0.3322 + 0.1368 = 0.4690 → C = <b>0.5310 bits/use</b></div>
+    p = 0.5: H<sub>b</sub> = 1 → C = <b>0</b> (worst channel).<br>
+    p = 0.9: H<sub>b</sub>(0.9) = H<sub>b</sub>(0.1) = 0.4690 → C = <b>0.5310</b>. The curve is symmetric, so a mostly-inverting channel is as good as a mostly-correct one.` },
+  { q:"Mutual information three ways. BSC with p = 0.1 and equiprobable inputs. Find H(X), H(Y), H(X,Y) and I(X;Y), and confirm I = 1 − H_b(p).",
+    a:`Joint P(x,y) = P(y|x)P(x): 0.45, 0.05, 0.05, 0.45. Outputs: P(y=0) = P(y=1) = 0.5.
+    <div class="math-block">H(X) = 1, &nbsp; H(Y) = 1, &nbsp; H(X,Y) = 2(0.45 log₂${frac("1","0.45")}) + 2(0.05 log₂${frac("1","0.05")}) = <b>1.4690</b></div>
+    <div class="math-block">I = H(X) + H(Y) − H(X,Y) = 2 − 1.4690 = <b>0.5310 bits</b> = 1 − H<sub>b</sub>(0.1) ✓</div>
+    Also H(X,Y) = 1.469 ≤ H(X)+H(Y) = 2, which confirms the inequality goes ≤.` },
+  { q:"Channel coding theorem. A DMS with H(S) = 1.75 bits/symbol emits 1000 symbols/s. The channel is a BSC with p = 0.1 that can be used 4000 times per second. Is reliable transmission possible?",
+    a:`<div class="math-block">R<sub>s</sub>H(S) = 1000 × 1.75 = <b>1750 bps</b> &nbsp;&nbsp; R<sub>c</sub>C = 4000 × 0.5310 = <b>2124 bps</b></div>
+    1750 ≤ 2124, so <b>yes</b>: by Shannon's 2nd theorem a coding scheme exists for arbitrarily reliable transmission. (With only 3000 channel uses/s: 1593 bps &lt; 1750 → not guaranteed.)` },
+];
+
+function loadState(){ try{ return JSON.parse(localStorage.getItem('m3p1-study-state')||'{}'); }catch(e){ return {}; } }
+function saveState(s){ try{ localStorage.setItem('m3p1-study-state', JSON.stringify(s)); }catch(e){} }
+let state = loadState();
+function updateProgress(){
+  const boxes=document.querySelectorAll('#scheduleList input[type=checkbox]');
+  const done=document.querySelectorAll('#scheduleList input[type=checkbox]:checked').length;
+  document.getElementById('progressPill').textContent = done+' / '+boxes.length+' tasks';
+}
+function renderSchedule(){
+  const root=document.getElementById('scheduleList'); root.innerHTML='';
+  schedule.forEach(n=>{
+    const card=document.createElement('div'); card.className='card';
+    const totalMin=n.tasks.reduce((s,t)=>s+parseInt(t[1]),0);
+    card.innerHTML=`<div class="night-head"><div><span class="night-tag">${n.day}</span>
+      <div class="sub" style="margin-top:6px;font-weight:600;color:var(--ink);">${n.focus}</div></div>
+      <div class="night-mins">~${totalMin} min</div></div><ul class="tasklist"></ul>`;
+    const ul=card.querySelector('ul');
+    n.tasks.forEach((t,i)=>{
+      const id='n'+n.night+'-t'+i; const li=document.createElement('li'); const c=!!state[id];
+      if(c) li.classList.add('done');
+      li.innerHTML=`<input type="checkbox" id="${id}" ${c?'checked':''}><label for="${id}" class="tasktext">${t[0]}</label><span class="taskmin">${t[1]}</span>`;
+      ul.appendChild(li);
+    });
+    root.appendChild(card);
+  });
+  root.addEventListener('change',e=>{
+    if(e.target.matches('input[type=checkbox]')){
+      state[e.target.id]=e.target.checked; saveState(state);
+      e.target.closest('li').classList.toggle('done',e.target.checked); updateProgress();
+    }
+  });
+  updateProgress();
+}
+let activeNoteModule=Object.keys(lectureNotes)[0];
+function renderNotesSubtabs(){
+  const root=document.getElementById('notesSubtabs'); root.innerHTML='';
+  Object.keys(lectureNotes).forEach(key=>{
+    const b=document.createElement('button'); b.textContent=lectureNotes[key].label;
+    b.className= key===activeNoteModule?'active':'';
+    b.addEventListener('click',()=>{ activeNoteModule=key; renderNotesSubtabs(); renderNotesContent(); });
+    root.appendChild(b);
+  });
+}
+function renderNotesContent(){
+  const root=document.getElementById('notesContent'); root.innerHTML='';
+  lectureNotes[activeNoteModule].sections.forEach(sec=>{
+    const card=document.createElement('div'); card.className='card note-sec';
+    card.innerHTML=`<h3>${sec.h}</h3>${sec.html}`; root.appendChild(card);
+  });
+}
+function renderFormulas(){
+  const root=document.getElementById('formulaList'); root.innerHTML='';
+  formulaGroups.forEach(g=>{
+    const h=document.createElement('div'); h.className='topic-h'; h.textContent=g.topic; root.appendChild(h);
+    const card=document.createElement('div'); card.className='card';
+    g.items.forEach(it=>{
+      const d=document.createElement('div'); d.className='formula-item';
+      d.innerHTML=`<div class="formula-name">${it.name}</div><div class="math-block">${it.eq}</div>${it.note?`<div class="formula-note">${it.note}</div>`:''}`;
+      card.appendChild(d);
+    });
+    root.appendChild(card);
+  });
+}
+function renderGlossary(filter=''){
+  const root=document.getElementById('glossList'), empty=document.getElementById('glossEmpty');
+  root.innerHTML=''; const f=filter.trim().toLowerCase(); let n=0;
+  glossary.forEach(([t,d])=>{
+    if(f && !t.toLowerCase().includes(f) && !d.toLowerCase().includes(f)) return;
+    n++; const div=document.createElement('div'); div.className='gloss-item';
+    div.innerHTML=`<div class="gloss-term">${t}</div><div class="gloss-def">${d}</div>`; root.appendChild(div);
+  });
+  empty.hidden=n>0;
+}
+function renderPractice(){
+  const root=document.getElementById('practiceList'); root.innerHTML='';
+  practice.forEach((p,i)=>{
+    const div=document.createElement('div'); div.className='prob';
+    div.innerHTML=`<div class="prob-title">Problem ${i+1}</div><div class="prob-body">${p.q}</div>
+      <button class="reveal-btn" type="button">Show answer</button><div class="answer" hidden>${p.a}</div>`;
+    const b=div.querySelector('.reveal-btn'), a=div.querySelector('.answer');
+    b.addEventListener('click',()=>{ a.hidden=!a.hidden; b.textContent=a.hidden?'Show answer':'Hide answer'; });
+    root.appendChild(div);
+  });
+}
+document.getElementById('tabs').addEventListener('click',e=>{
+  const btn=e.target.closest('button[data-pane]'); if(!btn) return;
+  document.querySelectorAll('#tabs button').forEach(b=>b.classList.toggle('active',b===btn));
+  document.querySelectorAll('section.pane').forEach(p=>p.classList.toggle('active',p.id==='pane-'+btn.dataset.pane));
+  window.scrollTo(0,0);
+});
+document.getElementById('glossSearch').addEventListener('input',e=>renderGlossary(e.target.value));
+renderSchedule(); renderNotesSubtabs(); renderNotesContent(); renderFormulas(); renderGlossary(); renderPractice();
+</script>
+</html>
