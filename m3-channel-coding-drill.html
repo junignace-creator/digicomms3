@@ -1314,5 +1314,48 @@ document.getElementById('tabs').addEventListener('click',e=>{
 });
 document.getElementById('glossSearch').addEventListener('input',e=>renderGlossary(e.target.value));
 renderSchedule(); renderNotesSubtabs(); renderNotesContent(); renderFormulas(); renderGlossary(); renderPractice();
+
+/* ---------- practice → lecture-notes links ---------- */
+const PRACTICE_REFS = [[["a", "5. Linear block codes"]], [["a", "7. Systematic linear block codes"]], [["a", "8. Generator matrix G"]], [["a", "9. Parity check matrix H"]], [["a", "3. Performance measures: coding gain, redundancy, code rate"], ["a", "8. Generator matrix G"], ["a", "9. Parity check matrix H"], ["a", "6. Metrics: weight and distance"], ["a", "10. Syndrome & error pattern"]], [["a", "11. Syndrome decoding (slides 29–33, not in the recording)"], ["a", "10. Syndrome & error pattern"], ["a", "9. Parity check matrix H"]], [["b", "5. Systematic cyclic code (Example #6)"], ["b", "2. Polynomial representation (Galois field)"]], [["b", "6. Syndrome calculation & CRC"], ["b", "2. Polynomial representation (Galois field)"]], [["c", "2. Encoding with the shift-register table (Example #8)"], ["c", "1. Convolutional codes vs block codes"]], [["c", "4. State transition table & state diagram (Example #9)"]], [["c", "6. Decoding: hard/soft decisions & the Viterbi algorithm"], ["c", "5. Trellis diagram"]], [["a", "2. Parity check & repetition codes"]], [["a", "4. Block codes"], ["a", "3. Performance measures: coding gain, redundancy, code rate"]], [["a", "3. Performance measures: coding gain, redundancy, code rate"]], [["a", "5. Linear block codes"], ["a", "6. Metrics: weight and distance"]], [["a", "8. Generator matrix G"], ["a", "9. Parity check matrix H"], ["a", "10. Syndrome & error pattern"], ["a", "11. Syndrome decoding (slides 29–33, not in the recording)"]], [["b", "5. Systematic cyclic code (Example #6)"]], [["b", "6. Syndrome calculation & CRC"], ["b", "1. Cyclic codes & the cyclic shift property"]], [["c", "2. Encoding with the shift-register table (Example #8)"]], [["c", "6. Decoding: hard/soft decisions & the Viterbi algorithm"]], [["c", "1. Convolutional codes vs block codes"], ["c", "4. State transition table & state diagram (Example #9)"], ["c", "6. Decoding: hard/soft decisions & the Viterbi algorithm"]]];
+let lastProb=null;
+function addRefs(){
+  document.querySelectorAll('#practiceList .prob').forEach((div,i)=>{
+    const refs=PRACTICE_REFS[i]||[]; if(!refs.length) return;
+    const row=document.createElement('div'); row.className='refrow';
+    row.innerHTML='<span class="refhead">Formulas used →</span>'+refs.map(([m,h])=>{
+      const part=lectureNotes[m].label.split(' · ')[0];
+      return '<a href="#" class="noteref" data-mod="'+m+'" data-h="'+h.replace(/"/g,'&quot;')+'">📖 '+part+' · '+h+'</a>'; }).join('');
+    div.querySelector('.prob-body').before(row);
+  });
+}
+function gotoNote(mod,h,fromEl){
+  lastProb=fromEl;
+  activeNoteModule=mod; renderNotesSubtabs(); renderNotesContent();
+  document.querySelector('#tabs button[data-pane="notes"]').click();
+  const card=[...document.querySelectorAll('#notesContent .note-sec')].find(c=>c.querySelector('h3').textContent===h);
+  if(card){ setTimeout(()=>{ const top=card.getBoundingClientRect().top+window.scrollY-document.querySelector('header.top').offsetHeight-8; window.scrollTo({top}); },60);
+    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); }
+  const b=document.getElementById('backBtn'); b.textContent='← Back to '+(fromEl.querySelector('.prob-title').textContent.split(' · ')[0]); b.hidden=false;
+}
+document.getElementById('practiceList').addEventListener('click',e=>{
+  const a=e.target.closest('a.noteref'); if(!a) return; e.preventDefault();
+  gotoNote(a.dataset.mod,a.dataset.h,a.closest('.prob'));
+});
+(function(){
+  const b=document.createElement('button'); b.id='backBtn'; b.type='button'; b.hidden=true; document.body.appendChild(b);
+  b.addEventListener('click',()=>{ document.querySelector('#tabs button[data-pane="practice"]').click(); b.hidden=true;
+    if(lastProb) requestAnimationFrame(()=>{ const top=lastProb.getBoundingClientRect().top+window.scrollY-document.querySelector('header.top').offsetHeight-8; window.scrollTo({top}); }); });
+  document.getElementById('tabs').addEventListener('click',e=>{ const t=e.target.closest('button[data-pane]'); if(t && t.dataset.pane!=='notes') b.hidden=true; });
+  const s=document.createElement('style'); s.textContent=`
+  .refrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 2px}
+  .refhead{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  a.noteref{font-size:.78rem;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:3px 9px;text-decoration:none;line-height:1.35}
+  a.noteref:hover{text-decoration:underline}
+  #backBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;font:600 .85rem "IBM Plex Sans",sans-serif;color:var(--accent-ink);background:var(--accent);border:0;border-radius:999px;padding:10px 16px;box-shadow:var(--shadow);cursor:pointer}
+  @keyframes flashbg{0%{box-shadow:0 0 0 3px var(--accent-2)}100%{box-shadow:var(--shadow)}}
+  .note-sec.flash{animation:flashbg 2.4s ease-out}`;
+  document.head.appendChild(s);
+})();
+addRefs();
 </script>
 </html>

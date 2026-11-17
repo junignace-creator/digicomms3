@@ -1372,5 +1372,48 @@ document.getElementById('tabs').addEventListener('click',e=>{
 });
 document.getElementById('glossSearch').addEventListener('input',e=>renderGlossary(e.target.value));
 renderSchedule(); renderNotesSubtabs(); renderNotesContent(); renderFormulas(); renderGlossary(); renderPractice();
+
+/* ---------- practice → lecture-notes links ---------- */
+const PRACTICE_REFS = [[["a", "5. Entropy (slides 19–21)"]], [["b", "4. Kraft‑McMillan inequality"], ["b", "2. Uniquely decodable vs prefix-free"]], [["b", "6. Shannon code (Example #3)"], ["a", "5. Entropy (slides 19–21)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["b", "7. Shannon‑Fano code (Example #4)"], ["a", "5. Entropy (slides 19–21)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["b", "8. Huffman code (Example #5)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["a", "5. Entropy (slides 19–21)"], ["b", "6. Shannon code (Example #3)"], ["b", "7. Shannon‑Fano code (Example #4)"], ["b", "8. Huffman code (Example #5)"]], [["b", "5. Optimal length & Shannon's first theorem"], ["b", "9. Example #6: comparing all three, plus the 2nd extension"]], [["b", "7. Shannon‑Fano code (Example #4)"], ["a", "5. Entropy (slides 19–21)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["b", "7. Shannon‑Fano code (Example #4)"], ["a", "5. Entropy (slides 19–21)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["b", "8. Huffman code (Example #5)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["b", "8. Huffman code (Example #5)"], ["b", "1. Source coding & average codeword length"], ["b", "4. Kraft‑McMillan inequality"]], [["a", "4. Self-information (slides 16–18)"]], [["a", "5. Entropy (slides 19–21)"]], [["b", "4. Kraft‑McMillan inequality"], ["b", "2. Uniquely decodable vs prefix-free"]], [["b", "6. Shannon code (Example #3)"], ["b", "1. Source coding & average codeword length"]], [["b", "5. Optimal length & Shannon's first theorem"], ["b", "8. Huffman code (Example #5)"]], [["c", "1. Discrete memoryless channel (DMC)"], ["c", "3. Decision rules"]], [["c", "5. Channel capacity (slides 63–65)"], ["a", "5. Entropy (slides 19–21)"]], [["c", "4. Mutual information (slides 58–61)"], ["c", "1. Discrete memoryless channel (DMC)"]], [["c", "6. Information rate & the channel coding theorem"], ["c", "5. Channel capacity (slides 63–65)"]]];
+let lastProb=null;
+function addRefs(){
+  document.querySelectorAll('#practiceList .prob').forEach((div,i)=>{
+    const refs=PRACTICE_REFS[i]||[]; if(!refs.length) return;
+    const row=document.createElement('div'); row.className='refrow';
+    row.innerHTML='<span class="refhead">Formulas used →</span>'+refs.map(([m,h])=>{
+      const part=lectureNotes[m].label.split(' · ')[0];
+      return '<a href="#" class="noteref" data-mod="'+m+'" data-h="'+h.replace(/"/g,'&quot;')+'">📖 '+part+' · '+h+'</a>'; }).join('');
+    div.querySelector('.prob-body').before(row);
+  });
+}
+function gotoNote(mod,h,fromEl){
+  lastProb=fromEl;
+  activeNoteModule=mod; renderNotesSubtabs(); renderNotesContent();
+  document.querySelector('#tabs button[data-pane="notes"]').click();
+  const card=[...document.querySelectorAll('#notesContent .note-sec')].find(c=>c.querySelector('h3').textContent===h);
+  if(card){ setTimeout(()=>{ const top=card.getBoundingClientRect().top+window.scrollY-document.querySelector('header.top').offsetHeight-8; window.scrollTo({top}); },60);
+    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash'); }
+  const b=document.getElementById('backBtn'); b.textContent='← Back to '+(fromEl.querySelector('.prob-title').textContent.split(' · ')[0]); b.hidden=false;
+}
+document.getElementById('practiceList').addEventListener('click',e=>{
+  const a=e.target.closest('a.noteref'); if(!a) return; e.preventDefault();
+  gotoNote(a.dataset.mod,a.dataset.h,a.closest('.prob'));
+});
+(function(){
+  const b=document.createElement('button'); b.id='backBtn'; b.type='button'; b.hidden=true; document.body.appendChild(b);
+  b.addEventListener('click',()=>{ document.querySelector('#tabs button[data-pane="practice"]').click(); b.hidden=true;
+    if(lastProb) requestAnimationFrame(()=>{ const top=lastProb.getBoundingClientRect().top+window.scrollY-document.querySelector('header.top').offsetHeight-8; window.scrollTo({top}); }); });
+  document.getElementById('tabs').addEventListener('click',e=>{ const t=e.target.closest('button[data-pane]'); if(t && t.dataset.pane!=='notes') b.hidden=true; });
+  const s=document.createElement('style'); s.textContent=`
+  .refrow{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 2px}
+  .refhead{font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  a.noteref{font-size:.78rem;font-weight:600;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent);border-radius:999px;padding:3px 9px;text-decoration:none;line-height:1.35}
+  a.noteref:hover{text-decoration:underline}
+  #backBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:50;font:600 .85rem "IBM Plex Sans",sans-serif;color:var(--accent-ink);background:var(--accent);border:0;border-radius:999px;padding:10px 16px;box-shadow:var(--shadow);cursor:pointer}
+  @keyframes flashbg{0%{box-shadow:0 0 0 3px var(--accent-2)}100%{box-shadow:var(--shadow)}}
+  .note-sec.flash{animation:flashbg 2.4s ease-out}`;
+  document.head.appendChild(s);
+})();
+addRefs();
 </script>
 </html>
