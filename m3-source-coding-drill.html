@@ -1032,101 +1032,245 @@ const glossary = [
   ["Channel coding theorem","Reliable transmission is possible if R_s H(S) ≤ R_c C. Also called Shannon's Second Coding Theorem or the Noisy Coding Theorem."],
 ];
 
+function st(n,t){ return '<p style="margin:10px 0 4px"><b>Step '+n+'.</b> '+t+'</p>'; }
+function eq(t){ return '<div class="math-block" style="font-size:1.02rem;line-height:1.7;padding:10px 12px">'+t+'</div>'; }
+function given(t){ return '<p style="margin:4px 0"><b>Given:</b> '+t+'</p>'; }
+function fin(t){ return '<div class="callout"><span class="callout-tag">Final answer</span>'+t+'</div>'; }
+function src(t){ return '<span class="formula-note">'+t+'</span>'; }
+const LG = 'log₂(x) = log₁₀(x) / log₁₀(2) if your calculator has no log₂ key';
+
 const practice = [
-  /* ---------- FROM THE SLIDES ---------- */
+  /* =================== FROM THE SLIDES =================== */
   { src:'deck', tag:'lect', title:'Example #1 (slide 21): Entropy',
     q:"S = {s₀, s₁, s₂, s₃} with p = ½, ¼, ⅛, ⅛. Find H(S) in bits/symbol.",
-    a:`<div class="math-block">H = ½·log₂2 + ¼·log₂4 + ⅛·log₂8 + ⅛·log₂8 = 0.5 + 0.5 + 0.375 + 0.375 = <b>1.75 bits/symbol</b></div>
-    <span class="formula-note">She skipped this for time ("you can try this out") and gave the answer 1.75 bits. The steps are just her entropy formula.</span>` },
+    a: given('K = 4 symbols, p₀ = ½, p₁ = ¼, p₂ = ⅛, p₃ = ⅛. Unit = bits, so b = 2.')+
+    st(1,'Write the entropy formula.')+eq('H(S) = Σ<sub>i=0</sub><sup>K−1</sup> p<sub>i</sub> log₂'+frac('1','p<sub>i</sub>'))+
+    st(2,'Find each symbol\'s self-information I = log₂(1/p).')+
+    tbl(['symbol','p<sub>i</sub>','1/p<sub>i</sub>','log₂(1/p<sub>i</sub>)','p<sub>i</sub> · log₂(1/p<sub>i</sub>)'],[['s₀','½','2','1','½ × 1 = 0.5'],['s₁','¼','4','2','¼ × 2 = 0.5'],['s₂','⅛','8','3','⅛ × 3 = 0.375'],['s₃','⅛','8','3','⅛ × 3 = 0.375']])+
+    st(3,'Add the last column.')+eq('H(S) = 0.5 + 0.5 + 0.375 + 0.375 = 1.75')+
+    fin('<b>H(S) = 1.75 bits/symbol</b> (max possible = log₂4 = 2 bits).')+
+    src('She skipped this for time and gave the answer 1.75 bits. The steps are her entropy formula.') },
+
   { src:'deck', tag:'slide', title:'Example #2 (slide 34): Kraft‑McMillan',
-    q:"Evaluate Kraft‑McMillan for Code I {0, 1, 11, 00}, Code II {0, 10, 110, 111}, Code III {0, 01, 011, 0111} (p = 0.5, 0.25, 0.125, 0.125).",
-    a:`${tbl(['code','Kraft sum','verdict'],[['I','½+½+¼+¼ = 1.5','!violates → not a prefix code'],['II','½+¼+⅛+⅛ = 1','!satisfies, prefix code'],['III','½+¼+⅛+1/16 = 0.9375','satisfies, but "0" is a prefix of "01" → not prefix']])}
-    <span class="formula-note">Matches the slide's answer. This example wasn't discussed in the recording, so the steps are mine.</span>` },
+    q:"Evaluate Kraft‑McMillan for Code I {0, 1, 11, 00}, Code II {0, 10, 110, 111}, Code III {0, 01, 011, 0111}.",
+    a: given('three codes; binary, so r = 2.')+
+    st(1,'Write the inequality.')+eq('Σ<sub>i=0</sub><sup>K−1</sup> 2<sup>−l<sub>i</sub></sup> ≤ 1 &nbsp;&nbsp;<span class="fn">l<sub>i</sub> = number of bits in codeword i</span>')+
+    st(2,'Count each codeword\'s length, then convert: 2<sup>−1</sup> = ½, 2<sup>−2</sup> = ¼, 2<sup>−3</sup> = ⅛, 2<sup>−4</sup> = 1/16.')+
+    tbl(['','Code I','Code II','Code III'],[['lengths l<sub>i</sub>','1, 1, 2, 2','1, 2, 3, 3','1, 2, 3, 4'],['2<sup>−l<sub>i</sub></sup>','½ + ½ + ¼ + ¼','½ + ¼ + ⅛ + ⅛','½ + ¼ + ⅛ + 1/16'],['sum','1.5','1.0','0.9375']])+
+    st(3,'Compare each sum with 1.')+
+    '<p>Code I: 1.5 &gt; 1 → <b>violates</b>. Code II: 1 ≤ 1 → satisfies. Code III: 0.9375 ≤ 1 → satisfies.</p>'+
+    st(4,'Separate prefix check (using the actual bits): is any codeword the start of another?')+
+    '<p>Code I: "1" starts "11" → no. Code II: none → <b>prefix-free</b>. Code III: "0" starts "01", "011", "0111" → no.</p>'+
+    fin('Code I violates Kraft → not a prefix code. Codes II and III satisfy Kraft, but <b>only Code II is a prefix code</b>.')+
+    src('Matches the slide answer. Not discussed in the recording, so the steps are mine.') },
+
   { src:'deck', tag:'lect', title:'Example #3 (slide 43): Shannon code',
     q:"p_A = 0.5, p_B = 0.25, p_C = 0.125, p_D = 0.125. Obtain the Shannon code, H, L̄, η, and verify with Kraft‑McMillan.",
-    a:`Her steps: sort → l = ⌈log₂(1/p)⌉ → p<sub>k</sub> = sum of the probabilities above → ×2 conversion.
-    ${tbl(['sym','p','l','p<sub>k</sub>','×2 steps','code'],[['A','0.5','1','0','0×2 = 0.0','!0'],['B','0.25','2','0.5','1.0 → 0.0','!10'],['C','0.125','3','0.75','1.5 → 1.0 → 0.0','!110'],['D','0.125','3','0.875','1.75 → 1.5 → 1.0','!111']])}
-    H = 1.75, L̄ = 1.75, <b>η = 1</b>, Kraft = 1. Prefix-free.
-    <span class="formula-note">She built the code live. H, L̄, η and Kraft she called "direct substitution" and left to you; the values are on the slide.</span>` },
+    a: given('4 symbols, already sorted largest to smallest. Binary (radix 2).')+
+    st(1,'Codeword length for each symbol.')+eq('l<sub>i</sub> = ⌈log₂'+frac('1','p<sub>i</sub>')+'⌉')+
+    '<p>A: ⌈log₂2⌉ = 1 &nbsp; B: ⌈log₂4⌉ = 2 &nbsp; C: ⌈log₂8⌉ = 3 &nbsp; D: ⌈log₂8⌉ = 3</p>'+
+    st(2,'Cumulative probability p<sub>k</sub> = sum of all probabilities <b>above</b> the symbol.')+
+    '<p>A: 0 &nbsp; B: 0.5 &nbsp; C: 0.5 + 0.25 = 0.75 &nbsp; D: 0.5 + 0.25 + 0.125 = 0.875</p>'+
+    st(3,'Convert p<sub>k</sub> to binary: multiply by 2, write the integer part, keep the fraction. Stop after l<sub>i</sub> bits.')+
+    tbl(['sym','p<sub>k</sub>','l<sub>i</sub>','×2 steps (integer part = bit)','codeword'],[['A','0','1','0 × 2 = <b>0</b>.0','!0'],['B','0.5','2','0.5×2 = <b>1</b>.0 → 0×2 = <b>0</b>.0','!10'],['C','0.75','3','0.75×2 = <b>1</b>.5 → 0.5×2 = <b>1</b>.0 → 0×2 = <b>0</b>','!110'],['D','0.875','3','0.875×2 = <b>1</b>.75 → 0.75×2 = <b>1</b>.5 → 0.5×2 = <b>1</b>.0','!111']])+
+    st(4,'Entropy.')+eq('H = 0.5(1) + 0.25(2) + 0.125(3) + 0.125(3) = 0.5 + 0.5 + 0.375 + 0.375 = 1.75 bits')+
+    st(5,'Average codeword length.')+eq('L̄ = Σ p<sub>i</sub> l<sub>i</sub> = 0.5(1) + 0.25(2) + 0.125(3) + 0.125(3) = 1.75 bits')+
+    st(6,'Efficiency.')+eq('η = '+frac('H(S)','L̄')+' = '+frac('1.75','1.75')+' = 1')+
+    st(7,'Kraft.')+eq('2<sup>−1</sup> + 2<sup>−2</sup> + 2<sup>−3</sup> + 2<sup>−3</sup> = ½ + ¼ + ⅛ + ⅛ = 1 ≤ 1 ✓')+
+    fin('Code {0, 10, 110, 111}. <b>H = 1.75 bits, L̄ = 1.75 bits, η = 1</b>. Kraft = 1, prefix-free.')+
+    src('She built the code live (steps 1–3). Steps 4–7 she called "direct substitution"; values match the slide.') },
+
   { src:'deck', tag:'lect', title:'Example #4 (slide 45): Shannon‑Fano',
     q:"p = 0.4, 0.2, 0.2, 0.1, 0.1 (A–E). Obtain the Shannon‑Fano code, H, L̄, η, and verify with Kraft.",
-    a:`Her split: <b>AB | CDE</b> (0.6 vs 0.4) → A | B, C | DE → D | E. Upper group = 0.
-    ${tbl(['sym','p','code','l'],[['A','0.4','!00','2'],['B','0.2','!01','2'],['C','0.2','!10','2'],['D','0.1','!110','3'],['E','0.1','!111','3']])}
-    H = 2.1219 bits, L̄ = 2.2 bits, η = 0.9645, Kraft = 1.
-    <span class="formula-note">Code built live by her. She also showed A | BCDE as a valid first split and said <b>any valid split is accepted on the exam</b>.</span>` },
+    a: given('5 symbols, already sorted. Radix 2, so split into 2 groups each time.')+
+    st(1,'First split: two groups with sums as close as possible.')+
+    '<p>A,B | C,D,E → 0.6 vs 0.4 (difference 0.2). She chose this split. Group AB gets bit <b>0</b>, group CDE gets <b>1</b>.</p>'+
+    st(2,'Split each group again until every symbol is alone.')+
+    tbl(['sym','p','split 1','split 2','split 3','code','l'],[['A','0.4','0','0','','!00','2'],['B','0.2','0','1','','!01','2'],['C','0.2','1','0','','!10','2'],['D','0.1','1','1','0','!110','3'],['E','0.1','1','1','1','!111','3']])+
+    '<p>CDE (0.4) → C | DE (0.2 vs 0.2) → D | E.</p>'+
+    st(3,'Entropy: H = Σ p log₂(1/p).')+
+    eq('H = 0.4 log₂(2.5) + 2 × 0.2 log₂5 + 2 × 0.1 log₂10')+
+    eq('= 0.4(1.3219) + 2(0.2)(2.3219) + 2(0.1)(3.3219) = 0.5288 + 0.9288 + 0.6644 = 2.1219 bits')+
+    st(4,'Average length: L̄ = Σ p l.')+eq('L̄ = 0.4(2) + 0.2(2) + 0.2(2) + 0.1(3) + 0.1(3) = 0.8 + 0.4 + 0.4 + 0.3 + 0.3 = 2.2 bits')+
+    st(5,'Efficiency.')+eq('η = '+frac('2.1219','2.2')+' = 0.9645')+
+    st(6,'Kraft.')+eq('¼ + ¼ + ¼ + ⅛ + ⅛ = 1 ≤ 1 ✓')+
+    fin('Code {00, 01, 10, 110, 111}. <b>H = 2.1219 bits, L̄ = 2.2 bits, η = 0.9645</b>. Kraft = 1, prefix-free.')+
+    src('Code built live by her. She said any valid split is accepted on the exam.') },
+
   { src:'deck', tag:'lect', title:'Example #5 (slide 47): Huffman',
     q:"Same p = 0.4, 0.2, 0.2, 0.1, 0.1. Obtain the Huffman code, H, L̄, η, and verify with Kraft.",
-    a:`Merge D+E = 0.2 → three 0.2s tie, so she showed two ways:
-    ${tbl(['sym','p','her slide answer','her alternative'],[['A','0.4','0','0'],['B','0.2','10','100'],['C','0.2','110','101'],['D','0.1','1110','110'],['E','0.1','1111','111']])}
-    Both: H = 2.1219, <b>L̄ = 2.2</b>, η = 0.9645, Kraft = 1.
-    <span class="formula-note">Both trees were drawn by her in the recording.</span>` },
+    a: given('same source as Example #4 (H = 2.1219 bits).')+
+    st(1,'Repeatedly combine the two smallest probabilities (label the branches 0 and 1).')+
+    tbl(['round','list (sorted)','combine','new value'],[['1','0.4, 0.2, 0.2, 0.1, 0.1','D(0.1) + E(0.1)','0.2'],['2','0.4, 0.2, 0.2, 0.2','two of the 0.2s','0.4'],['3','0.4, 0.4, 0.2','0.4 + 0.2','0.6'],['4','0.6, 0.4','0.6 + 0.4','1.0 ✓']])+
+    st(2,'Trace back from the root (1.0) to each symbol, collecting the branch bits.')+
+    tbl(['sym','p','her slide answer','l','her alternative','l'],[['A','0.4','0','1','0','1'],['B','0.2','10','2','100','3'],['C','0.2','110','3','101','3'],['D','0.1','1110','4','110','3'],['E','0.1','1111','4','111','3']])+
+    st(3,'Average length (both trees give the same).')+
+    eq('slide: L̄ = 0.4(1) + 0.2(2) + 0.2(3) + 0.1(4) + 0.1(4) = 0.4 + 0.4 + 0.6 + 0.4 + 0.4 = 2.2 bits')+
+    eq('alternative: L̄ = 0.4(1) + 0.2(3) + 0.2(3) + 0.1(3) + 0.1(3) = 0.4 + 0.6 + 0.6 + 0.3 + 0.3 = 2.2 bits')+
+    st(4,'Efficiency and Kraft.')+eq('η = 2.1219 / 2.2 = 0.9645 &nbsp;&nbsp; Kraft (slide code): ½ + ¼ + ⅛ + 1/16 + 1/16 = 1 ✓')+
+    fin('<b>L̄ = 2.2 bits, η = 0.9645</b> for either tree. Prefix-free, Kraft = 1.')+
+    src('Both trees were drawn by her in the recording.') },
+
   { src:'deck', tag:'slide', title:'Example #6 a–d (slides 48–49): one source, three codes',
     q:"p₀ = 0.8, p₁ = 0.2. (a) Entropy. (b) Shannon, (c) Shannon‑Fano, (d) Huffman code with L̄ and η.",
-    a:`(a) H = 0.8·log₂(1.25) + 0.2·log₂5 = <b>0.7219 bits</b>.<br>
-    (b) Shannon: l = ⌈0.32⌉ = 1, ⌈2.32⌉ = 3; p<sub>k</sub> = 0, 0.8 → codes <b>0, 110</b> (0.8 → 1.6 → 1.2 → 0.4 gives 110). L̄ = 0.8 + 0.6 = 1.4, η = <b>0.5156</b>.<br>
-    (c), (d) Shannon‑Fano = Huffman = <b>0, 1</b>, L̄ = 1.0, η = 0.7219.
-    <span class="formula-note">She said "kaya nyo na pong gawin" and left a–d to you, pointing to the slide answers. <span class="watch">⚠</span> The slide prints η = 0.5756 for (b); 0.7219/1.4 = 0.5156.</span>` },
+    a: given('K = 2, p₀ = 0.8, p₁ = 0.2.')+
+    st('(a)','Entropy.')+eq('H = 0.8 log₂'+frac('1','0.8')+' + 0.2 log₂'+frac('1','0.2')+' = 0.8(0.3219) + 0.2(2.3219) = 0.2575 + 0.4644 = 0.7219 bits')+
+    st('(b)','Shannon code.')+
+    '<p>Lengths: l₀ = ⌈log₂1.25⌉ = ⌈0.3219⌉ = 1, &nbsp; l₁ = ⌈log₂5⌉ = ⌈2.3219⌉ = 3.<br>Cumulative: p<sub>k</sub>(s₀) = 0 → <b>0</b>. p<sub>k</sub>(s₁) = 0.8 → 0.8×2 = <b>1</b>.6 → 0.6×2 = <b>1</b>.2 → 0.2×2 = <b>0</b>.4 → <b>110</b>.</p>'+
+    eq('L̄ = 0.8(1) + 0.2(3) = 1.4 bits &nbsp;&nbsp; η = 0.7219 / 1.4 = 0.5156')+
+    st('(c)','Shannon‑Fano: only one way to split two symbols → s₀ = 0, s₁ = 1.')+
+    eq('L̄ = 0.8(1) + 0.2(1) = 1.0 bit &nbsp;&nbsp; η = 0.7219 / 1.0 = 0.7219')+
+    st('(d)','Huffman: combine the only two symbols → s₀ = 0, s₁ = 1 (same as c).')+
+    fin('(a) H = 0.7219 bits. (b) {0, 110}, L̄ = 1.4, η = <b>0.5156</b>. (c), (d) {0, 1}, L̄ = 1.0, η = 0.7219.')+
+    src('She left a–d to you. <span class="watch">⚠</span> The slide prints η = 0.5756 for (b); 0.7219/1.4 = 0.5156.') },
+
   { src:'deck', tag:'lect', title:'Example #6e (slide 49): 2nd extension',
     q:"Same source, n = 2. Repeat Shannon, Shannon‑Fano and Huffman on the super-symbols.",
-    a:`Her steps: concatenate → <b>multiply</b> probabilities (DMS is i.i.d.) → H(S̄) = 2 × 0.7219 = 1.4439.
-    ${tbl(['super-symbol','p','Shannon','Shannon‑Fano (hers)','Huffman (hers)'],[['s₀s₀','0.64','0','0','0'],['s₀s₁','0.16','101','10','10'],['s₁s₀','0.16','110','110','110'],['s₁s₁','0.04','11110','111','111']])}
-    Shannon L̄ = 1.80, η = 0.8021. Shannon‑Fano L̄ = 1.56, η = 0.9255. Huffman L̄ = <b>1.56</b>, η = <b>0.9255</b>.
-    <span class="formula-note">She worked the super-symbol table and the Fano/Huffman codes live. The Shannon code column is computed by me with her method. <span class="watch">⚠</span> The slide says Huffman L̄ = 1.6, η = 0.9024; her own code gives 1.56 / 0.9255.</span>` },
+    a: given('p₀ = 0.8, p₁ = 0.2, n = 2 (combine 2 symbols).')+
+    st(1,'List the super-symbols and multiply the probabilities (DMS is i.i.d., so P(sᵢsⱼ) = pᵢ·pⱼ).')+
+    '<p>s₀s₀: 0.8×0.8 = 0.64 &nbsp; s₀s₁: 0.8×0.2 = 0.16 &nbsp; s₁s₀: 0.2×0.8 = 0.16 &nbsp; s₁s₁: 0.2×0.2 = 0.04</p>'+
+    st(2,'Entropy of the block.')+eq('H(S̄) = nH(S) = 2 × 0.7219 = 1.4439 bits')+
+    st(3,'Shannon code on the new probabilities.')+
+    tbl(['super','p','l = ⌈log₂(1/p)⌉','p<sub>k</sub>','binary','code'],[['s₀s₀','0.64','⌈0.644⌉ = 1','0','0','0'],['s₀s₁','0.16','⌈2.644⌉ = 3','0.64','1.28 → 0.56 → 1.12','101'],['s₁s₀','0.16','3','0.80','1.6 → 1.2 → 0.4','110'],['s₁s₁','0.04','⌈4.644⌉ = 5','0.96','1.92 → 1.84 → 1.68 → 1.36 → 0.72','11110']])+
+    eq('L̄₂ = 0.64(1) + 0.16(3) + 0.16(3) + 0.04(5) = 0.64 + 0.48 + 0.48 + 0.20 = 1.80 &nbsp; η = 1.4439/1.80 = 0.8021')+
+    st(4,'Shannon‑Fano (her split): s₀s₀ (0.64) | rest (0.36) → s₀s₁ | (s₁s₀, s₁s₁) → codes 0, 10, 110, 111.')+
+    eq('L̄₂ = 0.64(1) + 0.16(2) + 0.16(3) + 0.04(3) = 0.64 + 0.32 + 0.48 + 0.12 = 1.56 &nbsp; η = 1.4439/1.56 = 0.9255')+
+    st(5,'Huffman: 0.04 + 0.16 = 0.20 → 0.16 + 0.20 = 0.36 → 0.36 + 0.64 = 1.0 → codes 0, 10, 110, 111 (same lengths).')+
+    eq('L̄₂ = 1.56 &nbsp; η = 0.9255')+
+    fin('H(S̄) = 1.4439. Shannon L̄ = 1.80, η = 0.8021. Shannon‑Fano L̄ = 1.56, η = 0.9255. Huffman L̄ = <b>1.56</b>, η = <b>0.9255</b>. Bits per original symbol (Huffman) = 1.56/2 = 0.78.')+
+    src('She worked the super-symbol table and the Fano/Huffman codes live. <span class="watch">⚠</span> The slide says Huffman 1.6 / 0.9024; her own code gives 1.56 / 0.9255.') },
+
   { src:'deck', tag:'none', title:'Problem #1a (slide 71): Shannon‑Fano',
     q:"p₀ = 0.30, p₁ = 0.25, p₂ = 0.15, p₃ = 0.12, p₄ = 0.10, p₅ = 0.08. Shannon‑Fano code, H, L̄, Kraft.",
-    a:`Split {s₀,s₁} = 0.55 | {s₂…s₅} = 0.45 → s₀|s₁; {s₂,s₃} = 0.27 | {s₄,s₅} = 0.18.
-    ${tbl(['sym','p','code','l'],[['s₀','0.30','!00','2'],['s₁','0.25','!01','2'],['s₂','0.15','!100','3'],['s₃','0.12','!101','3'],['s₄','0.10','!110','3'],['s₅','0.08','!111','3']])}
-    H = <b>2.4224</b>, L̄ = <b>2.45</b>, η = 0.9887, Kraft = 1.
-    <span class="formula-note">Homework problem: not solved in the recording, and the slide has no answer. The solution is mine using her Example #4 method (closest sums, 0 on the upper group).</span>` },
+    a: given('6 symbols, sorted. Radix 2.')+
+    st(1,'Split 1: try every cut and pick the closest sums.')+
+    '<p>s₀ | rest → 0.30 vs 0.70 (diff 0.40). <b>s₀s₁ | rest → 0.55 vs 0.45 (diff 0.10)</b> ✓. s₀s₁s₂ | rest → 0.70 vs 0.30 (diff 0.40).</p>'+
+    st(2,'Split each group.')+
+    '<p>{s₀, s₁}: s₀ | s₁. &nbsp; {s₂ … s₅} (0.45): s₂ | rest → 0.15 vs 0.30 (diff 0.15); <b>s₂s₃ | s₄s₅ → 0.27 vs 0.18 (diff 0.09)</b> ✓. Then s₂ | s₃ and s₄ | s₅.</p>'+
+    tbl(['sym','p','split 1','split 2','split 3','code','l'],[['s₀','0.30','0','0','','!00','2'],['s₁','0.25','0','1','','!01','2'],['s₂','0.15','1','0','0','!100','3'],['s₃','0.12','1','0','1','!101','3'],['s₄','0.10','1','1','0','!110','3'],['s₅','0.08','1','1','1','!111','3']])+
+    st(3,'Entropy.')+
+    tbl(['p','log₂(1/p)','p · log₂(1/p)'],[['0.30','1.7370','0.5211'],['0.25','2.0000','0.5000'],['0.15','2.7370','0.4105'],['0.12','3.0589','0.3671'],['0.10','3.3219','0.3322'],['0.08','3.6439','0.2915'],['','<b>H =</b>','<b>2.4224</b>']])+
+    st(4,'Average length.')+eq('L̄ = (0.30 + 0.25)(2) + (0.15 + 0.12 + 0.10 + 0.08)(3) = 0.55(2) + 0.45(3) = 1.10 + 1.35 = 2.45 bits')+
+    st(5,'Efficiency and Kraft.')+eq('η = 2.4224 / 2.45 = 0.9887 &nbsp;&nbsp; Kraft: 2(¼) + 4(⅛) = 0.5 + 0.5 = 1 ≤ 1 ✓')+
+    fin('Code {00, 01, 100, 101, 110, 111}. <b>H = 2.4224 bits, L̄ = 2.45 bits</b>, η = 0.9887, Kraft = 1.')+
+    src('Homework, no slide answer. Solution mine, using her Example #4 method.') },
+
   { src:'deck', tag:'none', title:'Problem #1b (slide 71): Shannon‑Fano',
     q:"p = 0.20, 0.19, 0.17, 0.15, 0.14, 0.06, 0.05, 0.04 (a–h). Shannon‑Fano code, H, L̄, Kraft.",
-    a:`{a,b,c} = 0.56 | {d…h} = 0.44 → a | bc; {d…h}: d | efgh and de | fgh tie (either is fine).
-    ${tbl(['sym','p','code','l'],[['a','0.20','!00','2'],['b','0.19','!010','3'],['c','0.17','!011','3'],['d','0.15','!10','2'],['e','0.14','!110','3'],['f','0.06','!1110','4'],['g','0.05','!11110','5'],['h','0.04','!11111','5']])}
-    H = <b>2.8072</b>, L̄ = <b>2.89</b>, η = 0.9714, Kraft = 1. (The other tie also gives 2.89.)
-    <span class="formula-note">Homework, no slide answer. Solution mine, using her method.</span>` },
+    a: given('8 symbols, sorted.')+
+    st(1,'Split 1.')+'<p>ab | rest = 0.39 vs 0.61 (0.22); <b>abc | rest = 0.56 vs 0.44 (0.12)</b> ✓; abcd | rest = 0.71 vs 0.29 (0.42).</p>'+
+    st(2,'Split {a, b, c} (0.56).')+'<p><b>a | bc = 0.20 vs 0.36 (0.16)</b> ✓; ab | c = 0.39 vs 0.17 (0.22). Then b | c.</p>'+
+    st(3,'Split {d, e, f, g, h} (0.44).')+'<p>d | efgh = 0.15 vs 0.29 (0.14); de | fgh = 0.29 vs 0.15 (0.14). <b>Tie</b>, so both are valid. Using d | efgh: efgh → e | fgh (0.14 vs 0.15) → f | gh (0.06 vs 0.09) → g | h.</p>'+
+    tbl(['sym','p','code','l','p·l'],[['a','0.20','!00','2','0.40'],['b','0.19','!010','3','0.57'],['c','0.17','!011','3','0.51'],['d','0.15','!10','2','0.30'],['e','0.14','!110','3','0.42'],['f','0.06','!1110','4','0.24'],['g','0.05','!11110','5','0.25'],['h','0.04','!11111','5','0.20'],['','','','<b>L̄ =</b>','<b>2.89</b>']])+
+    st(4,'Entropy (sum of p·log₂(1/p)).')+eq('0.4644 + 0.4552 + 0.4346 + 0.4105 + 0.3971 + 0.2435 + 0.2161 + 0.1858 = 2.8072 bits')+
+    st(5,'Efficiency and Kraft.')+eq('η = 2.8072 / 2.89 = 0.9714 &nbsp;&nbsp; Kraft: ¼ + ⅛ + ⅛ + ¼ + ⅛ + 1/16 + 1/32 + 1/32 = 1 ✓')+
+    fin('<b>H = 2.8072 bits, L̄ = 2.89 bits</b>, η = 0.9714. The other tie (de | fgh) gives d = 100, e = 101, f = 110, g = 1110, h = 1111 and also L̄ = 2.89.')+
+    src('Homework, no slide answer. Solution mine, using her method.') },
+
   { src:'deck', tag:'none', title:'Problem #2a (slide 72): Huffman',
-    q:"Same source as #1a. Huffman code, H, L̄, Kraft.",
-    a:`Merges: 0.08+0.10 = 0.18 → 0.12+0.15 = 0.27 → 0.18+0.25 = 0.43 → 0.27+0.30 = 0.57 → 1.0.
-    ${tbl(['sym','p','code','l'],[['s₀','0.30','!00','2'],['s₁','0.25','!10','2'],['s₂','0.15','!010','3'],['s₃','0.12','!011','3'],['s₄','0.10','!110','3'],['s₅','0.08','!111','3']])}
-    H = 2.4224, L̄ = <b>2.45</b>, η = 0.9887, Kraft = 1.
-    <span class="formula-note">Homework, no slide answer. Solution mine, using her Example #5 method. Your 0/1 labels may differ; the lengths shouldn't.</span>` },
+    q:"Same source as #1a (0.30, 0.25, 0.15, 0.12, 0.10, 0.08). Huffman code, H, L̄, Kraft.",
+    a: given('H = 2.4224 bits (from Problem #1a).')+
+    st(1,'Combine the two smallest each round.')+
+    tbl(['round','sorted list','combine','new'],[['1','0.30, 0.25, 0.15, 0.12, 0.10, 0.08','0.10 + 0.08','0.18'],['2','0.30, 0.25, 0.18, 0.15, 0.12','0.15 + 0.12','0.27'],['3','0.30, 0.27, 0.25, 0.18','0.25 + 0.18','0.43'],['4','0.43, 0.30, 0.27','0.30 + 0.27','0.57'],['5','0.57, 0.43','0.57 + 0.43','1.00 ✓']])+
+    st(2,'Trace back from 1.00 (0 = higher branch, 1 = lower).')+
+    tbl(['sym','p','path','code','l'],[['s₀','0.30','0.57 → 0.30','!00','2'],['s₁','0.25','0.43 → 0.25','!10','2'],['s₂','0.15','0.57 → 0.27 → 0.15','!010','3'],['s₃','0.12','0.57 → 0.27 → 0.12','!011','3'],['s₄','0.10','0.43 → 0.18 → 0.10','!110','3'],['s₅','0.08','0.43 → 0.18 → 0.08','!111','3']])+
+    st(3,'Average length, efficiency, Kraft.')+eq('L̄ = 0.55(2) + 0.45(3) = 2.45 bits &nbsp; η = 2.4224/2.45 = 0.9887 &nbsp; Kraft = 2(¼) + 4(⅛) = 1 ✓')+
+    fin('<b>L̄ = 2.45 bits</b>, η = 0.9887. Same lengths as Shannon‑Fano here.')+
+    src('Homework, no slide answer. Solution mine, using her Example #5 method. Your 0/1 labels may differ; the lengths shouldn\'t.') },
+
   { src:'deck', tag:'none', title:'Problem #2b (slide 72): Huffman',
     q:"Same source as #1b. Huffman code, H, L̄, Kraft.",
-    a:`Merges: 0.04+0.05 = 0.09 → 0.06+0.09 = 0.15 → 0.14+0.15 = 0.29 → 0.15+0.17 = 0.32 → 0.19+0.20 = 0.39 → 0.29+0.32 = 0.61 → 1.0.
-    ${tbl(['sym','p','code','l'],[['a','0.20','!10','2'],['b','0.19','!11','2'],['c','0.17','!000','3'],['d','0.15','!010','3'],['e','0.14','!011','3'],['f','0.06','!0011','4'],['g','0.05','!00100','5'],['h','0.04','!00101','5']])}
-    H = 2.8072, L̄ = <b>2.85</b>, η = 0.9850, Kraft = 1. Huffman beats Fano here (2.85 vs 2.89).
-    <span class="formula-note">Homework, no slide answer. Solution mine, using her method.</span>` },
+    a: given('H = 2.8072 bits (from Problem #1b).')+
+    st(1,'Combine the two smallest each round.')+
+    tbl(['round','combine','new'],[['1','0.04 (h) + 0.05 (g)','0.09'],['2','0.06 (f) + 0.09','0.15'],['3','0.14 (e) + 0.15 (d)','0.29'],['4','0.15 (fgh) + 0.17 (c)','0.32'],['5','0.19 (b) + 0.20 (a)','0.39'],['6','0.29 + 0.32','0.61'],['7','0.39 + 0.61','1.00 ✓']])+
+    st(2,'Trace back.')+
+    tbl(['sym','p','code','l','p·l'],[['a','0.20','!10','2','0.40'],['b','0.19','!11','2','0.38'],['c','0.17','!000','3','0.51'],['d','0.15','!010','3','0.45'],['e','0.14','!011','3','0.42'],['f','0.06','!0011','4','0.24'],['g','0.05','!00100','5','0.25'],['h','0.04','!00101','5','0.20'],['','','','<b>L̄ =</b>','<b>2.85</b>']])+
+    st(3,'Efficiency and Kraft.')+eq('η = 2.8072 / 2.85 = 0.9850 &nbsp; Kraft: ¼ + ¼ + ⅛ + ⅛ + ⅛ + 1/16 + 1/32 + 1/32 = 1 ✓')+
+    fin('<b>L̄ = 2.85 bits</b>, η = 0.9850. Huffman beats Fano here (2.85 vs 2.89).')+
+    src('Homework, no slide answer. Solution mine, using her method.') },
 
-  /* ---------- MADE BY ME ---------- */
+  /* =================== MADE BY ME =================== */
   { src:'mine', title:'Self-information units',
     q:"A symbol occurs with probability 1/8. Find its self-information in bits, Hartleys and nats.",
-    a:`<div class="math-block">log₂8 = <b>3 bits</b> &nbsp; log₁₀8 = <b>0.9031 Hartley</b> &nbsp; ln 8 = <b>2.0794 nats</b></div>` },
+    a: given('p = 1/8.')+st(1,'Formula: the base sets the unit.')+eq('I = log<sub>b</sub>'+frac('1','p')+' = log<sub>b</sub>8')+
+    st(2,'Substitute each base.')+eq('b = 2: log₂8 = 3 bits &nbsp;&nbsp; b = 10: log₁₀8 = 0.9031 Hartley &nbsp;&nbsp; b = e: ln 8 = 2.0794 nats')+
+    st(3,'Check with change of base.')+eq('log₁₀8 = log₂8 × log₁₀2 = 3 × 0.30103 = 0.9031 ✓')+
+    fin('<b>3 bits = 0.9031 Hartley = 2.0794 nats</b>.') },
+
   { src:'mine', title:'Entropy and its maximum',
-    q:"p = 0.4, 0.3, 0.2, 0.1. Find H(S) and its maximum possible value for a 4-symbol source.",
-    a:`<div class="math-block">0.5288 + 0.5211 + 0.4644 + 0.3322 = <b>1.8464 bits</b></div>Max = log₂4 = <b>2 bits</b> (equiprobable).` },
+    q:"p = 0.4, 0.3, 0.2, 0.1. Find H(S) in bits and its maximum possible value for a 4-symbol source.",
+    a: given('K = 4, unit = bits (b = 2). '+LG+'.')+
+    st(1,'Formula.')+eq('H(S) = Σ p<sub>i</sub> log₂'+frac('1','p<sub>i</sub>'))+
+    st(2,'Each term.')+
+    tbl(['p<sub>i</sub>','1/p<sub>i</sub>','log₂(1/p<sub>i</sub>)','p<sub>i</sub> · log₂(1/p<sub>i</sub>)'],[['0.4','2.5','1.3219','0.5288'],['0.3','3.333','1.7370','0.5211'],['0.2','5','2.3219','0.4644'],['0.1','10','3.3219','0.3322']])+
+    st(3,'Add.')+eq('H = 0.5288 + 0.5211 + 0.4644 + 0.3322 = 1.8464 bits')+
+    st(4,'Maximum (all four equally likely).')+eq('H<sub>max</sub> = log₂K = log₂4 = 2 bits')+
+    fin('<b>H = 1.8464 bits/symbol</b>, H<sub>max</sub> = <b>2 bits</b>. It\'s below the max because 0.4 is favored.') },
+
   { src:'mine', title:'Kraft trap',
     q:"Kraft sum and prefix check: X = {1, 01, 001, 0001}, Y = {0, 1, 00, 11}, Z = {0, 01, 11}.",
-    a:`${tbl(['code','Kraft','prefix-free?'],[['X','0.9375','yes'],['Y','1.5 > 1','no (violates)'],['Z','1','no: "0" is a prefix of "01"']])}` },
+    a: st(1,'Formula: Σ 2<sup>−l<sub>i</sub></sup> ≤ 1, where l<sub>i</sub> = bits in each codeword.','')+
+    tbl(['code','lengths','Kraft sum','≤ 1?','prefix check (actual bits)'],[['X','1, 2, 3, 4','½ + ¼ + ⅛ + 1/16 = 0.9375','yes','none is the start of another → prefix-free'],['Y','1, 1, 2, 2','½ + ½ + ¼ + ¼ = 1.5','no','"0" starts "00" → not prefix'],['Z','1, 2, 2','½ + ¼ + ¼ = 1','yes','"0" starts "01" → not prefix']])+
+    fin('X: prefix code. Y: violates Kraft. <b>Z: satisfies Kraft but is NOT prefix-free</b>. Kraft checks lengths only.') },
+
   { src:'mine', title:'Shannon code on Problem #1a\'s source',
     q:"Build the Shannon code for p = 0.30, 0.25, 0.15, 0.12, 0.10, 0.08. Find L̄, η and the Kraft sum.",
-    a:`${tbl(['p','l','p<sub>k</sub>','code'],[['0.30','2','0','!00'],['0.25','2','0.30','!01'],['0.15','3','0.55','!100'],['0.12','4','0.70','!1011'],['0.10','4','0.82','!1101'],['0.08','4','0.92','!1110']])}
-    L̄ = <b>2.75</b>, η = <b>0.8809</b>, Kraft = 0.8125. Valid, but less efficient than Fano/Huffman (2.45).` },
+    a: given('sorted probabilities; H = 2.4224 bits (Problem #1a).')+
+    st(1,'Lengths l = ⌈log₂(1/p)⌉, cumulative p<sub>k</sub>, binary of p<sub>k</sub>.')+
+    tbl(['p','log₂(1/p)','l','p<sub>k</sub>','×2 steps','code'],[['0.30','1.737','2','0','0, 0','!00'],['0.25','2.000','2','0.30','0.6→<b>0</b>, 1.2→<b>1</b>','!01'],['0.15','2.737','3','0.55','1.1→<b>1</b>, 0.2→<b>0</b>, 0.4→<b>0</b>','!100'],['0.12','3.059','4','0.70','1.4→1, 0.8→0, 1.6→1, 1.2→1','!1011'],['0.10','3.322','4','0.82','1.64→1, 1.28→1, 0.56→0, 1.12→1','!1101'],['0.08','3.644','4','0.92','1.84→1, 1.68→1, 1.36→1, 0.72→0','!1110']])+
+    st(2,'Average length.')+eq('L̄ = 0.30(2) + 0.25(2) + 0.15(3) + 0.12(4) + 0.10(4) + 0.08(4) = 0.60 + 0.50 + 0.45 + 0.48 + 0.40 + 0.32 = 2.75 bits')+
+    st(3,'Efficiency and Kraft.')+eq('η = 2.4224 / 2.75 = 0.8809 &nbsp;&nbsp; Kraft = ¼ + ¼ + ⅛ + 3(1/16) = 0.8125 ≤ 1 ✓')+
+    fin('<b>L̄ = 2.75 bits, η = 0.8809</b>, Kraft = 0.8125. Valid, but less efficient than Fano/Huffman (2.45).') },
+
   { src:'mine', title:'2nd extension on a new source',
     q:"p₀ = 0.9, p₁ = 0.1. Huffman η for n = 1, then Huffman code, L̄₂, bits/symbol and η for n = 2.",
-    a:`n = 1: H = 0.4690, code {0, 1}, η = <b>0.4690</b>.<br>n = 2: 0.81, 0.09, 0.09, 0.01 → codes 0, 10, 110, 111.
-    <div class="math-block">L̄₂ = <b>1.29</b>, &nbsp; 0.645 bits/symbol, &nbsp; η = 0.938/1.29 = <b>0.7271</b></div>` },
+    a: st(1,'n = 1 entropy and code.')+eq('H = 0.9 log₂'+frac('1','0.9')+' + 0.1 log₂10 = 0.9(0.1520) + 0.1(3.3219) = 0.1368 + 0.3322 = 0.4690 bits')+
+    '<p>Huffman on 2 symbols: {0, 1}, L̄ = 1 → η = 0.4690/1 = <b>0.4690</b>.</p>'+
+    st(2,'n = 2: multiply probabilities.')+'<p>s₀s₀ = 0.81, s₀s₁ = 0.09, s₁s₀ = 0.09, s₁s₁ = 0.01. &nbsp; H(S̄) = 2(0.4690) = 0.9380.</p>'+
+    st(3,'Huffman: 0.01 + 0.09 = 0.10 → 0.09 + 0.10 = 0.19 → 0.81 + 0.19 = 1.0. Codes 0, 10, 110, 111.')+
+    eq('L̄₂ = 0.81(1) + 0.09(2) + 0.09(3) + 0.01(3) = 0.81 + 0.18 + 0.27 + 0.03 = 1.29 bits per super-symbol')+
+    st(4,'Per symbol and efficiency.')+eq('L̄₂/n = 1.29/2 = 0.645 bits/symbol &nbsp;&nbsp; η = '+frac('0.9380','1.29')+' = 0.7271')+
+    st(5,'Check Shannon\'s first theorem: H ≤ L̄ₙ/n ≤ H + 1/n → 0.469 ≤ 0.645 ≤ 0.969 ✓')+
+    fin('n = 1: η = 0.469. n = 2: L̄₂ = <b>1.29</b>, <b>0.645 bits/symbol</b>, η = <b>0.7271</b>.') },
+
   { src:'mine', title:'Decision rules disagree',
     q:"BSC, p = 0.2, priors P(x=0) = 0.9, P(x=1) = 0.1. (a) P(y=0), P(y=1). (b) y = 1 received: max a priori, MAP, ML decisions?",
-    a:`(a) [0.9 0.1]·[0.8 0.2 ; 0.2 0.8] = [<b>0.74</b> &nbsp;<b>0.26</b>].<br>(b) Max a priori → <b>0</b>. ML: 0.2 vs 0.8 → <b>1</b>. MAP: 0.18/0.26 = 0.692 vs 0.08/0.26 = 0.308 → <b>0</b>.` },
+    a: given('transition matrix P = [0.8 0.2 ; 0.2 0.8] (row = sent, column = received). Priors p(X) = [0.9 0.1].')+
+    st('(a)','Marginals: p(Y) = p(X)·P, i.e. P(y<sub>j</sub>) = Σ<sub>i</sub> P(y<sub>j</sub>|x<sub>i</sub>)P(x<sub>i</sub>).')+
+    eq('P(y=0) = 0.8(0.9) + 0.2(0.1) = 0.72 + 0.02 = 0.74')+eq('P(y=1) = 0.2(0.9) + 0.8(0.1) = 0.18 + 0.08 = 0.26')+
+    st('(b1)','Max a priori: pick the largest P(x), ignoring y. 0.9 &gt; 0.1 → decide <b>0</b>.')+
+    st('(b2)','ML: pick the largest P(y=1|x).')+eq('P(y=1|x=0) = 0.2 &nbsp; vs &nbsp; P(y=1|x=1) = 0.8 → decide 1')+
+    st('(b3)','MAP: pick the largest posterior P(x|y=1) = P(y=1|x)P(x)/P(y=1).')+
+    eq('P(x=0|y=1) = '+frac('0.2 × 0.9','0.26')+' = 0.692 &nbsp;&nbsp; P(x=1|y=1) = '+frac('0.8 × 0.1','0.26')+' = 0.308 → decide 0')+
+    fin('(a) P(y=0) = <b>0.74</b>, P(y=1) = <b>0.26</b>. (b) Max a priori → <b>0</b>, ML → <b>1</b>, MAP → <b>0</b>. The strong prior wins under MAP.') },
+
   { src:'mine', title:'BSC capacity',
     q:"C for a BSC with p = 0.1, 0.5, 0.9.",
-    a:`p = 0.1: C = 1 − 0.4690 = <b>0.5310</b>. p = 0.5: <b>0</b>. p = 0.9: <b>0.5310</b> (symmetric).` },
+    a: st(1,'Formulas.')+eq('C<sub>BSC</sub> = 1 − H<sub>b</sub>(p), &nbsp; H<sub>b</sub>(p) = p log₂'+frac('1','p')+' + (1−p) log₂'+frac('1','1−p'))+
+    st(2,'p = 0.1.')+eq('H<sub>b</sub> = 0.1(3.3219) + 0.9(0.1520) = 0.3322 + 0.1368 = 0.4690 → C = 1 − 0.4690 = 0.5310')+
+    st(3,'p = 0.5.')+eq('H<sub>b</sub> = 0.5(1) + 0.5(1) = 1 → C = 0')+
+    st(4,'p = 0.9.')+eq('H<sub>b</sub> = 0.9(0.1520) + 0.1(3.3219) = 0.4690 → C = 0.5310')+
+    fin('<b>C = 0.5310, 0, 0.5310 bits/use</b>. The curve is symmetric, and p = 0.5 is the worst channel.') },
+
   { src:'mine', title:'Mutual information three ways',
     q:"BSC p = 0.1, equiprobable inputs. Find H(X), H(Y), H(X,Y), I(X;Y).",
-    a:`Joint: 0.45, 0.05, 0.05, 0.45. H(X) = H(Y) = 1, H(X,Y) = <b>1.4690</b>, I = 2 − 1.469 = <b>0.5310</b> = 1 − H<sub>b</sub>(0.1) ✓.` },
+    a: given('P(x=0) = P(x=1) = 0.5, P = [0.9 0.1 ; 0.1 0.9].')+
+    st(1,'Joint P(x,y) = P(y|x)P(x).')+eq('P(0,0) = 0.9(0.5) = 0.45, &nbsp; P(0,1) = 0.1(0.5) = 0.05, &nbsp; P(1,0) = 0.05, &nbsp; P(1,1) = 0.45')+
+    st(2,'Marginal of Y.')+eq('P(y=0) = 0.45 + 0.05 = 0.5, &nbsp; P(y=1) = 0.5')+
+    st(3,'Entropies.')+eq('H(X) = 0.5(1) + 0.5(1) = 1 bit, &nbsp; H(Y) = 1 bit')+
+    eq('H(X,Y) = 2 × 0.45 log₂'+frac('1','0.45')+' + 2 × 0.05 log₂'+frac('1','0.05')+' = 2(0.5184) + 2(0.2161) = 1.4690 bits')+
+    st(4,'Mutual information.')+eq('I(X;Y) = H(X) + H(Y) − H(X,Y) = 1 + 1 − 1.4690 = 0.5310 bits')+
+    st(5,'Check the other forms: H(X|Y) = H(X,Y) − H(Y) = 0.4690, so I = H(X) − H(X|Y) = 1 − 0.4690 = 0.5310 = 1 − H<sub>b</sub>(0.1) ✓')+
+    fin('H(X) = H(Y) = 1, H(X,Y) = 1.4690, <b>I(X;Y) = 0.5310 bits</b>.') },
+
   { src:'mine', title:'Channel coding theorem',
     q:"H(S) = 1.75 bits, 1000 symbols/s. BSC p = 0.1 used 4000 times/s. Reliable transmission possible?",
-    a:`R<sub>s</sub>H = <b>1750 bps</b> ≤ R<sub>c</sub>C = 4000 × 0.531 = <b>2124 bps</b> → <b>yes</b>.` },
+    a: given('H(S) = 1.75 bits/symbol, R<sub>s</sub> = 1000 symbols/s, p = 0.1, R<sub>c</sub> = 4000 uses/s.')+
+    st(1,'Condition (Shannon\'s 2nd theorem).')+eq('R<sub>s</sub>H(S) ≤ R<sub>c</sub>C')+
+    st(2,'Source information rate.')+eq('R<sub>s</sub>H(S) = 1000 × 1.75 = 1750 bps')+
+    st(3,'Channel capacity per use, then per second.')+eq('C = 1 − H<sub>b</sub>(0.1) = 0.5310 bits/use → R<sub>c</sub>C = 4000 × 0.5310 = 2124 bps')+
+    st(4,'Compare: 1750 ≤ 2124 ✓')+
+    fin('<b>Yes</b>, a coding scheme exists for arbitrarily reliable transmission. (With only 3000 uses/s: 1593 bps &lt; 1750, so not guaranteed.)') },
 ];
 
 function loadState(){ try{ return JSON.parse(localStorage.getItem('m3p1-study-state')||'{}'); }catch(e){ return {}; } }

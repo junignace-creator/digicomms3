@@ -990,103 +990,229 @@ const glossary = [
   ["Survivor path","The lowest-cost path into a state at a given stage; all others are eliminated."],
 ];
 
+function st(n,t){ return '<p style="margin:10px 0 4px"><b>Step '+n+'.</b> '+t+'</p>'; }
+function eq(t){ return '<div class="math-block" style="font-size:1.02rem;line-height:1.7;padding:10px 12px">'+t+'</div>'; }
+function given(t){ return '<p style="margin:4px 0"><b>Given:</b> '+t+'</p>'; }
+function fin(t){ return '<div class="callout"><span class="callout-tag">Final answer</span>'+t+'</div>'; }
+function src(t){ return '<span class="formula-note">'+t+'</span>'; }
+
 const practice = [
-  /* ---------- FROM THE SLIDES ---------- */
+  /* =================== FROM THE SLIDES =================== */
   { src:'deck', tag:'lect', title:'Slide 16: Linear or not?',
     q:"Which is a linear block code? (6,2): {000010, 110101, 101010, 011110}. (5,2): {00000, 01011, 10101, 11110}.",
-    a:`<b>(6,2)</b>: no all-zero codeword (fails property 3), and c<sub>A</sub> ⊕ c<sub>B</sub> = 110111 is not in the code (fails property 2) → <b>not linear</b>.<br>
-    <b>(5,2)</b>: has 00000, and every XOR lands in the set (e.g. c<sub>B</sub> ⊕ c<sub>C</sub> = 11110 = c<sub>D</sub>) → <b>linear</b>.
-    <span class="formula-note">Both checks were done by her in the recording.</span>` },
+    a: st(1,'Linear test: (i) the all-zero codeword must be in the set; (ii) c<sub>a</sub> ⊕ c<sub>b</sub> must be a codeword for every pair. XOR rule: 0⊕0 = 0, 0⊕1 = 1, 1⊕0 = 1, 1⊕1 = 0.')+
+    st(2,'(6,2) code, test (i): is 000000 in the list? No → already fails.')+
+    st(3,'(6,2) code, test (ii) on one pair anyway.')+eq('c<sub>A</sub> ⊕ c<sub>B</sub> = 000010 ⊕ 110101 = 110111 → not in the list ✗')+
+    st(4,'(5,2) code, test (i): 00000 is in the list ✓.')+
+    st(5,'(5,2) code, test (ii): all pairs (c<sub>A</sub> = 0, so pairs with it just give the other codeword).')+
+    tbl(['pair','XOR','in the code?'],[['c<sub>B</sub> ⊕ c<sub>C</sub>','01011 ⊕ 10101 = 11110','yes (c<sub>D</sub>)'],['c<sub>B</sub> ⊕ c<sub>D</sub>','01011 ⊕ 11110 = 10101','yes (c<sub>C</sub>)'],['c<sub>C</sub> ⊕ c<sub>D</sub>','10101 ⊕ 11110 = 01011','yes (c<sub>B</sub>)']])+
+    fin('(6,2): <b>not linear</b> (no all-zero codeword; 110111 not a codeword). (5,2): <b>linear</b>.')+
+    src('Both checks were done by her in the recording.') },
+
   { src:'deck', tag:'lect', title:'Example #1 (slide 20): Code bits as combinations',
     q:"For the (5,2) code {00000, 01011, 10101, 11110}, write each code bit as a linear combination of m₁, m₂.",
-    a:`${tbl(['bit','column','equation'],[['c₁','0011','1m₁ ⊕ 0m₂'],['c₂','0101','0m₁ ⊕ 1m₂'],['c₃','0011','1m₁ ⊕ 0m₂'],['c₄','0101','0m₁ ⊕ 1m₂'],['c₅','0110','1m₁ ⊕ 1m₂']])}
-    c₁c₂ = m₁m₂, so the code is systematic.
-    <span class="formula-note">Her method: compare each column with m₁ = 0011 and m₂ = 0101; c₅ looks like XOR (from logic circuits).</span>` },
+    a: given('messages 00, 01, 10, 11 → so the m₁ column (top to bottom) is 0011 and the m₂ column is 0101.')+
+    st(1,'Target form: c<sub>j</sub> = (coefficient)m₁ ⊕ (coefficient)m₂, each coefficient 0 or 1.')+
+    st(2,'Read each code-bit column top to bottom (codewords A → D) and compare with m₁ = 0011, m₂ = 0101, m₁ ⊕ m₂ = 0110.')+
+    tbl(['code bit','column A→D','equals','equation'],[['c₁','0 0 1 1','m₁','1m₁ ⊕ 0m₂'],['c₂','0 1 0 1','m₂','0m₁ ⊕ 1m₂'],['c₃','0 0 1 1','m₁','1m₁ ⊕ 0m₂'],['c₄','0 1 0 1','m₂','0m₁ ⊕ 1m₂'],['c₅','0 1 1 0','m₁ ⊕ m₂','1m₁ ⊕ 1m₂']])+
+    st(3,'Check c₅ = m₁ ⊕ m₂ on every message: 0⊕0 = 0, 0⊕1 = 1, 1⊕0 = 1, 1⊕1 = 0 → 0110 ✓')+
+    fin('c₁ = m₁, c₂ = m₂, c₃ = m₁, c₄ = m₂, <b>c₅ = m₁ ⊕ m₂</b>. Since c₁c₂ = m₁m₂, the code is <b>systematic</b> (c₃c₄c₅ are parity bits).')+
+    src('Her method: compare each column with m₁ and m₂; c₅ is an XOR (from logic circuits).') },
+
   { src:'deck', tag:'lect', title:'Example #2 (slide 23): Generator matrix',
     q:"Same (5,2) systematic code. Determine G.",
-    a:`Column j of G = the coefficients of c<sub>j</sub>:
-    <div class="math-block">G = [1 0 1 0 1 ; 0 1 0 1 1] = [I₂ | P], &nbsp; P = [1 0 1 ; 0 1 1]</div>
-    <span class="formula-note">Worked by her in the recording.</span>` },
+    a: given('k = 2, n = 5, equations from Example #1.')+
+    st(1,'G is k × n = 2 × 5. Row 1 holds the m₁ coefficients, row 2 the m₂ coefficients; column j belongs to c<sub>j</sub>.')+
+    st(2,'Fill the columns from the equations.')+
+    tbl(['','c₁','c₂','c₃','c₄','c₅'],[['m₁ (row 1)','1','0','1','0','1'],['m₂ (row 2)','0','1','0','1','1']])+
+    eq('G = [1 0 1 0 1 ; 0 1 0 1 1]')+
+    st(3,'Identify the parts: G = [I<sub>k</sub> | P].')+eq('I₂ = [1 0 ; 0 1] (first k = 2 columns), &nbsp; P = [1 0 1 ; 0 1 1] (last n − k = 3 columns)')+
+    st(4,'Check with c = mG, e.g. m = 11: row 1 ⊕ row 2 = 10101 ⊕ 01011 = 11110 = c<sub>D</sub> ✓')+
+    fin('<b>G = [1 0 1 0 1 ; 0 1 0 1 1]</b>. Shortcut: the rows of G are just the codewords for m = 10 and m = 01.')+
+    src('Worked by her in the recording.') },
+
   { src:'deck', tag:'lect', title:'Example #3 (slide 26): Parity check matrix + validity',
     q:"Same code. Determine H. Is x = 01011 a valid codeword?",
-    a:`H = [P<sup>T</sup> | I₃] = [1 0 1 0 0 ; 0 1 0 1 0 ; 1 1 0 0 1] (3×5).<br>
-    xH<sup>T</sup>: row 1 → 0, row 2 → 1+1 = 0, row 3 → 1+1 = 0 → <b>[0 0 0]</b> → <b>valid</b>.
-    <span class="formula-note">Worked by her in the recording, including the element-by-element multiplication.</span>` },
+    a: given('P = [1 0 1 ; 0 1 1] from Example #2, k = 2, n − k = 3.')+
+    st(1,'Formula for c = [m | b].')+eq('H = [P<sup>T</sup> | I<sub>n−k</sub>], &nbsp; size (n−k) × n = 3 × 5')+
+    st(2,'Transpose P (rows become columns).')+eq('P = [1 0 1 ; 0 1 1] → P<sup>T</sup> = [1 0 ; 0 1 ; 1 1]')+
+    st(3,'Append I₃.')+eq('H = [1 0 1 0 0 ; 0 1 0 1 0 ; 1 1 0 0 1]')+
+    st(4,'Validity test: s = xH<sup>T</sup>. Each entry of s = x dotted with one <b>row</b> of H, added mod 2.')+
+    tbl(['row of H','x = 0 1 0 1 1 times row (bit by bit)','sum mod 2'],[['1 0 1 0 0','0·1 + 1·0 + 0·1 + 1·0 + 1·0 = 0','0'],['0 1 0 1 0','0 + 1·1 + 0 + 1·1 + 0 = 1 + 1','0'],['1 1 0 0 1','0 + 1·1 + 0 + 0 + 1·1 = 1 + 1','0']])+
+    st(5,'s = [0 0 0] → valid.')+
+    fin('<b>H = [1 0 1 0 0 ; 0 1 0 1 0 ; 1 1 0 0 1]</b>. xH<sup>T</sup> = [0 0 0], so <b>x is valid</b> (it is c<sub>B</sub>).')+
+    src('Worked by her, including the element-by-element multiplication.') },
+
   { src:'deck', tag:'slide', title:'Example #4 (slide 28): (6,3) code',
     q:"G = [100110; 010011; 001101]. Find R, P, H, d_min, and s for (a) r = 110101, (b) r = 100101.",
-    a:`R = 3/6 = <b>0.5</b>. P = [110; 011; 101]. <div class="math-block">H = [1 0 1 1 0 0 ; 1 1 0 0 1 0 ; 0 1 1 0 0 1]</div>
-    Codewords: 000000, 001101, 010011, 011110, 100110, 101011, 110101, 111000 → <b>d_min = w_min = 3</b>.<br>
-    (a) <b>s = 000</b> (valid). (b) <b>s = 011</b> = column 2 of H → error in bit 2, c = 110101.
-    <span class="formula-note">She only walked through the d_min method (list all 2³ messages, multiply by G, take the smallest weight) and said the rest is direct substitution. The values match the slide. The bit‑2 correction in (b) is extra, by me.</span>` },
+    a: given('n = 6, k = 3, so n − k = 3.')+
+    st(1,'Code rate.')+eq('R = '+frac('k','n')+' = '+frac('3','6')+' = 0.5')+
+    st(2,'P = last n − k = 3 columns of G.')+eq('P = [1 1 0 ; 0 1 1 ; 1 0 1]')+
+    st(3,'H = [P<sup>T</sup> | I₃]. Transpose P: its columns (101, 110, 011) become the rows.')+eq('H = [1 0 1 1 0 0 ; 1 1 0 0 1 0 ; 0 1 1 0 0 1]')+
+    st(4,'d<sub>min</sub> = w<sub>min</sub> for a linear code: list all 2³ = 8 codewords with c = mG (XOR the rows of G picked by the 1s in m).')+
+    tbl(['m','c = mG','w<sub>H</sub>'],[['000','000000','–'],['001','001101','3'],['010','010011','3'],['011','011110','4'],['100','100110','3'],['101','101011','4'],['110','110101','4'],['111','111000','3']])+
+    '<p>Smallest non-zero weight = 3 → d<sub>min</sub> = 3.</p>'+
+    st('5a','s = rH<sup>T</sup> for r = 110101 (each s bit = XOR of the r bits where that row of H has a 1).')+
+    eq('row 1 (positions 1,3,4): 1 ⊕ 0 ⊕ 1 = 0 &nbsp; row 2 (1,2,5): 1 ⊕ 1 ⊕ 0 = 0 &nbsp; row 3 (2,3,6): 1 ⊕ 0 ⊕ 1 = 0')+
+    st('5b','r = 100101.')+eq('row 1: 1 ⊕ 0 ⊕ 1 = 0 &nbsp; row 2: 1 ⊕ 0 ⊕ 0 = 1 &nbsp; row 3: 0 ⊕ 0 ⊕ 1 = 1')+
+    '<p>s = 011 matches <b>column 2 of H</b> (0,1,1) → bit 2 is wrong → c = 110101, m = 110.</p>'+
+    fin('R = <b>0.5</b>, P = [110; 011; 101], H as above, <b>d<sub>min</sub> = 3</b>. (a) <b>s = [0 0 0]</b> (valid). (b) <b>s = [0 1 1]</b> (error; corrected to 110101).')+
+    src('She only walked through the d<sub>min</sub> method; the rest is direct substitution. Values match the slide. The correction in (b) is extra, by me.') },
+
   { src:'deck', tag:'none', title:'Example #5 (slide 33): Syndrome decoding',
     q:"G = [10110; 01101]. Find m if r = 10010, and the error pattern e.",
-    a:`H = [1 1 1 0 0 ; 1 0 0 1 0 ; 0 1 0 0 1]. s = rH<sup>T</sup> = <b>100</b>.<br>
-    Single-error syndromes = columns of H: 110, 101, <b>100</b>, 010, 001 → <b>e = 00100</b>.<br>
-    c = r ⊕ e = <b>10110</b> → <b>m = 10</b>. Matches the slide.
-    <span class="formula-note"><b>Not covered in the recording.</b> The steps follow slide 32's procedure; the column-of-H shortcut is my addition.</span>` },
+    a: given('k = 2, n = 5, n − k = 3.')+
+    st(1,'P = last 3 columns of G, then H = [P<sup>T</sup> | I₃].')+eq('P = [1 1 0 ; 1 0 1] → P<sup>T</sup> = [1 1 ; 1 0 ; 0 1] → H = [1 1 1 0 0 ; 1 0 0 1 0 ; 0 1 0 0 1]')+
+    st(2,'Syndrome s = rH<sup>T</sup> with r = 1 0 0 1 0.')+eq('row 1 (positions 1,2,3): 1 ⊕ 0 ⊕ 0 = 1 &nbsp; row 2 (1,4): 1 ⊕ 1 = 0 &nbsp; row 3 (2,5): 0 ⊕ 0 = 0 → s = 100')+
+    st(3,'s ≠ 0 → error. Find the lowest-weight e with that syndrome. A single error in position j has syndrome = column j of H.')+
+    tbl(['position j','1','2','3','4','5'],[['column j of H','110','101','!100','010','001']])+
+    '<p>s = 100 = column 3 → coset leader <b>e = 00100</b>.</p>'+
+    st(4,'Correct: c = r ⊕ e.')+eq('c = 10010 ⊕ 00100 = 10110')+
+    st(5,'Read the message: first k = 2 bits → m = 10. Check: 10110 is row 1 of G ✓')+
+    fin('<b>e = [0 0 1 0 0]</b>, <b>m = [1 0]</b>.')+
+    src('<b>Not covered in the recording.</b> Steps follow slide 32\'s procedure; the column-of-H shortcut is my addition.') },
+
   { src:'deck', tag:'lect', title:'Example #6 (slide 41): Systematic cyclic encoding',
     q:"(7,4) code, G(x) = x³ + x + 1, m = 1100. Find c.",
-    a:`r = 3, x³m(x) = x⁶ + x⁵.
-    ${tbl(['step','quotient','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³'],['2','x²','x⁵ + x³ + x²','x⁴ + x²'],['3','x','x⁴ + x² + x','!x']])}
-    b = 010 → <b>c = 1100010</b>.
-    <span class="formula-note">Worked by her live, the same long division.</span>` },
+    a: given('n = 7, k = 4, so r = n − k = 3. G(x) = x³ + x + 1.')+
+    st(1,'Formulas.')+eq('b(x) = x<sup>r</sup>m(x) mod G(x), &nbsp;&nbsp; c(x) = b(x) + x<sup>r</sup>m(x)')+
+    st(2,'Message polynomial (leftmost bit = highest power): 1100 → 1·x³ + 1·x² + 0·x + 0.')+eq('m(x) = x³ + x²')+
+    st(3,'Shift up by r = 3.')+eq('x³m(x) = x³(x³ + x²) = x⁶ + x⁵')+
+    st(4,'Long-divide x⁶ + x⁵ by x³ + x + 1 (subtracting = XOR, like terms cancel).')+
+    tbl(['step','divide leading term','multiply G(x) by it','XOR → remaining'],[['1','x⁶ ÷ x³ = x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³'],['2','x⁵ ÷ x³ = x²','x⁵ + x³ + x²','x⁴ + x²'],['3','x⁴ ÷ x³ = x','x⁴ + x² + x','!x  (degree &lt; 3, stop)']])+
+    st(5,'Remainder b(x) = x → as r = 3 bits (x², x¹, x⁰): 0 1 0.')+
+    st(6,'Codeword = [message | parity].')+eq('c(x) = x⁶ + x⁵ + x → c = [1 1 0 0 | 0 1 0]')+
+    fin('<b>c = 1100010</b>.')+
+    src('Worked by her live, the same long division.') },
+
   { src:'deck', tag:'slide', title:'Example #7 (slide 43): Cyclic syndrome',
     q:"Same code. Find s for r = 1100110.",
-    a:`r(x) = x⁶ + x⁵ + x² + x.
-    ${tbl(['step','quotient','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³ + x² + x'],['2','x²','x⁵ + x³ + x²','x⁴ + x'],['3','x','x⁴ + x² + x','!x²']])}
-    <b>s = 100</b> ≠ 0 → error detected.
-    <span class="formula-note">She left this one for practice ("try to solve for the syndrome") after teaching the division. The answer is on the slide; the division steps are mine.</span>` },
+    a: given('G(x) = x³ + x + 1, r = 1100110.')+
+    st(1,'Formula.')+eq('s(x) = r(x) mod G(x)')+
+    st(2,'Received polynomial: bits 1 1 0 0 1 1 0 ↔ x⁶ x⁵ x⁴ x³ x² x¹ x⁰.')+eq('r(x) = x⁶ + x⁵ + x² + x')+
+    st(3,'Long division.')+
+    tbl(['step','divide','multiply G(x)','XOR → remaining'],[['1','x⁶ ÷ x³ = x³','x⁶ + x⁴ + x³','x⁵ + x⁴ + x³ + x² + x'],['2','x⁵ ÷ x³ = x²','x⁵ + x³ + x²','x⁴ + x'],['3','x⁴ ÷ x³ = x','x⁴ + x² + x','!x²']])+
+    st(4,'Remainder x² → 3 bits (x², x, 1): 1 0 0.')+
+    fin('<b>s = [1 0 0]</b> ≠ 0 → error detected. (Compared with Example #6\'s 1100010, the x² bit was flipped.)')+
+    src('She left this one for practice after teaching the division. Answer on the slide; division steps mine.') },
+
   { src:'deck', tag:'lect', title:'Example #8 (slides 48–49): Convolutional encoding',
-    q:"(2,1,2) code, c₁ = b(l)+b(l−2), c₂ = b(l)+b(l−1)+b(l−2), b = 1 0 1 1 1. Find c.",
-    a:`${tbl(['l','b(l)','b(l−1)','b(l−2)','c₁','c₂'],[['0','1','0','0','1','1'],['1','0','1','0','0','1'],['2','1','0','1','0','0'],['3','1','1','0','1','0'],['4','1','1','1','0','1'],['5','0','1','1','1','0'],['6','0','0','1','1','1']])}
-    Interleave: <b>c = 11 01 00 10 01 10 11</b>.
-    <span class="formula-note">Worked by her live, including appending two zeros to flush the registers.</span>` },
+    q:"(2,1,2) code, c₁ = b(l) + b(l−2), c₂ = b(l) + b(l−1) + b(l−2), b = 1 0 1 1 1. Find c.",
+    a: given('N = 2 outputs, K = 1 input, M = 2 registers (S₁ = b(l−1), S₂ = b(l−2)). Registers start at 0.')+
+    st(1,'Append M = 2 zeros to flush: input = 1 0 1 1 1 0 0 (7 steps).')+
+    st(2,'Each step: S₁ and S₂ hold the previous two inputs; compute c₁ = b(l) ⊕ b(l−2) and c₂ = b(l) ⊕ b(l−1) ⊕ b(l−2).')+
+    tbl(['l','b(l)','b(l−1)','b(l−2)','c₁ = b ⊕ b(l−2)','c₂ = b ⊕ b(l−1) ⊕ b(l−2)'],[['0','1','0','0','1⊕0 = 1','1⊕0⊕0 = 1'],['1','0','1','0','0⊕0 = 0','0⊕1⊕0 = 1'],['2','1','0','1','1⊕1 = 0','1⊕0⊕1 = 0'],['3','1','1','0','1⊕0 = 1','1⊕1⊕0 = 0'],['4','1','1','1','1⊕1 = 0','1⊕1⊕1 = 1'],['5','0','1','1','0⊕1 = 1','0⊕1⊕1 = 0'],['6','0','0','1','0⊕1 = 1','0⊕0⊕1 = 1']])+
+    st(3,'Interleave c₁(0)c₂(0), c₁(1)c₂(1), …')+
+    fin('<b>c = 11 01 00 10 01 10 11</b> (N(L + M) = 2(5 + 2) = 14 bits).')+
+    src('Worked by her live, including appending two zeros to flush the registers.') },
+
   { src:'deck', tag:'lect', title:'Example #9 (slide 54): State diagram',
     q:"Same code. Build the state transition table and state diagram.",
-    a:`${tbl(['b','present S₁S₂','next','c₁c₂'],[['0','00','00','00'],['1','00','10','11'],['0','10','01','01'],['1','10','11','10'],['0','01','00','11'],['1','01','10','00'],['0','11','01','10'],['1','11','11','01']])}
-    ${stateFig()}
-    <span class="formula-note">Table and diagram built by her live (next state = b, S₁ shifted). She said a different layout is fine if the connections are right.</span>` },
+    a: given('2<sup>M</sup> = 2² = 4 states: 00, 10, 01, 11 (state = S₁S₂).')+
+    st(1,'Rules: next state = (b, S₁) (shift right); outputs c₁ = b ⊕ S₂, c₂ = b ⊕ S₁ ⊕ S₂.')+
+    st(2,'Fill every (state, input) combination.')+
+    tbl(['b','S₁S₂','next = b S₁','c₁ = b⊕S₂','c₂ = b⊕S₁⊕S₂'],[['0','00','00','0','0'],['1','00','10','1','1'],['0','10','01','0','0⊕1⊕0 = 1'],['1','10','11','1','1⊕1⊕0 = 0'],['0','01','00','0⊕1 = 1','0⊕0⊕1 = 1'],['1','01','10','1⊕1 = 0','1⊕0⊕1 = 0'],['0','11','01','0⊕1 = 1','0⊕1⊕1 = 0'],['1','11','11','1⊕1 = 0','1⊕1⊕1 = 1']])+
+    st(3,'Draw one circle per state and one arrow per row, labeled input/output.')+
+    stateFig()+
+    fin('Table above; arrows: 00 →(0/00) 00, 00 →(1/11) 10, 10 →(0/01) 01, 10 →(1/10) 11, 01 →(0/11) 00, 01 →(1/00) 10, 11 →(0/10) 01, 11 →(1/01) 11.')+
+    src('Built by her live. She said a different layout is fine if the connections are right.') },
+
   { src:'deck', tag:'lect', title:'Example #10 (slides 63–65): Viterbi decoding',
     q:"Same code, r = 01 11 10 10 00 11 10 (last two pairs are the flush). Decode with Viterbi.",
-    a:`${tbl(['stage','r','00','10','01','11'],[['1','01','1','1','–','–'],['2','11','3','1','2','2'],['3','10','3','3','2','1'],['4','10','3','3','1','3'],['5','00','3','1','4','4'],['6','11','4','–','2','–'],['7','10','!3','–','–','–']])}
-    ${trellisFig(['01','11','10','10','00','11','10'],5,'Survivor path for Example #10.')}
-    <b>c = 00 11 10 10 00 01 11</b>, <b>b = 0 1 1 0 1</b>.
-    <span class="formula-note">Worked by her live: Hamming distance per branch, add the path costs, cross out the more expensive branch, trace back from 00.</span>` },
+    a: given('7 received pairs; 5 data bits + M = 2 flush bits. Start at state 00 with cost 0.')+
+    st(1,'Branch metric = Hamming distance between the received pair and the branch output (count differing bits).')+
+    st(2,'Path metric = previous cost + branch metric. When two paths enter a state, keep the smaller.')+
+    st('3a','Stage 1 (r = 01): from 00: input 0 → 00 (output 00, d = 1); input 1 → 10 (output 11, d = 1). Costs: 00 = 1, 10 = 1.')+
+    st('3b','Stage 2 (r = 11): 00 → 00 (00, d = 2) = 3; 00 → 10 (11, d = 0) = 1; 10 → 01 (01, d = 1) = 2; 10 → 11 (10, d = 1) = 2.')+
+    st('3c','Stage 3 (r = 10): two paths now enter each state. E.g. into 00: from 00 (output 00, d = 1) → 3+1 = 4, from 01 (output 11, d = 1) → 2+1 = 3 → keep <b>3</b>.')+
+    st(4,'Full table of survivor costs.')+
+    tbl(['stage','r','00','10','01','11'],[['1','01','1','1','–','–'],['2','11','3','1','2','2'],['3','10','3','3','2','1'],['4','10','3','3','1','3'],['5','00','3','1','4','4'],['6 (flush)','11','4','–','2','–'],['7 (flush)','10','!3','–','–','–']])+
+    st(5,'Trace back from the final 00 along the surviving branches.')+
+    trellisFig(['01','11','10','10','00','11','10'],5,'Survivor path for Example #10 (thick line).')+
+    '<p>Path: 00 → 00 → 10 → 11 → 01 → 10 → 01 → 00. Inputs: lower (0), upper (1), upper (1), lower (0), upper (1), then the two flush 0s.</p>'+
+    fin('<b>c = 00 11 10 10 00 01 11</b>, <b>b = 0 1 1 0 1</b>. Final cost 3 = three bit errors corrected (pairs 1, 6, 7).')+
+    src('Worked by her live: Hamming distance per branch, add path costs, cross out the more expensive branch, trace back from 00.') },
 
-  /* ---------- MADE BY ME ---------- */
+  /* =================== MADE BY ME =================== */
   { src:'mine', title:'Parity & repetition',
     q:"(a) Even and odd parity bits for 1011001. (b) Received 1011101 + the even-parity bit: detected? (c) Decode 3× repetition 110 001 101 000 111.",
-    a:`(a) Four 1s → even bit <b>0</b>, odd bit <b>1</b>. (b) Five 1s → odd → <b>detected</b>. (c) <b>10101</b>.` },
+    a: st('(a)','Count the 1s in 1011001: 1+0+1+1+0+0+1 = 4 (even).')+
+    '<p>Even parity → make the total even → add <b>0</b> (10110010). Odd parity → make it odd → add <b>1</b> (10110011).</p>'+
+    st('(b)','Count the 1s in 1011101 + 0: 1+0+1+1+1+0+1+0 = 5 (odd). Even parity expected → <b>error detected</b>.')+
+    st('(c)','Majority vote on each group of 3.')+
+    tbl(['group','1s','majority'],[['110','2','1'],['001','1','0'],['101','2','1'],['000','0','0'],['111','3','1']])+
+    fin('(a) even <b>0</b>, odd <b>1</b>. (b) <b>Detected</b> (one flip; two flips would be missed). (c) <b>10101</b>.') },
   { src:'mine', title:'Block code numbers',
     q:"(7,4) code: R, redundancy, received words, valid codewords.",
-    a:`R = <b>4/7</b>, redundancy = <b>7/4</b>, <b>128</b> received words, <b>16</b> valid.` },
+    a: given('n = 7, k = 4.')+
+    eq('R = '+frac('k','n')+' = '+frac('4','7')+' = 0.571 &nbsp;&nbsp; Redundancy = '+frac('n','k')+' = '+frac('7','4')+' = 1.75')+
+    eq('received words = 2<sup>n</sup> = 2⁷ = 128 &nbsp;&nbsp; valid codewords = 2<sup>k</sup> = 2⁴ = 16')+
+    fin('R = <b>4/7</b>, redundancy = <b>7/4</b>, <b>128</b> received words, <b>16</b> valid (112 invalid words signal an error).') },
   { src:'mine', title:'Coding gain from slide 8',
     q:"At P_B = 10⁻⁶ uncoded needs 14 dB and coded needs 9 dB. Coding gain? What does an R = 1/2 code cost you?",
-    a:`G = <b>5 dB</b>. Cost: half the transmitted bits are redundant, so throughput halves for the same bandwidth.` },
+    a: st(1,'Formula.')+eq('G(dB) = (E<sub>b</sub>/N₀)<sub>uncoded</sub> − (E<sub>b</sub>/N₀)<sub>coded</sub> = 14 − 9 = 5 dB')+
+    st(2,'Cost: R = k/n = 1/2 → n = 2k, so every message bit is sent with 1 redundant bit. Same bandwidth → half the information throughput.')+
+    fin('<b>G = 5 dB</b>. Cost: throughput halves (or bandwidth doubles for the same data rate).') },
   { src:'mine', title:'Linear test & metrics',
     q:"Is {00000, 01110, 10101, 11011} linear? Weights, d_min, d_H(01110, 11011)?",
-    a:`Has 00000 and all XORs stay in the set → <b>linear</b>. Weights 0, 3, 3, 4 → <b>d_min = 3</b>. d_H = w(10101) = <b>3</b>.` },
+    a: st(1,'Has 00000 ✓. XOR every non-zero pair:')+
+    tbl(['pair','XOR','in code?'],[['01110 ⊕ 10101','11011','✓'],['01110 ⊕ 11011','10101','✓'],['10101 ⊕ 11011','01110','✓']])+
+    st(2,'Weights (count 1s): 00000 → 0, 01110 → 3, 10101 → 3, 11011 → 4. w<sub>min</sub> (non-zero) = 3 = d<sub>min</sub>.')+
+    st(3,'Distance.')+eq('d<sub>H</sub>(01110, 11011) = w<sub>H</sub>(01110 ⊕ 11011) = w<sub>H</sub>(10101) = 3')+
+    fin('<b>Linear</b>, weights 0/3/3/4, <b>d<sub>min</sub> = 3</b>, d<sub>H</sub> = <b>3</b>.') },
   { src:'mine', title:'Full (7,4) code',
     q:"G = [1000110; 0100011; 0010111; 0001101]. (a) Encode m = 1011. (b) H. (c) Correct r = 1010100.",
-    a:`(a) c = <b>1011100</b>. (b) H = [1 0 1 1 1 0 0 ; 1 1 1 0 0 1 0 ; 0 1 1 1 0 0 1]. (c) s = <b>101</b> = column 4 → c = 1011100, m = <b>1011</b>.` },
+    a: st('(a)','c = mG: XOR the rows of G where m has a 1 (rows 1, 3, 4).')+
+    eq('1000110 ⊕ 0010111 ⊕ 0001101 = 1011100')+
+    st('(b)','P = last 3 columns: [110; 011; 111; 101]. Transpose (columns 1011, 1110, 0111 become rows), append I₃.')+
+    eq('H = [1 0 1 1 1 0 0 ; 1 1 1 0 0 1 0 ; 0 1 1 1 0 0 1]')+
+    st('(c)','s = rH<sup>T</sup>, r = 1 0 1 0 1 0 0.')+
+    eq('row 1 (1,3,4,5): 1⊕1⊕0⊕1 = 1 &nbsp; row 2 (1,2,3,6): 1⊕0⊕1⊕0 = 0 &nbsp; row 3 (2,3,4,7): 0⊕1⊕0⊕0 = 1 → s = 101')+
+    tbl(['position','1','2','3','4','5','6','7'],[['column of H','110','011','111','!101','100','010','001']])+
+    '<p>s = 101 = column 4 → flip bit 4: 1010100 → 1011100.</p>'+
+    fin('(a) <b>c = 1011100</b>. (b) H above. (c) s = <b>101</b> → error in bit 4 → c = 1011100, <b>m = 1011</b> ✓.') },
   { src:'mine', title:'Systematic cyclic encoding',
     q:"(7,4), G(x) = x³ + x + 1, m = 1010. Find c.",
-    a:`x³m(x) = x⁶ + x⁴ → XOR x⁶+x⁴+x³ → x³ → XOR x³+x+1 → <b>x + 1</b> → b = 011 → <b>c = 1010011</b>.` },
+    a: given('r = 3.')+
+    st(1,'m(x) = x³ + x (from 1010). x³m(x) = x⁶ + x⁴.')+
+    st(2,'Divide by x³ + x + 1.')+
+    tbl(['step','divide','multiply G(x)','XOR → remaining'],[['1','x⁶ ÷ x³ = x³','x⁶ + x⁴ + x³','x³'],['2','x³ ÷ x³ = 1','x³ + x + 1','!x + 1']])+
+    st(3,'b(x) = x + 1 → 3 bits (x², x, 1): 0 1 1. c = [m | b].')+
+    st(4,'Check: c(x) = x⁶ + x⁴ + x + 1 mod G(x) should be 0 ✓ (verified).')+
+    fin('<b>c = 1010011</b>.') },
   { src:'mine', title:'More cyclic syndromes',
     q:"G(x) = x³ + x + 1. Find s for r = 1000011 and r = 1000101.",
-    a:`1000011 → s = <b>110</b> (error). 1000101 → s = <b>000</b>: it's 1100010 shifted left once, so valid by the cyclic property.` },
+    a: st(1,'r = 1000011 → r(x) = x⁶ + x + 1.')+
+    tbl(['step','divide','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁴ + x³ + x + 1'],['2','x','x⁴ + x² + x','x³ + x² + 1'],['3','1','x³ + x + 1','!x² + x']])+
+    '<p>s = x² + x → <b>110</b> ≠ 0 → error.</p>'+
+    st(2,'r = 1000101 → r(x) = x⁶ + x² + 1.')+
+    tbl(['step','divide','XOR with','remaining'],[['1','x³','x⁶ + x⁴ + x³','x⁴ + x³ + x² + 1'],['2','x','x⁴ + x² + x','x³ + x + 1'],['3','1','x³ + x + 1','!0']])+
+    '<p>s = <b>000</b> → valid. It\'s 1100010 shifted left once, which the cyclic property guarantees is a codeword.</p>'+
+    fin('1000011 → <b>s = 110</b> (error). 1000101 → <b>s = 000</b> (valid).') },
   { src:'mine', title:'Convolutional encoding',
     q:"Same (2,1,2) code. Encode b = 1 1 0 1.",
-    a:`${tbl(['l','b','b(l−1)','b(l−2)','c₁','c₂'],[['0','1','0','0','1','1'],['1','1','1','0','1','0'],['2','0','1','1','1','0'],['3','1','0','1','0','0'],['4','0','1','0','0','1'],['5','0','0','1','1','1']])}
-    c = <b>11 10 10 00 01 11</b> (12 bits).` },
+    a: st(1,'Append M = 2 zeros: 1 1 0 1 0 0. Registers start at 0.')+
+    tbl(['l','b','b(l−1)','b(l−2)','c₁ = b⊕b(l−2)','c₂ = b⊕b(l−1)⊕b(l−2)'],[['0','1','0','0','1','1'],['1','1','1','0','1','1⊕1⊕0 = 0'],['2','0','1','1','0⊕1 = 1','0⊕1⊕1 = 0'],['3','1','0','1','1⊕1 = 0','1⊕0⊕1 = 0'],['4','0','1','0','0','0⊕1⊕0 = 1'],['5','0','0','1','1','1']])+
+    st(2,'Interleave.')+
+    fin('<b>c = 11 10 10 00 01 11</b> (2 × (4 + 2) = 12 bits). States visited: 00 → 10 → 11 → 01 → 10 → 01 → 00.') },
   { src:'mine', title:'Viterbi with one error',
     q:"The previous codeword is received as r = 11 10 00 00 01 11. Decode with Viterbi.",
-    a:`${tbl(['stage','r','00','10','01','11'],[['1','11','2','0','–','–'],['2','10','3','3','2','0'],['3','00','3','2','1','1'],['4','00','3','1','2','2'],['5','01','3','–','1','–'],['6','11','!1','–','–','–']])}
-    ${trellisFig(['11','10','00','00','01','11'],4,'Survivor path; final cost 1 = one bit corrected.')}
-    c = <b>11 10 10 00 01 11</b>, b = <b>1 1 0 1</b> ✓.` },
+    a: given('4 data bits + 2 flush; start at 00 with cost 0.')+
+    st(1,'Stage 1 (r = 11): 00 →0→ 00 (out 00, d = 2) = 2; 00 →1→ 10 (out 11, d = 0) = 0.')+
+    st(2,'Stage 2 (r = 10): 00→00 (00, d=1) = 3; 00→10 (11, d=1) = 3; 10→01 (01, d=2) = 2; 10→11 (10, d=0) = 0.')+
+    st(3,'Stage 3 (r = 00), two paths per state, keep the smaller:')+
+    '<p>into 00: from 00 (00, d=0) 3+0 = 3, from 01 (11, d=2) 2+2 = 4 → <b>3</b>. &nbsp; into 10: from 00 (11, d=2) 5, from 01 (00, d=0) 2 → <b>2</b>. &nbsp; into 01: from 10 (01, d=1) 4, from 11 (10, d=1) 1 → <b>1</b>. &nbsp; into 11: from 10 (10, d=1) 4, from 11 (01, d=1) 1 → <b>1</b>.</p>'+
+    st(4,'Continue the same way.')+
+    tbl(['stage','r','00','10','01','11'],[['1','11','2','0','–','–'],['2','10','3','3','2','0'],['3','00','3','2','1','1'],['4','00','3','1','2','2'],['5 (flush)','01','3','–','1','–'],['6 (flush)','11','!1','–','–','–']])+
+    trellisFig(['11','10','00','00','01','11'],4,'Survivor path; final cost 1 = one bit corrected.')+
+    st(5,'Trace back: 00 → 10 → 11 → 01 → 10 → 01 → 00 → inputs 1, 1, 0, 1 (+ flush 0, 0).')+
+    fin('<b>c = 11 10 10 00 01 11</b>, <b>b = 1 1 0 1</b> ✓. Final cost 1: the error was in stage 3 (received 00, should be 10).') },
   { src:'mine', title:'Convolutional concepts',
     q:"(3,1,3) code: rate, states, output bits for a 10-bit message. Hard vs soft decision?",
-    a:`R = <b>1/3</b>, <b>8</b> states, 3(10 + 3) = <b>39 bits</b>. Hard = 0/1 + Hamming distance; soft = voltages + Euclidean distance.` },
+    a: given('N = 3, K = 1, M = 3, L = 10 message bits.')+
+    eq('R = K/N = 1/3 &nbsp;&nbsp; states = 2<sup>M</sup> = 2³ = 8 &nbsp;&nbsp; output = N(L + M) = 3(10 + 3) = 39 bits')+
+    '<p><b>Hard decision</b>: threshold each received value to 0/1, then use d<sub>H</sub> = Σ r<sub>i</sub> ⊕ c<sub>i</sub>. <b>Soft decision</b>: keep the voltages and use d<sub>E</sub> = √Σ(r<sub>i</sub> − c<sub>i</sub>)².</p>'+
+    fin('R = <b>1/3</b>, <b>8</b> states, <b>39 bits</b>. Viterbi as taught uses hard decisions (Hamming metric).') },
 ];
 
 function loadState(){ try{ return JSON.parse(localStorage.getItem('m3p2-study-state')||'{}'); }catch(e){ return {}; } }
